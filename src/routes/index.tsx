@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-import logo from '../logo.svg'
+import logo from '/Hypo-logo.png'
 
+// Forward '/' as the route for this file, the file will export the component App
 export const Route = createFileRoute('/')({
   component: App,
 })
@@ -15,24 +16,8 @@ function App() {
           alt="logo"
         />
         <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
+          Welcome to The Hypo Exchange
         </p>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <a
-          className="text-[#61dafb] hover:underline"
-          href="https://tanstack.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn TanStack
-        </a>
       </header>
     </div>
   )

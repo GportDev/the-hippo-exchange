@@ -11,7 +11,6 @@ import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
 // Create a new router instance
-
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
 const router = createRouter({
   routeTree,
@@ -29,6 +28,13 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
   }
+}
+
+// Import your Publishable Key
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error('Missing Publishable Key')
 }
 
 // Render the app
