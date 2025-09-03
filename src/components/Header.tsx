@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router'
-import logo from '/Hypo-logo.png'
 
 import ClerkHeader from '../integrations/clerk/header-user.tsx'
 
@@ -10,12 +9,7 @@ export default function Header() {
         to='/'
         className='flex items-center gap-2'
       >
-        <img
-          src={logo}
-          className="h-12"
-          alt="logo"
-        />
-        <h1 className='text-xl font-bold'>The Hypo Exchange</h1>
+        <h1 className='text-3xl font-bold'>HE</h1>
       </Link>
       {/* <nav className="flex flex-row">
         <div className="px-2 font-bold">
