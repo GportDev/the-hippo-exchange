@@ -1,12 +1,12 @@
-import { TanstackDevtools } from '@tanstack/react-devtools'
+// import { TanstackDevtools } from '@tanstack/react-devtools'
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+// import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 
 import Header from '@/components/Header'
 
 import ClerkProvider from '@/integrations/clerk/provider'
 
-import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
+// import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
 
 import type { QueryClient } from '@tanstack/react-query'
 
