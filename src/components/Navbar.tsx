@@ -1,13 +1,13 @@
 import {} from 'react'
 import { Link } from '@tanstack/react-router'
-import * as FaIcons from "react-icons/fa";
+import * as Lucide from "lucide-react";
 
 function Navbar() {
   return (
     <>
         <div className="navbar">
             <Link to="/" className='menu-bars'>
-                <FaIcons.FaBars size="1.5em"/>
+                <Lucide.Menu size="2em"/>
             </Link>
         </div>
     </>
