@@ -19,7 +19,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     <>
       <ClerkProvider>
         <Header />
-        <Outlet /> {/* Render the root in this position inside the page */}
+        <Outlet />
         {/* <TanstackDevtools
           config={{
             position: 'bottom-left',
