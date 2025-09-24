@@ -27,12 +27,16 @@ export const ProfilePage = () => {
   const { user } = useUser()
   const [isEditing, setIsEditing] = useState(false)
 
-  const { data, error, isLoading } = useQuery({
+  const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
       return fetch('/api/profile').then((res) => res.json())
     },
   })
+
+  if (getProfileError) {
+    toast.error('Error fetching profile data')
+  }
 
   const { mutate, isIdle } = useMutation({
       mutationFn: async (updatedData: ProfileFormValues) => {
