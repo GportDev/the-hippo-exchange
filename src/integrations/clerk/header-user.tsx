@@ -2,14 +2,14 @@ import {
   SignedIn,
   SignInButton,
   SignedOut,
-  UserButton,
 } from '@clerk/clerk-react'
+import CustomUserButton from '@/components/Auth/UserButton'
 
 export default function HeaderUser() {
   return (
     <>
       <SignedIn>
-        <UserButton />
+        <CustomUserButton />
       </SignedIn>
       <SignedOut>
         <SignInButton />
