@@ -8,21 +8,12 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemosTanstackQueryRouteImport } from './routes/demos/tanstack-query'
 import { Route as DemosClerkRouteImport } from './routes/demos/clerk'
-import { Route as MyAssetsPageRootRouteImport } from './routes/MyAssetsPage/_root'
+import { Route as AssetsMyAssetsRouteImport } from './routes/assets/my-assets'
 
-const MyAssetsPageRouteImport = createFileRoute('/MyAssetsPage')()
-
-const MyAssetsPageRoute = MyAssetsPageRouteImport.update({
-  id: '/MyAssetsPage',
-  path: '/MyAssetsPage',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -38,61 +29,57 @@ const DemosClerkRoute = DemosClerkRouteImport.update({
   path: '/demos/clerk',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MyAssetsPageRootRoute = MyAssetsPageRootRouteImport.update({
-  id: '/_root',
-  getParentRoute: () => MyAssetsPageRoute,
+const AssetsMyAssetsRoute = AssetsMyAssetsRouteImport.update({
+  id: '/assets/my-assets',
+  path: '/assets/my-assets',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/MyAssetsPage': typeof MyAssetsPageRootRoute
+  '/assets/my-assets': typeof AssetsMyAssetsRoute
   '/demos/clerk': typeof DemosClerkRoute
   '/demos/tanstack-query': typeof DemosTanstackQueryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/MyAssetsPage': typeof MyAssetsPageRootRoute
+  '/assets/my-assets': typeof AssetsMyAssetsRoute
   '/demos/clerk': typeof DemosClerkRoute
   '/demos/tanstack-query': typeof DemosTanstackQueryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/MyAssetsPage': typeof MyAssetsPageRouteWithChildren
-  '/MyAssetsPage/_root': typeof MyAssetsPageRootRoute
+  '/assets/my-assets': typeof AssetsMyAssetsRoute
   '/demos/clerk': typeof DemosClerkRoute
   '/demos/tanstack-query': typeof DemosTanstackQueryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/MyAssetsPage' | '/demos/clerk' | '/demos/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/assets/my-assets'
+    | '/demos/clerk'
+    | '/demos/tanstack-query'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/MyAssetsPage' | '/demos/clerk' | '/demos/tanstack-query'
+  to: '/' | '/assets/my-assets' | '/demos/clerk' | '/demos/tanstack-query'
   id:
     | '__root__'
     | '/'
-    | '/MyAssetsPage'
-    | '/MyAssetsPage/_root'
+    | '/assets/my-assets'
     | '/demos/clerk'
     | '/demos/tanstack-query'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  MyAssetsPageRoute: typeof MyAssetsPageRouteWithChildren
+  AssetsMyAssetsRoute: typeof AssetsMyAssetsRoute
   DemosClerkRoute: typeof DemosClerkRoute
   DemosTanstackQueryRoute: typeof DemosTanstackQueryRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/MyAssetsPage': {
-      id: '/MyAssetsPage'
-      path: '/MyAssetsPage'
-      fullPath: '/MyAssetsPage'
-      preLoaderRoute: typeof MyAssetsPageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -114,31 +101,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemosClerkRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/MyAssetsPage/_root': {
-      id: '/MyAssetsPage/_root'
-      path: '/MyAssetsPage'
-      fullPath: '/MyAssetsPage'
-      preLoaderRoute: typeof MyAssetsPageRootRouteImport
-      parentRoute: typeof MyAssetsPageRoute
+    '/assets/my-assets': {
+      id: '/assets/my-assets'
+      path: '/assets/my-assets'
+      fullPath: '/assets/my-assets'
+      preLoaderRoute: typeof AssetsMyAssetsRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface MyAssetsPageRouteChildren {
-  MyAssetsPageRootRoute: typeof MyAssetsPageRootRoute
-}
-
-const MyAssetsPageRouteChildren: MyAssetsPageRouteChildren = {
-  MyAssetsPageRootRoute: MyAssetsPageRootRoute,
-}
-
-const MyAssetsPageRouteWithChildren = MyAssetsPageRoute._addFileChildren(
-  MyAssetsPageRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  MyAssetsPageRoute: MyAssetsPageRouteWithChildren,
+  AssetsMyAssetsRoute: AssetsMyAssetsRoute,
   DemosClerkRoute: DemosClerkRoute,
   DemosTanstackQueryRoute: DemosTanstackQueryRoute,
 }

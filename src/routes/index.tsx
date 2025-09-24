@@ -138,9 +138,7 @@ function App() {
 }
 
 
-
 /*
-
 const {isSignedIn} = useUser();
 
 function AutoNavigateToMyAssets() {
@@ -148,11 +146,11 @@ function AutoNavigateToMyAssets() {
 
   useEffect(() => {
     if (isSignedIn) {
-      navigate({ to: '/MyAssetsPage' })
+      navigate({ to: '/assets/my-assets' })
     }
-  }, [isSignedIn, navigate])
+  }, 
+)
 
   return <div>Redirecting...</div>
 }
-  
 */

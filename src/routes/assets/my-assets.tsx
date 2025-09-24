@@ -2,12 +2,11 @@ import { createFileRoute } from '@tanstack/react-router'
 
 
 
-export const Route = createFileRoute('/MyAssetsPage/_root')({
+export const Route = createFileRoute('/assets/my-assets')({
   component: MyAssetsPage,
 })
 
 function MyAssetsPage() {
-  console.log('Rendering MyAssetsPage')
 
   return (
     <div style={{ padding: '2rem', fontSize: '1.2rem' }}>

@@ -26,9 +26,6 @@ export default function Header() {
       </nav> */}
 
       <div>
-        <div className="px-2 font-bold">
-          <Link to="/MyAssetsPage">go to assets</Link>
-        </div>
         <ClerkHeader />
       </div>
     </header>
