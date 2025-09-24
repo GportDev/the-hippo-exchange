@@ -38,7 +38,7 @@ export const ProfilePage = () => {
     toast.error('Error fetching profile data')
   }
 
-  const { mutate, isIdle } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
       mutationFn: async (updatedData: ProfileFormValues) => {
         const response = await fetch('/api/profile', {
           method: 'POST',
@@ -60,23 +60,24 @@ export const ProfilePage = () => {
     formState: { errors },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: data,
+    defaultValues: data ?? {
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+    },
   })
 
-  const onSubmit = (data: ProfileFormValues) => {
-    mutate(data, {
-      onError: (error) => {
-        toast.error(`Error updating profile: ${error.message}`)
-      },
-      onSuccess: () => {
-        toast.success('Profile updated successfully!')
-        setIsEditing(false)
-      },
-    })
 
-    setIsEditing(false)
-
-    toast.success('Profile updated successfully!')
+  const onSubmit = async (formValues: ProfileFormValues) => {
+    try {
+      await mutateAsync(formValues)
+      toast.success('Profile updated successfully!')
+      setIsEditing(false)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error'
+      toast.error(`Error updating profile: ${message}`)
+    }
   }
 
   if (!user) {
@@ -100,10 +101,10 @@ export const ProfilePage = () => {
           <button
             type="submit"
             form="profileForm"
-            disabled={!isEditing}
+            disabled={!isEditing || isPending}
             className="px-4 py-2 rounded cursor-pointer disabled:bg-primary-gray/60 disabled:cursor-not-allowed bg-primary-gray text-white hover:bg-primary-gray/90 transition-colors"
           >
-            {isIdle ? 'Save Changes' : 'Saving...'}
+            {isPending ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
