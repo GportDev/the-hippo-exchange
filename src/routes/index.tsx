@@ -1,10 +1,5 @@
 import { SignUpButton } from '@clerk/clerk-react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-
-
-import { useEffect } from 'react';
-import { useUser } from "@clerk/clerk-react"
-
+import { createFileRoute } from '@tanstack/react-router'
 
 // Forward '/' as the route for this file, the file will export the component App
 export const Route = createFileRoute('/')({
@@ -136,21 +131,3 @@ function App() {
     </div>
   )
 }
-
-
-/*
-const {isSignedIn} = useUser();
-
-function AutoNavigateToMyAssets() {
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (isSignedIn) {
-      navigate({ to: '/assets/my-assets' })
-    }
-  }, 
-)
-
-  return <div>Redirecting...</div>
-}
-*/
