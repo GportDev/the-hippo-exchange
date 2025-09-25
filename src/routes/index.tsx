@@ -1,5 +1,5 @@
-import { SignUpButton } from '@clerk/clerk-react'
-import { createFileRoute } from '@tanstack/react-router'
+import { SignUpButton, useUser } from '@clerk/clerk-react'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 
 // Forward '/' as the route for this file, the file will export the component App
 export const Route = createFileRoute('/')({
@@ -7,6 +7,13 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
+
+  const { isSignedIn } = useUser()
+
+  if (isSignedIn) {
+    return <Navigate to="/assets/my-assets" />
+  }
+
   return (
     <div className="bg-[#f4f4f4] font-sans text-black">
       <section className="relative overflow-hidden py-20 md:py-28 lg:py-32">

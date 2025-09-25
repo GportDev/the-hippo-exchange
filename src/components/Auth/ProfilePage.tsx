@@ -30,11 +30,12 @@ export const ProfilePage = () => {
   const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
-      return fetch('/api/profile').then((res) => res.json())
+      return fetch('https://thehippoexchange.com/api/profile').then((res) => res.json())
     },
   })
 
   if (getProfileError) {
+    console.log(getProfileError)
     toast.error('Error fetching profile data')
   }
 
@@ -48,6 +49,7 @@ export const ProfilePage = () => {
           body: JSON.stringify(updatedData),
         })
         if (!response.ok) {
+          console.log(response)
           throw new Error('Failed to update profile')
         }
         return response.json()

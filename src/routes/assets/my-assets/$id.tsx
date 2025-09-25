@@ -1,0 +1,172 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { ArrowLeft, MapPin, Calendar, DollarSign, Tag, Camera, CheckCircle } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import fakeAssets from '../../../lib/fake-assets.json'
+
+export const Route = createFileRoute('/assets/my-assets/$id')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  const { id } = Route.useParams()
+  const asset = fakeAssets.find((_, index) => index.toString() === id)
+  
+  if (!asset) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Asset Not Found</h1>
+          <p className="text-gray-600 mb-4">The asset you're looking for doesn't exist.</p>
+          <Link 
+            to="/assets/my-assets" 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Assets
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount)
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/assets/my-assets" 
+                className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                Back to Assets
+              </Link>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                asset.status === 'available' 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-red-100 text-red-800'
+              }`}>
+                <CheckCircle className="w-4 h-4" />
+                {asset.status}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Image Gallery */}
+          <div className="space-y-4">
+            <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200">
+              {asset.images && asset.images.length > 0 ? (
+                <img 
+                  src={asset.images[0]} 
+                  alt={asset.itemName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <Camera className="w-16 h-16" />
+                </div>
+              )}
+            </div>
+            
+            {/* Additional Images */}
+            {asset.images && asset.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {asset.images.slice(1, 5).map((image) => (
+                  <div key={asset.itemName} className="aspect-square rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200">
+                    <img 
+                      src={image} 
+                      alt={`${asset.itemName}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Asset Details */}
+          <div className="space-y-6">
+            {/* Title and Brand */}
+            <div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                <Tag className="w-4 h-4" />
+                {asset.category}
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{asset.itemName}</h1>
+              {asset.brandName && (
+                <p className="text-xl text-gray-600">{asset.brandName}</p>
+              )}
+            </div>
+
+            {/* Key Information */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                <div className="flex items-center gap-2 text-gray-600 mb-1">
+                  <DollarSign className="w-4 h-4" />
+                  <span className="text-sm font-medium">Purchase Cost</span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{formatCurrency(asset.purchaseCost)}</p>
+              </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+                <div className="flex items-center gap-2 text-gray-600 mb-1">
+                  <Calendar className="w-4 h-4" />
+                  <span className="text-sm font-medium">Purchase Date</span>
+                </div>
+                <p className="text-lg font-semibold text-gray-900">{formatDate(asset.purchaseDate)}</p>
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+              <div className="flex items-center gap-2 text-gray-600 mb-1">
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm font-medium">Current Location</span>
+              </div>
+              <p className="text-lg font-semibold text-gray-900">{asset.currentLocation}</p>
+            </div>
+
+            {/* Condition Description */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Condition Description</h3>
+              <p className="text-gray-700 leading-relaxed">{asset.conditionDescription}</p>
+            </div>
+
+            {/* Action Buttons */}
+            {/* <div className="flex gap-3 pt-4">
+              <button className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                Edit Asset
+              </button>
+              <button className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
+                Share Asset
+              </button>
+            </div> */}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemosTanstackQueryRouteImport } from './routes/demos/tanstack-query'
 import { Route as DemosClerkRouteImport } from './routes/demos/clerk'
+import { Route as AssetsMyAssetsIndexRouteImport } from './routes/assets/my-assets/index'
+import { Route as AssetsMyAssetsIdRouteImport } from './routes/assets/my-assets/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +30,69 @@ const DemosClerkRoute = DemosClerkRouteImport.update({
   path: '/demos/clerk',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssetsMyAssetsIndexRoute = AssetsMyAssetsIndexRouteImport.update({
+  id: '/assets/my-assets/',
+  path: '/assets/my-assets/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AssetsMyAssetsIdRoute = AssetsMyAssetsIdRouteImport.update({
+  id: '/assets/my-assets/$id',
+  path: '/assets/my-assets/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demos/clerk': typeof DemosClerkRoute
   '/demos/tanstack-query': typeof DemosTanstackQueryRoute
+  '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
+  '/assets/my-assets': typeof AssetsMyAssetsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demos/clerk': typeof DemosClerkRoute
   '/demos/tanstack-query': typeof DemosTanstackQueryRoute
+  '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
+  '/assets/my-assets': typeof AssetsMyAssetsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demos/clerk': typeof DemosClerkRoute
   '/demos/tanstack-query': typeof DemosTanstackQueryRoute
+  '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
+  '/assets/my-assets/': typeof AssetsMyAssetsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demos/clerk' | '/demos/tanstack-query'
+  fullPaths:
+    | '/'
+    | '/demos/clerk'
+    | '/demos/tanstack-query'
+    | '/assets/my-assets/$id'
+    | '/assets/my-assets'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demos/clerk' | '/demos/tanstack-query'
-  id: '__root__' | '/' | '/demos/clerk' | '/demos/tanstack-query'
+  to:
+    | '/'
+    | '/demos/clerk'
+    | '/demos/tanstack-query'
+    | '/assets/my-assets/$id'
+    | '/assets/my-assets'
+  id:
+    | '__root__'
+    | '/'
+    | '/demos/clerk'
+    | '/demos/tanstack-query'
+    | '/assets/my-assets/$id'
+    | '/assets/my-assets/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemosClerkRoute: typeof DemosClerkRoute
   DemosTanstackQueryRoute: typeof DemosTanstackQueryRoute
+  AssetsMyAssetsIdRoute: typeof AssetsMyAssetsIdRoute
+  AssetsMyAssetsIndexRoute: typeof AssetsMyAssetsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +118,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemosClerkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assets/my-assets/': {
+      id: '/assets/my-assets/'
+      path: '/assets/my-assets'
+      fullPath: '/assets/my-assets'
+      preLoaderRoute: typeof AssetsMyAssetsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/assets/my-assets/$id': {
+      id: '/assets/my-assets/$id'
+      path: '/assets/my-assets/$id'
+      fullPath: '/assets/my-assets/$id'
+      preLoaderRoute: typeof AssetsMyAssetsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +139,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemosClerkRoute: DemosClerkRoute,
   DemosTanstackQueryRoute: DemosTanstackQueryRoute,
+  AssetsMyAssetsIdRoute: AssetsMyAssetsIdRoute,
+  AssetsMyAssetsIndexRoute: AssetsMyAssetsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
