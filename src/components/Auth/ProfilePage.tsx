@@ -30,7 +30,11 @@ export const ProfilePage = () => {
   const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
-      return fetch('https://thehippoexchange.com/api/profile').then((res) => res.json())
+      return fetch('https://thehippoexchange.com/api/user', {
+        headers: {
+          'X-User-Id': `${user?.id}`
+        }
+      }).then((res) => res.json())
     },
   })
 
@@ -44,7 +48,7 @@ export const ProfilePage = () => {
         const response = await fetch('/api/profile', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'X-User-Id': `${user?.id}`
           },
           body: JSON.stringify(updatedData),
         })
