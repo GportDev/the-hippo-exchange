@@ -8,17 +8,16 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { z } from 'zod'
 
-const signUpSchema = z
-  .object({
-    username: z.string().min(3, 'Username must be at least 3 characters'),
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string(),
-  })
-  .refine((data: { password: string; confirmPassword: string }) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  })
+// .refine((data: { password: string; confirmPassword: string }) => data.password === data.confirmPassword, {
+//   message: "Passwords don't match",
+//   path: ['confirmPassword'],
+
+const signUpSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  confirmPassword: z.string(),
+})
 
 type SignUpSchema = z.infer<typeof signUpSchema>
 
@@ -36,7 +35,7 @@ function SignUpComponent() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpSchema>({
-    resolver: zodResolver(signUpSchema) as any,
+    resolver: zodResolver(signUpSchema),
   })
 
   const parseClerkError = (error: unknown) => {
