@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as VerifyEmailIndexRouteImport } from './routes/verify-email/index'
 import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
 import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
 import { Route as MaintenanceIndexRouteImport } from './routes/maintenance/index'
@@ -20,11 +19,6 @@ import { Route as AssetsMyAssetsIdRouteImport } from './routes/assets/my-assets/
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifyEmailIndexRoute = VerifyEmailIndexRouteImport.update({
-  id: '/verify-email/',
-  path: '/verify-email/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignUpIndexRoute = SignUpIndexRouteImport.update({
@@ -58,7 +52,6 @@ export interface FileRoutesByFullPath {
   '/maintenance': typeof MaintenanceIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
-  '/verify-email': typeof VerifyEmailIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
   '/assets/my-assets': typeof AssetsMyAssetsIndexRoute
 }
@@ -67,7 +60,6 @@ export interface FileRoutesByTo {
   '/maintenance': typeof MaintenanceIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
-  '/verify-email': typeof VerifyEmailIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
   '/assets/my-assets': typeof AssetsMyAssetsIndexRoute
 }
@@ -77,7 +69,6 @@ export interface FileRoutesById {
   '/maintenance/': typeof MaintenanceIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
-  '/verify-email/': typeof VerifyEmailIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
   '/assets/my-assets/': typeof AssetsMyAssetsIndexRoute
 }
@@ -88,7 +79,6 @@ export interface FileRouteTypes {
     | '/maintenance'
     | '/sign-in'
     | '/sign-up'
-    | '/verify-email'
     | '/assets/my-assets/$id'
     | '/assets/my-assets'
   fileRoutesByTo: FileRoutesByTo
@@ -97,7 +87,6 @@ export interface FileRouteTypes {
     | '/maintenance'
     | '/sign-in'
     | '/sign-up'
-    | '/verify-email'
     | '/assets/my-assets/$id'
     | '/assets/my-assets'
   id:
@@ -106,7 +95,6 @@ export interface FileRouteTypes {
     | '/maintenance/'
     | '/sign-in/'
     | '/sign-up/'
-    | '/verify-email/'
     | '/assets/my-assets/$id'
     | '/assets/my-assets/'
   fileRoutesById: FileRoutesById
@@ -116,7 +104,6 @@ export interface RootRouteChildren {
   MaintenanceIndexRoute: typeof MaintenanceIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
   SignUpIndexRoute: typeof SignUpIndexRoute
-  VerifyEmailIndexRoute: typeof VerifyEmailIndexRoute
   AssetsMyAssetsIdRoute: typeof AssetsMyAssetsIdRoute
   AssetsMyAssetsIndexRoute: typeof AssetsMyAssetsIndexRoute
 }
@@ -128,13 +115,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/verify-email/': {
-      id: '/verify-email/'
-      path: '/verify-email'
-      fullPath: '/verify-email'
-      preLoaderRoute: typeof VerifyEmailIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up/': {
@@ -180,7 +160,6 @@ const rootRouteChildren: RootRouteChildren = {
   MaintenanceIndexRoute: MaintenanceIndexRoute,
   SignInIndexRoute: SignInIndexRoute,
   SignUpIndexRoute: SignUpIndexRoute,
-  VerifyEmailIndexRoute: VerifyEmailIndexRoute,
   AssetsMyAssetsIdRoute: AssetsMyAssetsIdRoute,
   AssetsMyAssetsIndexRoute: AssetsMyAssetsIndexRoute,
 }
