@@ -70,9 +70,6 @@ function SignUpComponent() {
         password: data.password,
       })
 
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
-
-      navigate({ to: '/verify-email' })
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2))
       
