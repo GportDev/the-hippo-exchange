@@ -53,7 +53,7 @@ code {
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.871 0.006 286.286);
   --primary-gray: oklch(0.3152 0.0259 260.06);
-  --primary-yellow: oklch(0.9367 0.1744 103.99);
+  --primary-yellow: oklch(0.9521 0.1427 104.06);
 }
 
 .dark {

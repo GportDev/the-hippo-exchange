@@ -9,7 +9,7 @@ export default function Header() {
         to='/'
         className='flex items-center gap-2'
       >
-        <h1 className='text-3xl font-bold'>HE</h1>
+        <h1 className='text-3xl font-bold'>Hippo Exchange</h1>
       </Link>
 
       <div className='flex items-center gap-4'>
