@@ -158,3 +158,17 @@ code {
     @apply bg-background text-foreground;
   }
 }
+
+/* Sidebar positioning adjustments */
+.sidebar-collapsed {
+  width: 4rem;
+}
+
+.sidebar-expanded {
+  width: 16rem;
+}
+
+/* Ensure main content adjusts properly */
+.main-content {
+  transition: margin-left 0.3s ease-in-out;
+}

@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemosTanstackQueryRouteImport } from './routes/demos/tanstack-query'
-import { Route as DemosClerkRouteImport } from './routes/demos/clerk'
+import { Route as VerifyEmailIndexRouteImport } from './routes/verify-email/index'
+import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
+import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
+import { Route as MaintenanceIndexRouteImport } from './routes/maintenance/index'
 import { Route as AssetsMyAssetsIndexRouteImport } from './routes/assets/my-assets/index'
 import { Route as AssetsMyAssetsIdRouteImport } from './routes/assets/my-assets/$id'
 
@@ -20,14 +22,24 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemosTanstackQueryRoute = DemosTanstackQueryRouteImport.update({
-  id: '/demos/tanstack-query',
-  path: '/demos/tanstack-query',
+const VerifyEmailIndexRoute = VerifyEmailIndexRouteImport.update({
+  id: '/verify-email/',
+  path: '/verify-email/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemosClerkRoute = DemosClerkRouteImport.update({
-  id: '/demos/clerk',
-  path: '/demos/clerk',
+const SignUpIndexRoute = SignUpIndexRouteImport.update({
+  id: '/sign-up/',
+  path: '/sign-up/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInIndexRoute = SignInIndexRouteImport.update({
+  id: '/sign-in/',
+  path: '/sign-in/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MaintenanceIndexRoute = MaintenanceIndexRouteImport.update({
+  id: '/maintenance/',
+  path: '/maintenance/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssetsMyAssetsIndexRoute = AssetsMyAssetsIndexRouteImport.update({
@@ -43,23 +55,29 @@ const AssetsMyAssetsIdRoute = AssetsMyAssetsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/demos/clerk': typeof DemosClerkRoute
-  '/demos/tanstack-query': typeof DemosTanstackQueryRoute
+  '/maintenance': typeof MaintenanceIndexRoute
+  '/sign-in': typeof SignInIndexRoute
+  '/sign-up': typeof SignUpIndexRoute
+  '/verify-email': typeof VerifyEmailIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
   '/assets/my-assets': typeof AssetsMyAssetsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/demos/clerk': typeof DemosClerkRoute
-  '/demos/tanstack-query': typeof DemosTanstackQueryRoute
+  '/maintenance': typeof MaintenanceIndexRoute
+  '/sign-in': typeof SignInIndexRoute
+  '/sign-up': typeof SignUpIndexRoute
+  '/verify-email': typeof VerifyEmailIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
   '/assets/my-assets': typeof AssetsMyAssetsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/demos/clerk': typeof DemosClerkRoute
-  '/demos/tanstack-query': typeof DemosTanstackQueryRoute
+  '/maintenance/': typeof MaintenanceIndexRoute
+  '/sign-in/': typeof SignInIndexRoute
+  '/sign-up/': typeof SignUpIndexRoute
+  '/verify-email/': typeof VerifyEmailIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
   '/assets/my-assets/': typeof AssetsMyAssetsIndexRoute
 }
@@ -67,30 +85,38 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/demos/clerk'
-    | '/demos/tanstack-query'
+    | '/maintenance'
+    | '/sign-in'
+    | '/sign-up'
+    | '/verify-email'
     | '/assets/my-assets/$id'
     | '/assets/my-assets'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/demos/clerk'
-    | '/demos/tanstack-query'
+    | '/maintenance'
+    | '/sign-in'
+    | '/sign-up'
+    | '/verify-email'
     | '/assets/my-assets/$id'
     | '/assets/my-assets'
   id:
     | '__root__'
     | '/'
-    | '/demos/clerk'
-    | '/demos/tanstack-query'
+    | '/maintenance/'
+    | '/sign-in/'
+    | '/sign-up/'
+    | '/verify-email/'
     | '/assets/my-assets/$id'
     | '/assets/my-assets/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DemosClerkRoute: typeof DemosClerkRoute
-  DemosTanstackQueryRoute: typeof DemosTanstackQueryRoute
+  MaintenanceIndexRoute: typeof MaintenanceIndexRoute
+  SignInIndexRoute: typeof SignInIndexRoute
+  SignUpIndexRoute: typeof SignUpIndexRoute
+  VerifyEmailIndexRoute: typeof VerifyEmailIndexRoute
   AssetsMyAssetsIdRoute: typeof AssetsMyAssetsIdRoute
   AssetsMyAssetsIndexRoute: typeof AssetsMyAssetsIndexRoute
 }
@@ -104,18 +130,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demos/tanstack-query': {
-      id: '/demos/tanstack-query'
-      path: '/demos/tanstack-query'
-      fullPath: '/demos/tanstack-query'
-      preLoaderRoute: typeof DemosTanstackQueryRouteImport
+    '/verify-email/': {
+      id: '/verify-email/'
+      path: '/verify-email'
+      fullPath: '/verify-email'
+      preLoaderRoute: typeof VerifyEmailIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demos/clerk': {
-      id: '/demos/clerk'
-      path: '/demos/clerk'
-      fullPath: '/demos/clerk'
-      preLoaderRoute: typeof DemosClerkRouteImport
+    '/sign-up/': {
+      id: '/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in/': {
+      id: '/sign-in/'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maintenance/': {
+      id: '/maintenance/'
+      path: '/maintenance'
+      fullPath: '/maintenance'
+      preLoaderRoute: typeof MaintenanceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/assets/my-assets/': {
@@ -137,8 +177,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DemosClerkRoute: DemosClerkRoute,
-  DemosTanstackQueryRoute: DemosTanstackQueryRoute,
+  MaintenanceIndexRoute: MaintenanceIndexRoute,
+  SignInIndexRoute: SignInIndexRoute,
+  SignUpIndexRoute: SignUpIndexRoute,
+  VerifyEmailIndexRoute: VerifyEmailIndexRoute,
   AssetsMyAssetsIdRoute: AssetsMyAssetsIdRoute,
   AssetsMyAssetsIndexRoute: AssetsMyAssetsIndexRoute,
 }

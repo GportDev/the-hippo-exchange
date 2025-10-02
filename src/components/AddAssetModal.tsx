@@ -161,7 +161,7 @@ export default function AddAssetModal({ onAssetAdded }: AddAssetModalProps) {
                 type="number"
                 step="0.01"
                 value={formData.purchaseCost}
-                onChange={(e) => handleInputChange('purchaseCost', parseFloat(e.target.value) || 0)}
+                onChange={(e) => handleInputChange('purchaseCost', Number.parseFloat(e.target.value) || 0)}
                 placeholder="0.00"
               />
             </div>
@@ -205,7 +205,7 @@ export default function AddAssetModal({ onAssetAdded }: AddAssetModalProps) {
           <div className="space-y-2">
             <Label>Images</Label>
             {formData.images?.map((image, index) => (
-              <div key={index} className="flex gap-2">
+              <div key={`image-${index}-${image.slice(-10)}`} className="flex gap-2">
                 <Input
                   value={image}
                   onChange={(e) => handleImageChange(index, e.target.value)}

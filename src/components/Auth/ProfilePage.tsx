@@ -30,7 +30,7 @@ export const ProfilePage = () => {
   const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
-      return fetch('https://thehippoexchange.com/api/user', {
+      return fetch(`https://api.thehippoexchange.com/users/${user?.id}`, {
         headers: {
           'X-User-Id': `${user?.id}`
         }
@@ -45,8 +45,8 @@ export const ProfilePage = () => {
 
   const { mutateAsync, isPending } = useMutation({
       mutationFn: async (updatedData: ProfileFormValues) => {
-        const response = await fetch('/api/profile', {
-          method: 'POST',
+        const response = await fetch(`https://api.thehippoexchange.com/users/${user?.id}`, {
+          method: 'PATCH',
           headers: {
             'X-User-Id': `${user?.id}`
           },

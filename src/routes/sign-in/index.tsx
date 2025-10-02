@@ -1,0 +1,150 @@
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { useSignIn } from '@clerk/clerk-react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+
+export const Route = createFileRoute('/sign-in/')({
+  component: SignInComponent,
+})
+
+function SignInComponent() {
+  const { isLoaded, signIn, setActive } = useSignIn()
+  const navigate = useNavigate({ from: '/sign-in' })
+  const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
+  const [isLoading, setIsLoading] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+
+  const parseClerkError = (error: unknown) => {
+    const fieldErrors: Record<string, string> = {}
+    
+    if (error && typeof error === 'object' && 'errors' in error && Array.isArray(error.errors)) {
+      for (const err of error.errors) {
+        if (err && typeof err === 'object' && 'meta' in err && err.meta && typeof err.meta === 'object' && 'paramName' in err.meta) {
+          fieldErrors[err.meta.paramName as string] = (err as { message: string }).message
+        }
+      }
+    }
+    
+    return fieldErrors
+  }
+
+  const onSubmit = async (data: Record<string, string>) => {
+    if (!isLoaded || isLoading) {
+      return
+    }
+
+    setIsLoading(true)
+    // Clear previous errors
+    setClerkErrors({})
+
+    try {
+      const result = await signIn.create({
+        identifier: data.username,
+        password: data.password,
+      })
+
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId })
+        navigate({ to: '/' })
+      } else {
+        /*Investigate why the login failed */
+        console.log(result)
+      }
+    } catch (err: unknown) {
+      console.error(JSON.stringify(err, null, 2))
+      
+      const fieldErrors = parseClerkError(err)
+      setClerkErrors(fieldErrors)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="flex min-h-screen bg-primary-yellow">
+      <div className="flex flex-col justify-center w-1/2 p-12 text-white bg-primary-gray rounded-r-[6rem]">
+        <h1 className="text-6xl font-bold">Hippo Exchange</h1>
+        <p className="text-2xl">don't buy. borrow.</p>
+      </div>
+      <div className="flex flex-col items-center justify-center w-1/2">
+        <div className="w-full max-w-md p-8 space-y-8">
+          <div>
+            <h2 className="text-3xl font-bold text-center">Log In</h2>
+          </div>
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+              <div className='space-y-4'>
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                  className="border border-black"
+                  {...register('username', { required: true })}
+                />
+                {errors.username && (
+                  <p className="text-red-500">Username is required</p>
+                )}
+                {clerkErrors.identifier && (
+                  <p className="text-red-500">{clerkErrors.identifier}</p>
+                )}
+              </div>
+              <div className='space-y-4'>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  className="border border-black"
+                  {...register('password', { required: true })}
+                />
+                {errors.password && (
+                  <p className="text-red-500">Password is required</p>
+                )}
+                {clerkErrors.password && (
+                  <p className="text-red-500">{clerkErrors.password}</p>
+                )}
+              </div>
+            </div>
+
+            <div>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="img" aria-label="Loading spinner">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Signing In...
+                  </div>
+                ) : (
+                  'Log In'
+                )}
+              </Button>
+            </div>
+          </form>
+          <div className="text-sm text-center">
+            <p>
+              New?{' '}
+              <a href="/sign-up" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Start Here
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
