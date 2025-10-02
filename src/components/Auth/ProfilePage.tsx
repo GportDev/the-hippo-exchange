@@ -65,7 +65,7 @@ export const ProfilePage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+    resolver: zodResolver(profileFormSchema) as any,
     defaultValues: data ?? {
       phone: '',
       address: '',

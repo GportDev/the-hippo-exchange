@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSignUp } from '@clerk/clerk-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { z } from 'zod'
@@ -15,7 +15,7 @@ const signUpSchema = z
     password: z.string().min(8, 'Password must be at least 8 characters'),
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data: { password: string; confirmPassword: string }) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ['confirmPassword'],
   })
@@ -28,7 +28,6 @@ export const Route = createFileRoute('/sign-up/')({
 
 function SignUpComponent() {
   const { isLoaded, signUp } = useSignUp()
-  const navigate = useNavigate({ from: '/sign-up' })
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -37,7 +36,7 @@ function SignUpComponent() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpSchema>({
-    resolver: zodResolver(signUpSchema),
+    resolver: zodResolver(signUpSchema) as any,
   })
 
   const parseClerkError = (error: unknown) => {
