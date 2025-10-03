@@ -20,4 +20,12 @@ export default defineConfig({
       '@': resolve(__dirname, './src'),
     },
   },
-})
+  optimizeDeps: {
+    include: ["zod"],
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+  },
+});

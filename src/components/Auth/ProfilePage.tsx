@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '@/lib/api';
 import { useUser } from '@clerk/clerk-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -30,7 +31,7 @@ export const ProfilePage = () => {
   const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
-      return fetch(`https://api.thehippoexchange.com/users/${user?.id}`, {
+      return fetch(`${API_BASE_URL}/users/${user?.id}`, {
         headers: {
           'X-User-Id': `${user?.id}`
         }
@@ -45,7 +46,7 @@ export const ProfilePage = () => {
 
   const { mutateAsync, isPending } = useMutation({
       mutationFn: async (updatedData: ProfileFormValues) => {
-        const response = await fetch(`https://api.thehippoexchange.com/users/${user?.id}`, {
+        const response = await fetch(`${API_BASE_URL}/users/${user?.id}`, {
           method: 'PATCH',
           headers: {
             'X-User-Id': `${user?.id}`
