@@ -58,7 +58,7 @@ export default function AddAssetModal() {
     mutationFn: async (file: File) => {
       if (!user) throw new Error("User not authenticated for upload.");
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("file", file);
 
       const res = await fetch(`${API_BASE_URL}/assets/upload-image`, {
         method: "POST",
@@ -210,16 +210,16 @@ export default function AddAssetModal() {
       <DialogTrigger asChild>
         <Button>Add New Asset</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit}>
-          <DialogHeader>
-            <DialogTitle>Add New Asset</DialogTitle>
-            <DialogDescription>
-              Fill in the details for your new asset. Click save when you're
-              done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle>Add New Asset</DialogTitle>
+          <DialogDescription>
+            Fill in the details for your new asset. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="flex-grow overflow-y-auto pr-4 -mr-4">
+          <form onSubmit={handleSubmit} id="add-asset-form" className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="itemName" className="text-right">
                 Item Name
@@ -391,13 +391,14 @@ export default function AddAssetModal() {
                 className="col-span-3"
               />
             </div>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={isSaving}>
-              {isSaving ? "Saving..." : "Save Asset"}
-            </Button>
-          </DialogFooter>
-        </form>
+          </form>
+        </div>
+
+        <DialogFooter className="flex-shrink-0 border-t pt-4">
+          <Button type="submit" form="add-asset-form" disabled={isSaving}>
+            {isSaving ? "Saving..." : "Save Asset"}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
