@@ -18,14 +18,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
+      'zod/core': 'zod',
     },
   },
-  optimizeDeps: {
-    include: ["zod"],
-  },
-  build: {
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
-  },
-});
+})
