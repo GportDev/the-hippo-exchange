@@ -14,6 +14,8 @@ import { API_BASE_URL } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+
 
 // This interface should match the expected JSON body structure
 interface CreateAssetRequest {
@@ -25,6 +27,7 @@ interface CreateAssetRequest {
   currentLocation: string;
   images: string[];
   conditionDescription: string;
+  ownerUserId: string;
   status: string;
   favorite: boolean;
 }
@@ -41,6 +44,10 @@ export default function AddAssetModal() {
   const [purchaseCost, setPurchaseCost] = useState(0);
   const [currentLocation, setCurrentLocation] = useState("");
   const [conditionDescription, setConditionDescription] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("");
+  const [image, setImage] = useState(""); // For a single image URL
+  const [status, setStatus] = useState("available");
+  const [favorite, setFavorite] = useState(false);
 
   const addAssetMutation = useMutation({
     mutationFn: async (newAsset: CreateAssetRequest) => {
@@ -81,19 +88,24 @@ export default function AddAssetModal() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      // This check ensures the user is logged in before proceeding.
+      // It satisfies TypeScript and prevents runtime errors.
+      alert("You must be logged in to add an asset.");
+      return;
+    }
     const newAsset: CreateAssetRequest = {
       itemName,
       brandName,
       category,
-      // Using current date as a placeholder for purchaseDate
-      purchaseDate: new Date().toISOString(),
+      purchaseDate: new Date(purchaseDate).toISOString(),
       purchaseCost: Number(purchaseCost),
       currentLocation,
-      // Placeholder values for fields not in the form
-      images: ["http://example.com/image.jpg"],
+      images: image ? [image] : [], // Send image in an array
       conditionDescription,
-      status: "available",
-      favorite: false,
+      ownerUserId: user.id,
+      status,
+      favorite,
     };
     addAssetMutation.mutate(newAsset);
   };
@@ -148,6 +160,18 @@ export default function AddAssetModal() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="purchaseDate" className="text-right">
+                Purchase Date
+              </Label>
+              <Input
+                id="purchaseDate"
+                type="date"
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="purchaseCost" className="text-right">
                 Cost
               </Label>
@@ -171,6 +195,18 @@ export default function AddAssetModal() {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="image" className="text-right">
+                Image URL
+              </Label>
+              <Input
+                id="image"
+                value={image}
+                onChange={(e) => setImage(e.target.value)}
+                className="col-span-3"
+                placeholder="http://example.com/image.jpg"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="conditionDescription" className="text-right">
                 Condition
               </Label>
@@ -178,6 +214,32 @@ export default function AddAssetModal() {
                 id="conditionDescription"
                 value={conditionDescription}
                 onChange={(e) => setConditionDescription(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="status" className="text-right">
+                Status
+              </Label>
+              <select
+                id="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+              >
+                <option value="available">Available</option>
+                <option value="borrowed">Borrowed</option>
+                <option value="in_repair">In Repair</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="favorite" className="text-right">
+                Favorite
+              </Label>
+              <Checkbox
+                id="favorite"
+                checked={favorite}
+                onCheckedChange={(checked) => setFavorite(Boolean(checked))}
                 className="col-span-3"
               />
             </div>
