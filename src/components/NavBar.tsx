@@ -50,11 +50,11 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                 <Link 
                   to="/home"
                   className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-center'
+                    isExpanded ? 'justify-start' : 'justify-start'
                   }`}
                   title={!isExpanded ? "My Assets" : undefined}
                 >
-                  <Lucide.House size="1.2em"/>
+                  <Lucide.House size="1.5em"/>
                   {showText && <span>Home</span>}
                 </Link>
               </li>
@@ -62,11 +62,11 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                 <Link 
                   to="/assets/my-assets"
                   className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-center'
+                    isExpanded ? 'justify-start' : 'justify-start'
                   }`}
                   title={!isExpanded ? "My Assets" : undefined}
                 >
-                  <Lucide.Package size="1.2em" />
+                  <Lucide.Package size="1.5em" />
                   {showText && <span>My Assets</span>}
                 </Link>
               </li>
@@ -74,11 +74,11 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                 <Link 
                   to="/maintenance"
                   className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-center'
+                    isExpanded ? 'justify-start' : 'justify-start'
                   }`}
                   title={!isExpanded ? "Maintenance" : undefined}
                 >
-                  <Lucide.Wrench size="1.2em" />
+                  <Lucide.Wrench size="1.5em" />
                   {showText && <span>Maintenance</span>}
                 </Link>
               </li>
