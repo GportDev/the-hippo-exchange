@@ -1,38 +1,93 @@
-import { Link } from '@tanstack/react-router'
-import type React from 'react'
+import { Link } from '@tanstack/react-router';
+import { Heart, MoreVertical, Edit, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 
-type AssetCardProps = {
-  itemName: string
-  brandName?: string
-  category?: string
-  purchaseDate?: string
-  purchaseCost?: number
-  currentLocation: string
-  images: string[]
-  conditionDescription?: string
-  status?: string
-  link: string
+interface Asset {
+  id: string;
+  itemName: string;
+  category: string;
+  images: string[];
+  status: string;
+  favorite: boolean;
 }
 
-const AssetCard: React.FC<AssetCardProps> = ({
-  itemName,
-  brandName,
-  purchaseCost,
-  currentLocation,
-  images,
-  link,
-}) => {
+interface AssetCardProps {
+  asset: Asset;
+  onToggleFavorite: (id: string, isFavorite: boolean) => void;
+  onDelete: (id: string) => void;
+}
+
+export function AssetCard({ asset, onToggleFavorite, onDelete }: AssetCardProps) {
+  const getStatusColor = () => {
+    switch (asset.status) {
+      case 'available':
+        return 'bg-green-100 text-green-800';
+      case 'borrowed':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'in_repair':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
-    <Link to={link} className='w-60 rounded-2xl'>
-      <div className="w-60 rounded-2xl flex flex-col gap-2 justify-center text-slate-800">
-        <img src={images[0]} alt={itemName} className='aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200'/>
-        <p className='text-sm'>{brandName}</p>
-        <h1 className='text-2xl font-bold'>{itemName}</h1>
-        <p className='text-lg font-semibold'>${purchaseCost}</p>
-        <p className='text-xs'>{currentLocation}</p>
+    <div className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md">
+      <Link to="/assets/my-assets/$id" params={{ id: asset.id }} className="block">
+        <div className="aspect-square overflow-hidden">
+          <img
+            src={asset.images?.[0] || 'https://via.placeholder.com/300'}
+            alt={asset.itemName}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+        </div>
+      </Link>
+      <div className="p-4">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">{asset.category}</p>
+            <h3 className="font-semibold leading-tight">
+              <Link to="/assets/my-assets/$id" params={{ id: asset.id }}>
+                {asset.itemName}
+              </Link>
+            </h3>
+          </div>
+          <Badge className={`ml-2 shrink-0 ${getStatusColor()}`}>{asset.status}</Badge>
+        </div>
       </div>
-    </Link>
-  )
+      <button
+        onClick={() => onToggleFavorite(asset.id, !asset.favorite)}
+        className="absolute top-3 right-3 z-10 rounded-full bg-white/70 p-1.5 text-gray-600 backdrop-blur-sm transition hover:bg-white hover:text-red-500"
+      >
+        <Heart className={`h-5 w-5 ${asset.favorite ? 'fill-red-500 text-red-500' : ''}`} />
+      </button>
+      <div className="absolute top-3 left-3 z-10">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="rounded-full bg-white/70 p-1.5 text-gray-600 backdrop-blur-sm transition hover:bg-white">
+              <MoreVertical className="h-5 w-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem asChild>
+              <Link to="/assets/my-assets/$id" params={{ id: asset.id }} className="flex items-center gap-2">
+                <Edit className="h-4 w-4" />
+                <span>View / Edit</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(asset.id)} className="flex items-center gap-2 text-red-600">
+              <Trash2 className="h-4 w-4" />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </div>
+  );
 }
-
-export default AssetCard
