@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
 import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
 import { Route as MaintenanceIndexRouteImport } from './routes/maintenance/index'
+import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AssetsMyAssetsIndexRouteImport } from './routes/assets/my-assets/index'
 import { Route as AssetsMyAssetsIdRouteImport } from './routes/assets/my-assets/$id'
 
@@ -36,6 +37,11 @@ const MaintenanceIndexRoute = MaintenanceIndexRouteImport.update({
   path: '/maintenance/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HomeIndexRoute = HomeIndexRouteImport.update({
+  id: '/home/',
+  path: '/home/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AssetsMyAssetsIndexRoute = AssetsMyAssetsIndexRouteImport.update({
   id: '/assets/my-assets/',
   path: '/assets/my-assets/',
@@ -49,6 +55,7 @@ const AssetsMyAssetsIdRoute = AssetsMyAssetsIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/home': typeof HomeIndexRoute
   '/maintenance': typeof MaintenanceIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/home': typeof HomeIndexRoute
   '/maintenance': typeof MaintenanceIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/home/': typeof HomeIndexRoute
   '/maintenance/': typeof MaintenanceIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
@@ -76,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/home'
     | '/maintenance'
     | '/sign-in'
     | '/sign-up'
@@ -84,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/home'
     | '/maintenance'
     | '/sign-in'
     | '/sign-up'
@@ -92,6 +103,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/home/'
     | '/maintenance/'
     | '/sign-in/'
     | '/sign-up/'
@@ -101,6 +113,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HomeIndexRoute: typeof HomeIndexRoute
   MaintenanceIndexRoute: typeof MaintenanceIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
   SignUpIndexRoute: typeof SignUpIndexRoute
@@ -138,6 +151,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MaintenanceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/home/': {
+      id: '/home/'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/assets/my-assets/': {
       id: '/assets/my-assets/'
       path: '/assets/my-assets'
@@ -157,6 +177,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HomeIndexRoute: HomeIndexRoute,
   MaintenanceIndexRoute: MaintenanceIndexRoute,
   SignInIndexRoute: SignInIndexRoute,
   SignUpIndexRoute: SignUpIndexRoute,
