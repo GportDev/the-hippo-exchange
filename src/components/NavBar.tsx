@@ -46,6 +46,18 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             
             {/* Navigation links */}
             <ul className="flex-1 mt-4">
+              <li className='mb-2'>
+                <Link 
+                  to="/home"
+                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                    isExpanded ? 'justify-start' : 'justify-center'
+                  }`}
+                  title={!isExpanded ? "My Assets" : undefined}
+                >
+                  <Lucide.House size="1.2em"/>
+                  {showText && <span>Home</span>}
+                </Link>
+              </li>
               <li className="mb-2">
                 <Link 
                   to="/assets/my-assets"
@@ -70,18 +82,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                   {showText && <span>Maintenance</span>}
                 </Link>
               </li>
-              <li className='mb-2'>
-                <Link 
-                  to="/home"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-center'
-                  }`}
-                  title={!isExpanded ? "My Assets" : undefined}
-                >
-                  <Lucide.House size="1.2em"/>
-                  {showText && <span>Home</span>}
-                </Link>
-              </li>
+              
             </ul>
           </div>
         </nav>
