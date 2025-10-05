@@ -34,9 +34,9 @@ function RootComponent() {
   return (
     <div className="min-h-screen bg-background">
       <SignedIn>
-        <main className='flex flex-col h-screen'>
+        <main className='flex flex-col h-screen overflow-hidden'>
           {!shouldHideHeader && <Header />}
-          <div className="flex flex-1">
+          <div className="flex flex-1 overflow-hidden">
             <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
             <div className="flex-1 overflow-auto">
               <Outlet />
@@ -45,7 +45,12 @@ function RootComponent() {
         </main>
       </SignedIn>
       <SignedOut>
-        <Outlet />
+        <div className="flex flex-col min-h-screen">
+          {!shouldHideHeader && <Header />}
+          <div className="flex-1">
+            <Outlet />
+          </div>
+        </div>
       </SignedOut>
     </div>
   )
