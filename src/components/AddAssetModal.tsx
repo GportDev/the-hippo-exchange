@@ -133,11 +133,13 @@ export default function AddAssetModal() {
             throw new Error("Failed to fetch address.");
           }
           const data = await response.json();
-          const city = data.address.city || data.address.town || data.address.village;
+          // Fallback chain: city -> town -> village -> county
+          const city = data.address.city || data.address.town || data.address.village || data.address.county;
           const state = data.address.state;
           if (city && state) {
             setCurrentLocation(`${city}, ${state}`);
           } else {
+            console.log("Could not determine location from data:", data);
             alert("Could not determine a valid location.");
           }
         } catch (error) {

@@ -5,6 +5,7 @@ import { useUser } from "@clerk/clerk-react";
 import { API_BASE_URL } from "@/lib/api";
 
 import AddAssetModal from "@/components/AddAssetModal";
+import { EditAssetModal } from "@/components/EditAssetModal";
 import { AssetCard } from "@/components/AssetCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ function MyAssetsComponent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
 
   const { data: assets = [], isLoading } = useQuery<Asset[]>({
     queryKey: ["assets", user?.id],
@@ -55,6 +57,28 @@ function MyAssetsComponent() {
       return res.json();
     },
     enabled: !!user,
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (updatedAsset: Asset) => {
+      if (!user) throw new Error("User not authenticated");
+      const { id, ...assetData } = updatedAsset;
+      const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-User-Id": user.id,
+        },
+        body: JSON.stringify(assetData),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update asset");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
+      setEditingAsset(null); // Close modal on success
+    },
   });
 
   const deleteMutation = useMutation({
@@ -95,6 +119,10 @@ function MyAssetsComponent() {
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
     },
   });
+
+  const handleEditAsset = (asset: Asset) => {
+    setEditingAsset(asset);
+  };
 
   const handleDeleteAsset = (id: string) => {
     if (window.confirm("Are you sure you want to delete this asset?")) {
@@ -228,11 +256,25 @@ function MyAssetsComponent() {
                 asset={asset}
                 onDelete={handleDeleteAsset}
                 onToggleFavorite={handleToggleFavorite}
+                onEdit={() => handleEditAsset(asset)}
               />
             ))}
           </div>
         )}
-      </div>
+        </div>
+      {editingAsset && (
+        <EditAssetModal
+          asset={editingAsset}
+          open={!!editingAsset}
+          onOpenChange={(isOpen: boolean) => {
+            if (!isOpen) {
+              setEditingAsset(null);
+            }
+          }}
+          onSave={updateMutation.mutate}
+          isSaving={updateMutation.isPending}
+        />
+      )}
     </div>
   );
 }
