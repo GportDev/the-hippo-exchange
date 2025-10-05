@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 
-interface Asset {
+interface ShortAsset {
   id: string;
   itemName: string;
   category: string;
@@ -18,12 +18,13 @@ interface Asset {
 }
 
 interface AssetCardProps {
-  asset: Asset;
+  asset: ShortAsset;
   onToggleFavorite: (id: string, isFavorite: boolean) => void;
   onDelete: (id: string) => void;
+  onEdit: (asset: ShortAsset) => void;
 }
 
-export function AssetCard({ asset, onToggleFavorite, onDelete }: AssetCardProps) {
+export function AssetCard({ asset, onToggleFavorite, onDelete, onEdit }: AssetCardProps) {
   const getStatusColor = () => {
     switch (asset.status) {
       case 'available':
@@ -75,11 +76,9 @@ export function AssetCard({ asset, onToggleFavorite, onDelete }: AssetCardProps)
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuItem asChild>
-              <Link to="/assets/my-assets/$id" params={{ id: asset.id }} className="flex items-center gap-2">
-                <Edit className="h-4 w-4" />
-                <span>View / Edit</span>
-              </Link>
+            <DropdownMenuItem onClick={() => onEdit(asset)} className="flex items-center gap-2 cursor-pointer">
+              <Edit className="h-4 w-4" />
+              <span>Edit</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onDelete(asset.id)} className="flex items-center gap-2 text-red-600">
               <Trash2 className="h-4 w-4" />
