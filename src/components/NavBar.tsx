@@ -27,7 +27,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
   return (
     <>
       <SignedIn>
-        <nav className={`h-screen bg-primary-gray text-primary-yellow transition-all duration-300 ease-in-out z-40 ${
+        <nav className={`h-full bg-primary-gray text-primary-yellow transition-all duration-300 ease-in-out z-40 overflow-visible ${
           isExpanded ? 'w-64' : 'w-16'
         }`}>
           <div className="flex flex-col h-full">
