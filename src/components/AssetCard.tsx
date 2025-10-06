@@ -32,14 +32,20 @@ export function AssetCard({ asset, onToggleFavorite, onDelete, onEdit }: AssetCa
       case 'borrowed':
         return 'bg-yellow-100 text-yellow-800';
       case 'in_repair':
-        return 'bg-red-100 text-red-800';
+        return 'bg-yellow-100 text-yellow-800';
+      case 'unlisted':
+        return 'bg-gray-100 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
-    <div className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md">
+    <div
+      className={`group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md ${
+        asset.status === 'unlisted' ? 'opacity-50' : ''
+      }`}
+    >
       <Link to="/assets/my-assets/$id" params={{ id: asset.id }} className="block">
         <div className="aspect-square overflow-hidden">
           <img
@@ -59,7 +65,12 @@ export function AssetCard({ asset, onToggleFavorite, onDelete, onEdit }: AssetCa
               </Link>
             </h3>
           </div>
-          <Badge className={`ml-2 shrink-0 ${getStatusColor()}`}>{asset.status}</Badge>
+          <Badge className={`ml-2 shrink-0 ${getStatusColor()}`}>
+            {asset.status
+              .split('_')
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ')}
+          </Badge>
         </div>
       </div>
       <button
