@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -11,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect } from "react";
+import { X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -84,6 +86,15 @@ export function EditAssetModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
+        {/* Close Button */}
+        <DialogClose asChild>
+          <button
+            aria-label="Close"
+            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-10"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </DialogClose>
         {/* Header */}
         <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
           <DialogTitle className="text-center text-primary-yellow">Edit Asset</DialogTitle>
