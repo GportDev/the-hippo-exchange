@@ -215,8 +215,8 @@ function MyAssetsComponent() {
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="available">Available</SelectItem>
-                <SelectItem value="borrowed">Borrowed</SelectItem>
                 <SelectItem value="in_repair">In Repair</SelectItem>
+                <SelectItem value="unlisted">Unlisted</SelectItem>
               </SelectContent>
             </Select>
             <Button

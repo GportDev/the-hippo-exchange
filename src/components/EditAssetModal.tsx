@@ -185,8 +185,8 @@ export function EditAssetModal({
                 className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value="available">Available</option>
-                <option value="borrowed">Borrowed</option>
                 <option value="in_repair">In Repair</option>
+                <option value="unlisted">Unlisted</option>
               </select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
