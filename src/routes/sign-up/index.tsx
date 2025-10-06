@@ -157,7 +157,7 @@ function SignUpComponent() {
             </div>
 
             <div className='space-y-4'>
-              <Button type="submit" className="w-full text-primary-yellow bg-primary-gray" disabled={isLoading}>
+              <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="img" aria-label="Loading spinner">

@@ -210,7 +210,7 @@ export default function AddAssetModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add New Asset</Button>
+        <Button className="bg-primary-gray text-primary-yellow cursor-pointer">Add New Asset</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
