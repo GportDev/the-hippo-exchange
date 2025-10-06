@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
 import * as Lucide from "lucide-react"
+import { useState, useEffect } from 'react'
 
 interface NavbarProps {
   isExpanded: boolean
@@ -8,10 +9,25 @@ interface NavbarProps {
 }
 
 function Navbar({ isExpanded, onToggle }: NavbarProps) {
+  
+  const [showText, setShowText] = useState(isExpanded);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (isExpanded) {
+      timer = setTimeout(() => setShowText(true), 100);
+    } else {
+      setShowText(false);
+    }
+
+    return () => clearTimeout(timer);
+  }, [isExpanded]);
+  
   return (
     <>
       <SignedIn>
-        <nav className={`h-screen bg-primary-gray text-primary-yellow transition-all duration-300 ease-in-out z-40 ${
+        <nav className={`h-full bg-primary-gray text-primary-yellow transition-all duration-300 ease-in-out z-40 overflow-visible ${
           isExpanded ? 'w-64' : 'w-16'
         }`}>
           <div className="flex flex-col h-full">
@@ -30,6 +46,18 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             
             {/* Navigation links */}
             <ul className="flex-1 mt-4">
+              <li className='mb-2'>
+                <Link 
+                  to="/home"
+                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                    isExpanded ? 'justify-start' : 'justify-center'
+                  }`}
+                  title={!isExpanded ? "My Assets" : undefined}
+                >
+                  <Lucide.House size="1.2em"/>
+                  {showText && <span>Home</span>}
+                </Link>
+              </li>
               <li className="mb-2">
                 <Link 
                   to="/assets/my-assets"
@@ -39,7 +67,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                   title={!isExpanded ? "My Assets" : undefined}
                 >
                   <Lucide.Package size="1.2em" />
-                  {isExpanded && <span>My Assets</span>}
+                  {showText && <span>My Assets</span>}
                 </Link>
               </li>
               <li className="mb-2">
@@ -51,19 +79,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                   title={!isExpanded ? "Maintenance" : undefined}
                 >
                   <Lucide.Wrench size="1.2em" />
-                  {isExpanded && <span>Maintenance</span>}
-                </Link>
-              </li>
-              <li className='mb-2'>
-                <Link 
-                  to="/home"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-center'
-                  }`}
-                  title={!isExpanded ? "My Assets" : undefined}
-                >
-                  <Lucide.House size="1.2em"/>
-                  {isExpanded && <span>Home</span>}
+                  {showText && <span>Maintenance</span>}
                 </Link>
               </li>
             </ul>

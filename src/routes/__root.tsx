@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router'
 import Header from '@/components/Header'
 import ClerkProvider from '@/integrations/clerk/provider'
-import Navbar from '@/components/NavBar'
+import Navbar from '@/components/Navbar'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
@@ -33,17 +33,24 @@ function RootComponent() {
 
   return (
     <div className="min-h-screen bg-background">
-      {!shouldHideHeader && <Header />}
       <SignedIn>
-        <main className='flex h-screen'>
-          <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
-          <div className="flex-1 overflow-auto">
-            <Outlet />
+        <main className='flex flex-col h-screen overflow-hidden'>
+          {!shouldHideHeader && <Header />}
+          <div className="flex flex-1 overflow-hidden">
+            <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
+            <div className="flex-1 overflow-auto">
+              <Outlet />
+            </div>
           </div>
         </main>
       </SignedIn>
       <SignedOut>
-        <Outlet />
+        <div className="flex flex-col min-h-screen">
+          {!shouldHideHeader && <Header />}
+          <div className="flex-1">
+            <Outlet />
+          </div>
+        </div>
       </SignedOut>
     </div>
   )

@@ -81,23 +81,23 @@ function SignUpComponent() {
   return (
     <div className="flex min-h-screen bg-primary-yellow">
       <div className="flex flex-col justify-center w-1/2 p-12 text-white bg-primary-gray rounded-r-[6rem]">
-        <h1 className="text-6xl font-bold">Hippo Exchange</h1>
-        <p className="text-2xl">don't buy. borrow.</p>
+        <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
+        <p className="text-2xl text-primary-yellow">don't buy. borrow.</p>
       </div>
       <div className="flex flex-col items-center justify-center w-1/2 ">
         <div className="w-full max-w-md p-8 space-y-8">
           <div>
-            <h2 className="text-3xl font-bold text-center">Create Account</h2>
+            <h2 className="text-3xl font-bold text-center text-primary-gray">Create Account</h2>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4 rounded-md">
-              <div className='space-y-4'>
+              <div className='space-y-4 text-primary-gray'>
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
                   type="text"
                   placeholder="Username"
-                  className="border border-black"
+                  className="border border-primary-gray"
                   {...register('username')}
                 />
                 {errors.username && (
@@ -107,13 +107,13 @@ function SignUpComponent() {
                   <p className="text-red-500">{clerkErrors.username}</p>
                 )}
               </div>
-              <div className='space-y-4'>
+              <div className='space-y-4 text-primary-gray'>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Email"
-                  className="border border-black"
+                  className="border border-primary-gray"
                   {...register('email')}
                 />
                 {errors.email && (
@@ -123,13 +123,13 @@ function SignUpComponent() {
                   <p className="text-red-500">{clerkErrors.emailAddress}</p>
                 )}
               </div>
-              <div className='space-y-4'>
-                <Label htmlFor="password">Password</Label>
+              <div className='space-y-4 text-primary-gray'>
+                <Label htmlFor="password ">Password</Label>
                 <Input
                   id="password"
                   type="password"
                   placeholder="Password"
-                  className="border border-black"
+                  className="border border-primary-gray"
                   {...register('password')}
                 />
                 {errors.password && (
@@ -139,13 +139,13 @@ function SignUpComponent() {
                   <p className="text-red-500">{clerkErrors.password}</p>
                 )}
               </div>
-              <div className='space-y-4'>
+              <div className='space-y-4 text-primary-gray'>
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   placeholder="Confirm Password"
-                  className="border border-black"
+                  className="border border-primary-gray"
                   {...register('confirmPassword')}
                 />
                 {errors.confirmPassword && (
@@ -157,7 +157,7 @@ function SignUpComponent() {
             </div>
 
             <div className='space-y-4'>
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button type="submit" className="w-full text-primary-yellow bg-primary-gray" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="img" aria-label="Loading spinner">
@@ -173,9 +173,9 @@ function SignUpComponent() {
             </div>
           </form>
           <div className="text-sm text-center">
-            <p>
+            <p className='text-primary-gray'>
               Already Have an Account?{' '}
-              <a href="/sign-in" className="font-medium text-primary-gray underline hover:scale-105 transition-all duration-300">
+              <a href="/sign-in" className="text-primary-gray underline-offset-2 underline hover:text-indigo-500">
                 Log In
               </a>
             </p>
