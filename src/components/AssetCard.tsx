@@ -53,7 +53,7 @@ export function AssetCard({ asset, onToggleFavorite, onDelete, onEdit }: AssetCa
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm text-muted-foreground">{asset.category}</p>
-            <h3 className="font-semibold leading-tight">
+            <h3 className="font-semibold leading-tight text-primary-gray">
               <Link to="/assets/my-assets/$id" params={{ id: asset.id }}>
                 {asset.itemName}
               </Link>
