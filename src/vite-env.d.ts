@@ -5,6 +5,8 @@ declare global {
   interface Window {
     Clerk?: {
       user: unknown | null;
+      session: unknown | null;
+      loaded: boolean;
     };
   }
 }

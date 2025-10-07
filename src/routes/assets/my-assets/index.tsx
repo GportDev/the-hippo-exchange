@@ -35,10 +35,12 @@ interface Asset {
 
 export const Route = createFileRoute("/assets/my-assets/")({
   beforeLoad: async () => {
-    // Check if user is authenticated via Clerk
-    const isAuthenticated = typeof window !== 'undefined' && window.Clerk?.user !== null
-    if (!isAuthenticated) {
-      throw redirect({ to: '/', replace: true })
+    // Wait for Clerk to load if it hasn't already
+    if (typeof window !== 'undefined' && window.Clerk) {
+      // Check if user is authenticated via Clerk session
+      if (!window.Clerk.session) {
+        throw redirect({ to: '/', replace: true })
+      }
     }
   },
   component: MyAssetsComponent,
