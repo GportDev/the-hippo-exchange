@@ -38,7 +38,7 @@ function RootComponent() {
           {!shouldHideHeader && <Header />}
           <div className="flex flex-1 overflow-hidden">
             <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto bg-gray-50 p-6">
               <Outlet />
             </div>
           </div>
