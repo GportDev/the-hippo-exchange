@@ -242,6 +242,56 @@ export default function AddAssetModal() {
 
         <div className="flex-grow overflow-y-auto px-6">
           <form onSubmit={handleSubmit} id="add-asset-form" className="space-y-6 py-6">
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label htmlFor="imageUpload">Image</Label>
+              <div className="col-span-3">
+                <Input
+                  type="file"
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={handleFileSelect}
+                  accept="image/png, image/jpeg, image/gif"
+                />
+                {!previewUrl ? (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-100 p-6 text-center hover:border-gray-400 hover:bg-gray-100"
+                  >
+                    <UploadCloud className="h-8 w-8 text-gray-400" />
+                    <span className="mt-2 text-sm text-gray-600">
+                      Click to upload an image
+                    </span>
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <img
+                      src={previewUrl}
+                      alt="Selected preview"
+                      className="h-auto w-full rounded-md object-cover"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 h-6 w-6"
+                      onClick={() => {
+                        setPreviewUrl(null);
+                        setSelectedFile(null);
+                        if (fileInputRef.current) {
+                          fileInputRef.current.value = "";
+                        }
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Item Name */}
             <div className="space-y-2">
               <Label htmlFor="itemName">Item Name</Label>
@@ -327,55 +377,6 @@ export default function AddAssetModal() {
                 >
                   {isFetchingLocation ? "Fetching..." : "Use My Location"}
                 </Button>
-              </div>
-            </div>
-
-            {/* Image Upload */}
-            <div className="space-y-2">
-              <Label htmlFor="imageUpload">Image</Label>
-              <div className="col-span-3">
-                <Input
-                  type="file"
-                  className="hidden"
-                  ref={fileInputRef}
-                  onChange={handleFileSelect}
-                  accept="image/png, image/jpeg, image/gif"
-                />
-                {!previewUrl ? (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="cursor-pointer flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center hover:border-gray-400 hover:bg-gray-100"
-                  >
-                    <UploadCloud className="h-8 w-8 text-gray-400" />
-                    <span className="mt-2 text-sm text-gray-600">
-                      Click to upload an image
-                    </span>
-                  </button>
-                ) : (
-                  <div className="relative">
-                    <img
-                      src={previewUrl}
-                      alt="Selected preview"
-                      className="h-auto w-full rounded-md object-cover"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2 h-6 w-6"
-                      onClick={() => {
-                        setPreviewUrl(null);
-                        setSelectedFile(null);
-                        if (fileInputRef.current) {
-                          fileInputRef.current.value = "";
-                        }
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
 
