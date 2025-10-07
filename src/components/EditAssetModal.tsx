@@ -78,7 +78,7 @@ export function EditAssetModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle>Edit Asset</DialogTitle>
+          <DialogTitle className="text-primary-gray">Edit Asset</DialogTitle>
           <DialogDescription>
             Update the details for your asset. Click save when you're done.
           </DialogDescription>
@@ -87,7 +87,7 @@ export function EditAssetModal({
         <div className="flex-grow overflow-y-auto pr-4 -mr-4">
           <form onSubmit={handleSubmit} id="edit-asset-form" className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="itemName" className="text-right">
+              <Label htmlFor="itemName" className="text-right text-primary-gray">
                 Item Name
               </Label>
               <Input
@@ -99,7 +99,7 @@ export function EditAssetModal({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="brandName" className="text-right">
+              <Label htmlFor="brandName" className="text-right text-primary-gray">
                 Brand
               </Label>
               <Input
@@ -111,7 +111,7 @@ export function EditAssetModal({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">
+              <Label htmlFor="category" className="text-right text-primary-gray">
                 Category
               </Label>
               <Input
@@ -123,7 +123,7 @@ export function EditAssetModal({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="purchaseDate" className="text-right">
+              <Label htmlFor="purchaseDate" className="text-left text-primary-gray">
                 Purchase Date
               </Label>
               <Input
@@ -131,12 +131,12 @@ export function EditAssetModal({
                 type="date"
                 value={purchaseDateForInput}
                 onChange={handleChange}
-                className="col-span-3"
+                className="col-span-3 cursor-pointer"
                 required
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="purchaseCost" className="text-right">
+              <Label htmlFor="purchaseCost" className="text-right text-primary-gray">
                 Cost
               </Label>
               <div className="col-span-3 flex h-10 w-full items-center rounded-md border border-input bg-background text-sm">
@@ -152,7 +152,7 @@ export function EditAssetModal({
               </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="currentLocation" className="text-right">
+              <Label htmlFor="currentLocation" className="text-right text-primary-gray">
                 Location
               </Label>
               <Input
@@ -164,7 +164,7 @@ export function EditAssetModal({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="conditionDescription" className="text-right">
+              <Label htmlFor="conditionDescription" className="text-right text-primary-gray">
                 Condition
               </Label>
               <Input
@@ -175,14 +175,14 @@ export function EditAssetModal({
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
+              <Label htmlFor="status" className="text-right text-primary-gray">
                 Status
               </Label>
               <select
                 id="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="cursor-pointer col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value="available">Available</option>
                 <option value="in_repair">In Repair</option>
@@ -190,11 +190,12 @@ export function EditAssetModal({
               </select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="favorite" className="text-right">
+              <Label htmlFor="favorite" className="text-right text-primary-gray">
                 Favorite
               </Label>
               <Checkbox
                 id="favorite"
+                className={`cursor-pointer ${formData.favorite ? "bg-gray-400" : "bg-transparent"}`}
                 checked={formData.favorite}
                 onCheckedChange={(checked) => handleCheckboxChange("favorite", Boolean(checked))}
               />
@@ -203,7 +204,7 @@ export function EditAssetModal({
         </div>
 
         <DialogFooter className="flex-shrink-0 border-t pt-4">
-          <Button type="submit" form="edit-asset-form" disabled={isSaving}>
+          <Button type="submit" form="edit-asset-form" disabled={isSaving} className="text-primary-yellow bg-primary-gray cursor-pointer">
             {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </DialogFooter>
