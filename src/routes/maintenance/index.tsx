@@ -1,27 +1,8 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useUser } from '@clerk/clerk-react'
 
 export const Route = createFileRoute('/maintenance/')({
-  beforeLoad: async () => {
-    // Check if user is authenticated via Clerk
-    if (typeof window !== 'undefined') {
-      // Wait for Clerk to load and check session
-      // If Clerk is loaded, we must check its session state
-      // If session is null/undefined, redirect regardless of cookies
-      if (window.Clerk) {
-        if (!window.Clerk.session) {
-          throw redirect({ to: '/', replace: true })
-        }
-      } else {
-        // If Clerk hasn't loaded yet, check for session cookies as fallback
-        const hasSessionCookie = document.cookie.includes('__session') || 
-                                 document.cookie.includes('__clerk_db_jwt')
-        if (!hasSessionCookie) {
-          throw redirect({ to: '/', replace: true })
-        }
-      }
-    }
-  },
   component: RouteComponent,
 })
 
@@ -93,7 +74,13 @@ const maintenanceData: MaintenanceItem[] = [
 ]
 
 function RouteComponent() {
+  const { isSignedIn, isLoaded } = useUser()
   const [activeFilter, setActiveFilter] = useState<'all' | 'overdue' | 'upcoming' | 'history'>('all')
+
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />
+  }
 
   const filteredItems = maintenanceData.filter(item => {
     switch (activeFilter) {
