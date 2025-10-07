@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { API_BASE_URL } from "@/lib/api";
@@ -34,6 +34,13 @@ interface Asset {
 }
 
 export const Route = createFileRoute("/assets/my-assets/")({
+  beforeLoad: async () => {
+    // Check if user is authenticated via Clerk
+    const isAuthenticated = typeof window !== 'undefined' && window.Clerk?.user !== null
+    if (!isAuthenticated) {
+      throw redirect({ to: '/', replace: true })
+    }
+  },
   component: MyAssetsComponent,
 });
 
