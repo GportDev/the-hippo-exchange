@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSignUp } from '@clerk/clerk-react'
+import { useSignUp, useUser } from '@clerk/clerk-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { z } from 'zod'
@@ -27,8 +27,14 @@ export const Route = createFileRoute('/sign-up/')({
 
 function SignUpComponent() {
   const { isLoaded, signUp } = useSignUp()
+  const { isSignedIn, isLoaded: isUserLoaded } = useUser()
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+
+  // Redirect to assets if already signed in
+  if (isUserLoaded && isSignedIn) {
+    return <Navigate to="/assets/my-assets" replace />
+  }
 
   const {
     register,
