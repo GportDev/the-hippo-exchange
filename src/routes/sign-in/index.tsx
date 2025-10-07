@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSignIn } from '@clerk/clerk-react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useSignIn, useUser } from '@clerk/clerk-react'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 
@@ -12,9 +12,15 @@ export const Route = createFileRoute('/sign-in/')({
 
 function SignInComponent() {
   const { isLoaded, signIn, setActive } = useSignIn()
+  const { isSignedIn, isLoaded: isUserLoaded } = useUser()
   const navigate = useNavigate({ from: '/sign-in' })
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+
+  // Redirect to assets if already signed in
+  if (isUserLoaded && isSignedIn) {
+    return <Navigate to="/assets/my-assets" replace />
+  }
 
   const {
     register,
