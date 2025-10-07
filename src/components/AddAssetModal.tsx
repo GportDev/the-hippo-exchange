@@ -403,8 +403,8 @@ export default function AddAssetModal() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="available">Available</SelectItem>
-                  <SelectItem value="borrowed">Borrowed</SelectItem>
                   <SelectItem value="in_repair">In Repair</SelectItem>
+                  <SelectItem value="unlisted">Unlisted</SelectItem>
                 </SelectContent>
               </Select>
             </div>
