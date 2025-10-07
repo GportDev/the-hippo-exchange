@@ -85,7 +85,7 @@ export function EditAssetModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
+      <DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
         {/* Close Button */}
         <DialogClose asChild>
           <button

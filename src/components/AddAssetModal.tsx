@@ -223,7 +223,7 @@ export default function AddAssetModal() {
         Add New Asset
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
+      <DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
         {/* Close Button */}
         <DialogClose asChild>
           <button
@@ -310,12 +310,12 @@ export default function AddAssetModal() {
             {/* Current Location */}
             <div className="space-y-2">
               <Label htmlFor="currentLocation">Location</Label>
-              <div className="col-span-3 flex items-center gap-2">
+              <div className="col-span-3 flex flex-col sm:flex-row items-center gap-2">
                 <Input
                   id="currentLocation"
                   value={currentLocation}
                   onChange={(e) => setCurrentLocation(e.target.value)}
-                  className="flex-grow"
+                  className="flex-grow w-full"
                   placeholder="e.g., Detroit, MI"
                 />
                 <Button
@@ -323,6 +323,7 @@ export default function AddAssetModal() {
                   variant="outline"
                   onClick={handleFetchLocation}
                   disabled={isFetchingLocation}
+                  className="w-full sm:w-auto"
                 >
                   {isFetchingLocation ? "Fetching..." : "Use My Location"}
                 </Button>
