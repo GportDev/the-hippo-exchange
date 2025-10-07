@@ -108,14 +108,34 @@ function RouteComponent() {
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
-                asset.status === 'available' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                <CheckCircle className="w-4 h-4" />
-                {asset.status}
-              </span>
+              {(() => {
+                const getStatusColor = (status: string) => {
+                  switch (status) {
+                    case 'available':
+                      return 'bg-green-100 text-green-800';
+                    case 'borrowed':
+                      return 'bg-yellow-100 text-yellow-800';
+                    case 'in_repair':
+                      return 'bg-yellow-100 text-yellow-800';
+                    case 'unlisted':
+                      return 'bg-gray-100 text-gray-800';
+                    default:
+                      return 'bg-gray-100 text-gray-800';
+                  }
+                };
+
+                const formattedStatus = asset.status
+                  .split('_')
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ');
+
+                return (
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}`}>
+                    <CheckCircle className="w-4 h-4" />
+                    {formattedStatus}
+                  </span>
+                );
+              })()}
             </div>
           </div>
         </div>

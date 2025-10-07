@@ -59,7 +59,16 @@ function MyAssetsComponent() {
         headers: { "X-User-Id": user.id },
       });
       if (!res.ok) throw new Error("Failed to fetch assets");
-      return res.json();
+      const data = await res.json();
+      // Normalize status values coming from the API so UI mapping is consistent.
+      // Convert values like "In Repair" or "in-repair" to "in_repair".
+      if (Array.isArray(data)) {
+        return data.map((asset: Asset) => ({
+          ...asset,
+          status: String(asset.status).replace(/[-\s]/g, "_").toLowerCase(),
+        }));
+      }
+      return data;
     },
     enabled: !!user,
   });
