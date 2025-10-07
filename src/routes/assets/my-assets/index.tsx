@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { API_BASE_URL } from "@/lib/api";
@@ -38,8 +38,13 @@ export const Route = createFileRoute("/assets/my-assets/")({
 });
 
 function MyAssetsComponent() {
-  const { user } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const queryClient = useQueryClient();
+
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -156,7 +161,7 @@ function MyAssetsComponent() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="bg-gray-50 p-6">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
