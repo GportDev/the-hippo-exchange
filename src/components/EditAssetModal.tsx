@@ -216,6 +216,7 @@ export function EditAssetModal({
               </Label>
               <Checkbox
                 id="favorite"
+                className={`cursor-pointer ${formData.favorite ? "bg-gray-400" : "bg-transparent"}`}
                 checked={formData.favorite}
                 onCheckedChange={(checked) => handleCheckboxChange("favorite", Boolean(checked))}
               />

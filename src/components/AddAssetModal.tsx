@@ -286,7 +286,7 @@ export default function AddAssetModal() {
                 type="date"
                 value={purchaseDate}
                 onChange={(e) => setPurchaseDate(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 cursor-text"
                 required
               />
             </div>
@@ -345,7 +345,7 @@ export default function AddAssetModal() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center hover:border-gray-400 hover:bg-gray-100"
+                    className="cursor-pointer flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center hover:border-gray-400 hover:bg-gray-100"
                   >
                     <UploadCloud className="h-8 w-8 text-gray-400" />
                     <span className="mt-2 text-sm text-gray-600">
