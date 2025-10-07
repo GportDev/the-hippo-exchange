@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { API_BASE_URL } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useEffect, useRef } from "react";
 import { UploadCloud, X } from "lucide-react";
