@@ -24,14 +24,20 @@ export const Route = createFileRoute('/assets/my-assets/$id')({
   beforeLoad: async () => {
     // Check if user is authenticated via Clerk
     if (typeof window !== 'undefined') {
-      // Check if there's a Clerk session token in storage
-      // Clerk stores the session in __session or __clerk_db_jwt
-      const hasSession = document.cookie.includes('__session') || 
-                        document.cookie.includes('__clerk_db_jwt') ||
-                        (window.Clerk && window.Clerk.session)
-      
-      if (!hasSession) {
-        throw redirect({ to: '/', replace: true })
+      // Wait for Clerk to load and check session
+      // If Clerk is loaded, we must check its session state
+      // If session is null/undefined, redirect regardless of cookies
+      if (window.Clerk) {
+        if (!window.Clerk.session) {
+          throw redirect({ to: '/', replace: true })
+        }
+      } else {
+        // If Clerk hasn't loaded yet, check for session cookies as fallback
+        const hasSessionCookie = document.cookie.includes('__session') || 
+                                 document.cookie.includes('__clerk_db_jwt')
+        if (!hasSessionCookie) {
+          throw redirect({ to: '/', replace: true })
+        }
       }
     }
   },
