@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
 import { API_BASE_URL } from '@/lib/api'
@@ -26,7 +26,12 @@ export const Route = createFileRoute('/assets/my-assets/$id')({
 
 function RouteComponent() {
   const { id } = Route.useParams()
-  const { user } = useUser()
+  const { user, isSignedIn, isLoaded } = useUser()
+  
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />
+  }
   
   const { data: asset, isLoading, isError } = useQuery<Asset>({
     queryKey: ['assets', id],
