@@ -1,5 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useUser } from '@clerk/clerk-react'
 
 export const Route = createFileRoute('/maintenance/')({
   component: RouteComponent,
@@ -73,7 +74,13 @@ const maintenanceData: MaintenanceItem[] = [
 ]
 
 function RouteComponent() {
+  const { isSignedIn, isLoaded } = useUser()
   const [activeFilter, setActiveFilter] = useState<'all' | 'overdue' | 'upcoming' | 'history'>('all')
+
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />
+  }
 
   const filteredItems = maintenanceData.filter(item => {
     switch (activeFilter) {
@@ -124,7 +131,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className='min-h-screen bg-gray-50 p-6'>
+    <div className='bg-gray-50 p-6'>
       <section className='mx-auto max-w-7xl'>
         <div className='flex justify-between items-center mb-6'>
           <h1 className='text-3xl font-bold text-primary-gray'>My Maintenance</h1>

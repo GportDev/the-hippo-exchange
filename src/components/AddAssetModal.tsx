@@ -336,7 +336,7 @@ export default function AddAssetModal() {
                 type="date"
                 value={purchaseDate}
                 onChange={(e) => setPurchaseDate(e.target.value)}
-                className="col-span-3"
+                className="col-span-3 cursor-text"
                 required
               />
             </div>
