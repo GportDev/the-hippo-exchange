@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
+import { SignedIn, SignedOut } from '@clerk/clerk-react'
 import * as Lucide from "lucide-react"
 import { useState, useEffect } from 'react'
 import ClerkHeader from '../integrations/clerk/header-user.tsx'
@@ -10,8 +10,6 @@ interface NavbarProps {
 }
 
 function Navbar({ isExpanded, onToggle }: NavbarProps) {
-  const { user } = useUser()
-  
   const [showText, setShowText] = useState(isExpanded);
 
   useEffect(() => {
