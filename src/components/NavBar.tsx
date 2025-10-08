@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router'
-import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import { SignedIn, SignedOut, useUser } from '@clerk/clerk-react'
 import * as Lucide from "lucide-react"
 import { useState, useEffect } from 'react'
+import ClerkHeader from '../integrations/clerk/header-user.tsx'
 
 interface NavbarProps {
   isExpanded: boolean
@@ -9,6 +10,7 @@ interface NavbarProps {
 }
 
 function Navbar({ isExpanded, onToggle }: NavbarProps) {
+  const { user } = useUser()
   
   const [showText, setShowText] = useState(isExpanded);
 
@@ -45,7 +47,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             </div>
             
             {/* Navigation links */}
-            <ul className="flex-1 mt-4">
+            <ul className={`flex flex-col mt-4 ${isExpanded ? 'items-start' : 'items-center'}`}>
               <li className='mb-2'>
                 <Link 
                   to="/home"
@@ -84,6 +86,8 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
               </li>
               
             </ul>
+
+            <ClerkHeader className='mt-auto px-4 py-3'/>
           </div>
         </nav>
       </SignedIn>
