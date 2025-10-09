@@ -44,13 +44,11 @@ export default function HeaderUser({ className }: { className?: string }) {
         </div>
       </SignedIn>
       <SignedOut>
-        <div 
-          ref={signInButtonRef}
-          className="cursor-pointer"
-          onClick={handleSignInClick}
-        >
-          <SignInButton />
-        </div>
+        <SignInButton>
+          <button className="bg-primary-gray text-primary-yellow px-4 py-2 rounded-md font-semibold text-lg mr-4 hover:bg-primary-yellow hover:text-primary-gray transition-colors">
+            Sign In
+          </button>
+        </SignInButton>
       </SignedOut>
     </div>
   )

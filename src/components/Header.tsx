@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import HeaderUser from '../integrations/clerk/header-user'
 
 export default function Header() {
   return (
@@ -11,6 +12,7 @@ export default function Header() {
           <h1 className='text-3xl font-bold'>Hippo Exchange</h1>
         </Link>
       </div>
+      <HeaderUser />
     </header>
   )
 }
