@@ -1,3 +1,4 @@
+import { SignedOut, SignInButton } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 
 export default function Header() {
@@ -11,6 +12,9 @@ export default function Header() {
           <h1 className='text-3xl font-bold'>Hippo Exchange</h1>
         </Link>
       </div>
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
     </header>
   )
 }
