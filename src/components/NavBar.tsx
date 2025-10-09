@@ -46,10 +46,10 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             
             {/* Navigation links */}
             <ul className={`flex flex-col mt-4 ${isExpanded ? 'items-start' : 'items-center'}`}>
-              <li className='mb-2'>
+              <li className='mb-2 w-full'>
                 <Link 
                   to="/home"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
                     isExpanded ? 'justify-start' : 'justify-center'
                   }`}
                   title={!isExpanded ? "My Assets" : undefined}
@@ -61,7 +61,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
               <li className="mb-2">
                 <Link 
                   to="/assets/my-assets"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
                     isExpanded ? 'justify-start' : 'justify-center'
                   }`}
                   title={!isExpanded ? "My Assets" : undefined}
@@ -73,7 +73,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
               <li className="mb-2">
                 <Link 
                   to="/maintenance"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
                     isExpanded ? 'justify-start' : 'justify-center'
                   }`}
                   title={!isExpanded ? "Maintenance" : undefined}
@@ -85,7 +85,10 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
               
             </ul>
 
-            <ClerkHeader className='mt-auto px-4 py-3'/>
+            <ClerkHeader 
+              className='mt-auto px-4 py-3' 
+              isNavExpanded={isExpanded}
+            />
           </div>
         </nav>
       </SignedIn>

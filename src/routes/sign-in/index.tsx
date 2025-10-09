@@ -75,13 +75,13 @@ function SignInComponent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center w-1/2 p-12 text-white bg-primary-gray rounded-r-[6rem]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
+      <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray rounded-b-[4rem] md:rounded-r-[6rem] md:rounded-bl-none">
         <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
-        <p className="text-2xl text-primary-yellow">don't buy. borrow.</p>
+        <p className="text-2xl text-white">don't buy. borrow.</p>
       </div>
-      <div className="flex flex-col items-center justify-center w-1/2">
-        <div className="w-full max-w-md p-8 space-y-8">
+      <div className="flex flex-col items-center justify-center md:w-1/2">
+        <div className="w-full md:max-w-md p-8 space-y-8">
           <div>
             <h2 className="text-3xl font-bold text-center text-primary-gray">Log In</h2>
           </div>

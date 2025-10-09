@@ -1,14 +1,11 @@
 import {
-  SignedIn,
-  SignInButton,
-  SignedOut,
   useUser,
   UserButton,
 } from '@clerk/clerk-react'
 import { twMerge } from 'tailwind-merge'
 import { useRef } from 'react'
 
-export default function HeaderUser({ className }: { className?: string }) {
+export default function HeaderUser({ className, isNavExpanded }: { className?: string, isNavExpanded?: boolean }) {
   const { user } = useUser()
   const userButtonRef = useRef<HTMLDivElement>(null)
 
@@ -21,7 +18,6 @@ export default function HeaderUser({ className }: { className?: string }) {
 
   return (
     <div className={twMerge('flex items-center gap-4', className)}>
-      <SignedIn>
         <div 
           className="flex items-center gap-4 cursor-pointer"
           onClick={handleUserButtonClick}
