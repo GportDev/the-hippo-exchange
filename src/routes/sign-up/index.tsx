@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSignUp, useUser } from '@clerk/clerk-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { z } from 'zod'
@@ -26,8 +26,9 @@ export const Route = createFileRoute('/sign-up/')({
 })
 
 function SignUpComponent() {
-  const { isLoaded, signUp } = useSignUp()
+  const { isLoaded, signUp, setActive } = useSignUp()
   const { isSignedIn, isLoaded: isUserLoaded } = useUser()
+  const navigate = useNavigate({ from: '/sign-up' })
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -68,11 +69,18 @@ function SignUpComponent() {
     setClerkErrors({})
 
     try {
-      await signUp.create({
+      const result = await signUp.create({
         username: data.username,
         emailAddress: data.email,
         password: data.password,
       })
+
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId })
+        navigate({ to: '/' })
+      } else {
+        console.log(result)
+      }
 
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2))
