@@ -1,11 +1,14 @@
 import {
   useUser,
   UserButton,
+  SignedIn,
+  SignedOut,
+  SignInButton,
 } from '@clerk/clerk-react'
 import { twMerge } from 'tailwind-merge'
 import { useRef } from 'react'
 
-export default function HeaderUser({ className, isNavExpanded }: { className?: string, isNavExpanded?: boolean }) {
+export default function HeaderUser({ className }: { className?: string }) {
   const { user } = useUser()
   const userButtonRef = useRef<HTMLDivElement>(null)
 
@@ -17,17 +20,20 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
   }
 
   return (
-    <div className={twMerge('flex items-center gap-4', className)}>
-        <div 
-          className="flex items-center gap-4 cursor-pointer"
-          onClick={handleUserButtonClick}
-        >
-          <div ref={userButtonRef}>
-            <UserButton />
-          </div>
-          <div className='flex flex-col mb-1'>
-            <p className='text-primary-yellow font-medium'>{user?.firstName} {user?.lastName}</p>
-            <p className='text-primary-yellow text-sm'>{user?.username}</p>
+    <>
+      <SignedIn>
+        <div className={twMerge('flex items-center gap-4', className)}>
+          <div 
+            className="flex items-center gap-4 cursor-pointer"
+            onClick={handleUserButtonClick}
+          >
+            <div ref={userButtonRef}>
+              <UserButton />
+            </div>
+            <div className='flex flex-col mb-1'>
+              <p className='text-primary-yellow font-medium'>{user?.firstName} {user?.lastName}</p>
+              <p className='text-primary-yellow text-sm'>{user?.username}</p>
+            </div>
           </div>
         </div>
       </SignedIn>
@@ -38,6 +44,6 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
           </button>
         </SignInButton>
       </SignedOut>
-    </div>
+    </>
   )
 }

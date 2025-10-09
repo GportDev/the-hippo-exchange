@@ -87,7 +87,6 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
 
             <ClerkHeader 
               className='mt-auto px-4 py-3' 
-              isNavExpanded={isExpanded}
             />
           </div>
         </nav>

@@ -1,4 +1,3 @@
-import { SignedOut, SignInButton } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
 import HeaderUser from '../integrations/clerk/header-user'
 
