@@ -11,17 +11,9 @@ import { useRef } from 'react'
 export default function HeaderUser({ className }: { className?: string }) {
   const { user } = useUser()
   const userButtonRef = useRef<HTMLDivElement>(null)
-  const signInButtonRef = useRef<HTMLDivElement>(null)
 
   const handleUserButtonClick = () => {
     const button = userButtonRef.current?.querySelector('button')
-    if (button) {
-      button.click()
-    }
-  }
-
-  const handleSignInClick = () => {
-    const button = signInButtonRef.current?.querySelector('button')
     if (button) {
       button.click()
     }
