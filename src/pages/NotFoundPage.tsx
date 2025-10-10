@@ -65,7 +65,7 @@ export const Desktop = () => {
 
 export const Mobile = () => {
   return (
-    <main className="flex md:hidden min-h-full w-full flex-col overflow-hidden" style={{ backgroundColor: COLORS.mobileDecoration }}>
+    <main className="flex md:hidden h-full w-full flex-col overflow-hidden" style={{ backgroundColor: COLORS.mobileDecoration }}>
       {/* Dark gray box at top with rounded bottom edges */}
       <section 
         className="relative flex flex-col items-center rounded-b-[40px] px-6 py-12" 
