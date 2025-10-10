@@ -5,7 +5,7 @@ import Header from '@/components/Header'
 import ClerkProvider from '@/integrations/clerk/provider'
 import Navbar from '@/components/NavBar'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
-import { Desktop as NotFoundComponent } from '@/pages/NotFoundPage'
+import NotFoundComponent from '@/pages/NotFoundPage'
 
 interface MyRouterContext {
   queryClient: QueryClient
