@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { API_BASE_URL } from "@/lib/api";
+import { authedFetch } from "@/lib/api";
+import { useAuth } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef } from "react";
@@ -44,6 +45,7 @@ interface CreateAssetRequest {
 export default function AddAssetModal() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
+  const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -51,7 +53,7 @@ export default function AddAssetModal() {
   const [itemName, setItemName] = useState("");
   const [brandName, setBrandName] = useState("");
   const [category, setCategory] = useState("");
-  const [purchaseDate, setPurchaseDate] = useState("");
+  const [purchaseDate, setPurchaseDate] = useState("2024-01-01");
   const [purchaseCost, setPurchaseCost] = useState<number | null>(null);
   const [currentLocation, setCurrentLocation] = useState("");
   const [isFetchingLocation, setIsFetchingLocation] = useState(false);
@@ -68,19 +70,10 @@ export default function AddAssetModal() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_BASE_URL}/assets/upload-image`, {
+      return (await authedFetch(getToken, "/assets/upload-image", {
         method: "POST",
-        headers: {
-          "X-User-Id": user.id,
-        },
         body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error("Image upload failed.");
-      }
-      // Assuming the API returns { "url": "..." }
-      return (await res.json()) as { url: string };
+      })) as { url: string };
     },
   });
 
@@ -90,23 +83,13 @@ export default function AddAssetModal() {
         throw new Error("User not authenticated");
       }
 
-      const res = await fetch(`${API_BASE_URL}/assets`, {
+      return await authedFetch(getToken, "/assets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-User-Id": user.id,
         },
         body: JSON.stringify(newAsset),
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(
-          `Failed to create asset: ${res.status} ${res.statusText} - ${errorText}`,
-        );
-      }
-
-      return res.json();
     },
     onSuccess: () => {
       // Invalidate and refetch the assets query to show the new asset

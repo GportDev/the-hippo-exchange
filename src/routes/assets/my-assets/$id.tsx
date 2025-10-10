@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { useUser } from '@clerk/clerk-react'
-import { API_BASE_URL } from '@/lib/api'
+import { useUser, useAuth } from '@clerk/clerk-react'
+import { authedFetch } from '@/lib/api'
 import { ArrowLeft, MapPin, Calendar, DollarSign, Tag, Camera, CheckCircle } from 'lucide-react'
 
 // Structure of the asset object.
@@ -27,6 +27,7 @@ export const Route = createFileRoute('/assets/my-assets/$id')({
 function RouteComponent() {
   const { id } = Route.useParams()
   const { user, isSignedIn, isLoaded } = useUser()
+  const { getToken } = useAuth();
   
   // Redirect to home if not signed in
   if (isLoaded && !isSignedIn) {
@@ -38,15 +39,7 @@ function RouteComponent() {
     queryFn: async () => {
       if (!user) throw new Error("User not authenticated");
 
-      const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
-        headers: {
-          'X-User-Id': user.id,
-        },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to fetch asset');
-      }
-      return res.json();
+      return await authedFetch(getToken, `/assets/${id}`);
     },
     enabled: !!user && !!id, // Only run the query when user and id are available
   });
