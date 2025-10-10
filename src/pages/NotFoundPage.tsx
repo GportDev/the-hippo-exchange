@@ -18,7 +18,7 @@ export const Desktop = () => {
         {/* Left side content */}
         <div className="relative h-full w-[744px] flex-shrink-0 p-16">
           {/* Decorative corner elements that remain absolutely positioned */}
-          <div className="absolute left-0 bottom-107 flex items-start bg-[#2a323f]">
+          <div className="absolute left-0 bottom-[428px] flex items-start bg-[#2a323f]">
             <div className="h-[128px] w-[144px] rounded-bl-[60px]" style={{ backgroundColor: COLORS.desktopBackground }} />
           </div>
           <div className="absolute left-0 bottom-0 h-[429px] w-[600px] rounded-tr-[100px] bg-[#2a323f]" />
