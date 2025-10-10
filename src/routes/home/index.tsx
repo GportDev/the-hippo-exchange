@@ -237,34 +237,45 @@ function RouteComponent() {
 
   return (
     <div className="mx-auto max-w-7xl p-6" >
-      <div className='flex justify-between items-center'>
-        <h1 className='text-4xl font-bold'>Home</h1>
+      <div className="mx-auto max-w-7xl p-6 relative">
+      <div className="flex flex-col-reverse md:flex-row justify-between items-start md:items-center">
+        <h1 className="text-4xl font-bold mt-4 md:mt-0">Home</h1>
+
         {overdueItems.length > 0 && hidePopup === false && (
-          <div className="flex-shrink-0 bg-primary-yellow border border-gray-200 rounded-lg w-80">  
-          <div className="h-1/2 flex items-center justify-between rounded-t-lg bg-chart-4 border-b border-gray-300 px-4">
-            <div className="flex items-center gap-2">
-              <Link 
-                to="/maintenance"
-                className="inline-flex items-center text-inherit no-underline"
-              >
-                <MoveLeft size="1.5em" />
-              </Link>
-              <h1 className="font-bold">Important!</h1>
+          <div
+            className="
+              flex-shrink-0 bg-primary-yellow border border-gray-200 rounded-lg w-60 
+              mb-4 md:mb-0
+              md:w-80
+              md:absolute md:top-0 md:right-0
+            "
+          >
+            <div className="h-1/2 flex items-center justify-between rounded-t-lg bg-chart-4 border-b border-gray-300 px-4">
+              <div className="flex items-center gap-2">
+                <Link 
+                  to="/maintenance"
+                  className="inline-flex items-center text-inherit no-underline"
+                >
+                  <MoveLeft size="1.5em" />
+                </Link>
+                <h1 className="font-bold">Important!</h1>
+              </div>
+              <button onClick={() => togglePopup(!hidePopup)} className="hover:cursor-pointer">
+                <X size="1.5em" />
+              </button>
             </div>
-            <button onClick={() => togglePopup(!hidePopup)} className="hover:cursor-pointer">
-              <X size="1.5em" />
-            </button>
+
+            <div className="h-1/2 flex items-start justify-start p-3">
+              <p>
+                Overdue maintenance on {overdueItems[0].itemName}
+                {overdueItems.length > 1 && (
+                  <span> and {overdueItems.length - 1} more.</span>
+                )}
+              </p>
+            </div>
           </div>
-          <div className="h-1/2 flex items-start justify-start">
-            <p>
-              Overdue maintenance on {overdueItems[0].itemName}
-              {overdueItems.length > 1 && (
-                <span> and {overdueItems.length - 1} more.</span>
-              )}
-            </p>
-          </div>
-        </div >
         )}
+      </div>
     </div>
     <div className='py-2'></div>
     <div className='flex-shrink-0 bg-white border-2 border-gray-200 rounded-lg'>
