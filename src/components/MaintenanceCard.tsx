@@ -1,25 +1,74 @@
-import type React from 'react'
+//import { Link } from '@tanstack/react-router';
+import { Badge } from '@/components/ui/badge';
 
-type MaintenanceCardProps = {
-  date: string
-  itemName: string
-  action: string
+const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    })
+  }
+
+interface ShortMaintenance {
+  id: string;
+  productName: string;
+  maintenanceStatus: string;
+  maintenanceDueDate: string;
+  maintenanceTitle: string;
 }
 
-const MaintenanceCard: React.FC<MaintenanceCardProps> = ({
-  date,
-  itemName,
-  action,
-}) => {
+interface MaintenaceCardProps {
+  maintenance: ShortMaintenance;
+}
+
+
+export function MaintenaceCard({ maintenance }: MaintenaceCardProps) {
+  const getStatusColor = () => {
+    switch (maintenance.maintenanceStatus) {
+      case 'completed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'overdue':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
-      <div className="w-70 rounded-lg flex flex-col gap-0 justify-between text-slate-800 bg-primary-yellow/25">
-        <h1 className='text-3xl font-semibold'>{date}</h1>
-        <div className='inline'>
-          <span className='text-xl inline'>{itemName} • </span>
-          <p className='text-xl inline'>{action}</p>
-        </div>
-      </div>
-  )
+  <div
+   className='bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow'
+ >
+   <div className='flex justify-between items-start'>
+     <div className='flex-1'>
+       <div className='flex items-center gap-3 mb-2'>
+         <h3 className='text-xl font-semibold text-primary-gray'>{maintenance.productName}</h3>
+         <span className={`px-2 py-1 rounded-full text-sm font-medium ${getStatusColor()}`}>
+          <Badge className={getStatusColor()}>
+            {maintenance.maintenanceStatus === "pending"
+              ? "Upcoming"
+              : maintenance.maintenanceStatus.charAt(0).toUpperCase() + maintenance.maintenanceStatus.slice(1)}
+          </Badge>
+         </span>
+       </div>
+       <p className='text-gray-600 mb-2'>{maintenance.maintenanceTitle}</p>
+       <div className='flex items-center gap-4 text-sm text-gray-500'>
+         <span>Due: {formatDate(maintenance.maintenanceDueDate)}</span>
+         {/*<span>•</span>
+         <span>{maintenance.Category}</span> no category in backend*/}
+       </div>
+     </div>
+     <div className='ml-4 grid space-y-4'>
+       <button type="button" className='px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer'>
+         {maintenance.maintenanceStatus === 'completed' ? 'Completed' : 'Mark Complete'}
+       </button>
+       <button type="button" className='px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer'>
+         View Details
+       </button>
+     </div>
+   </div>
+ </div>         
+  );
 }
-
-export default MaintenanceCard
