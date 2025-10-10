@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router'
+import type { QueryClient } from '@tanstack/react-query'
 import Header from '@/components/Header'
 import ClerkProvider from '@/integrations/clerk/provider'
 import Navbar from '@/components/NavBar'
-
-import type { QueryClient } from '@tanstack/react-query'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import { Desktop as NotFoundComponent } from '@/pages/NotFoundPage'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -64,4 +64,5 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       </ClerkProvider>
     </>
   ),
+  notFoundComponent: NotFoundComponent,
 })
