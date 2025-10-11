@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router'
+import type { QueryClient } from '@tanstack/react-query'
 import Header from '@/components/Header'
 import ClerkProvider from '@/integrations/clerk/provider'
 import Navbar from '@/components/NavBar'
-
-import type { QueryClient } from '@tanstack/react-query'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import NotFoundComponent from '@/pages/NotFoundPage'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -38,7 +38,7 @@ function RootComponent() {
           {!shouldHideHeader && <Header />}
           <div className="flex flex-1 overflow-hidden">
             <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
-            <div className="flex-1 overflow-auto bg-gray-50 p-6">
+            <div className="flex-1 overflow-auto bg-gray-50">
               <Outlet />
             </div>
           </div>
@@ -64,4 +64,5 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       </ClerkProvider>
     </>
   ),
+  notFoundComponent: NotFoundComponent,
 })
