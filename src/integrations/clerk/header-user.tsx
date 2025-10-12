@@ -17,16 +17,17 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
   }
 
   return (
-    <div className={twMerge('flex items-center gap-4', className)}>
+    <div className={twMerge('flex gap-4', className)}>
         <div 
-          className="flex items-center gap-4 cursor-pointer"
-          onClick={handleUserButtonClick}
+          className="flex gap-4"
         >
-          <div ref={userButtonRef}>
+          <div ref={userButtonRef} className={isNavExpanded ? "mt-[0.375rem]" : "mb-10 ml-2"}>
             <UserButton />
           </div>
           {isNavExpanded && (
-            <div className='flex flex-col mb-1'>
+            <div className='flex flex-col cursor-pointer'
+              onClick={handleUserButtonClick}
+            >
               <p className='text-primary-yellow font-medium'>{user?.firstName} {user?.lastName}</p>
               <p className='text-primary-yellow text-sm'>{user?.username}</p>
             </div>
