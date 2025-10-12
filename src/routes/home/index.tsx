@@ -52,9 +52,13 @@ function RouteComponent() {
 
   // Derived State
   const isLoading = assetsLoading || maintenanceLoading;
-  const upcomingItems = maintenanceTasks.filter(
-    (item) => item.maintenanceStatus === "pending" || item.maintenanceStatus === "overdue"
-  );
+  const upcomingItems = maintenanceTasks
+    .filter(
+      (item) => item.maintenanceStatus === "pending" || item.maintenanceStatus === "overdue"
+    )
+    .sort((a, b) => new Date(a.maintenanceDueDate).getTime() - new Date(b.maintenanceDueDate).getTime())
+    .slice(0, 5); // Cap the list to the top 5
+
   const overdueItems = maintenanceTasks.filter(
     (item) => item.maintenanceStatus === "overdue"
   );
