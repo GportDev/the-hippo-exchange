@@ -1,11 +1,14 @@
-import { createFileRoute, useSearch } from '@tanstack/react-router'
-import { MoveLeft, X, Package } from 'lucide-react'
+import { createFileRoute } from '@tanstack/react-router'
+import { X, Package, Star, AlertTriangle, Calendar, ChevronRight } from 'lucide-react'
 import { Link } from "@tanstack/react-router"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, 
+  // useMutation, useQueryClient 
+} from "@tanstack/react-query";
 import { API_BASE_URL } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
-import { AssetCard } from "@/components/AssetCard";
-import { useState } from "react";
+// import { AssetCard } from "@/components/AssetCard";
+import { useEffect } from "react";
+import toast from 'react-hot-toast';
 
 type MaintenanceItem = {
   id: string
@@ -99,8 +102,8 @@ export const Route = createFileRoute('/home/')({
 function RouteComponent() {
 
   const { user } = useUser();
-  const queryClient = useQueryClient();
-  const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
+  // const queryClient = useQueryClient();
+  // const [, setEditingAsset] = useState<Asset | null>(null);
 
 
   const { data: assets = [], isLoading } = useQuery<Asset[]>({
@@ -115,29 +118,8 @@ function RouteComponent() {
     },
     enabled: !!user,
   });
-
-  const updateMutation = useMutation({
-      mutationFn: async (updatedAsset: Asset) => {
-        if (!user) throw new Error("User not authenticated");
-        const { id, ...assetData } = updatedAsset;
-        const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-User-Id": user.id,
-          },
-          body: JSON.stringify(assetData),
-        });
-        if (!res.ok) {
-          throw new Error("Failed to update asset");
-        }
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
-        setEditingAsset(null); // Close modal on success
-      },
-    });
   
+  /*
     const deleteMutation = useMutation({
       mutationFn: async (assetId: string) => {
         if (!user) throw new Error("User not authenticated");
@@ -176,7 +158,9 @@ function RouteComponent() {
         queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
       },
     });
+    */
   
+    /*
     const handleEditAsset = (asset: Asset) => {
       setEditingAsset(asset);
     };
@@ -195,164 +179,147 @@ function RouteComponent() {
         favoriteMutation.mutate(updatedAsset);
       }
     };
+    */
 
   const upcomingItems = maintenanceData.filter(item => item.status === 'upcoming' || item.status === 'overdue');
   const overdueItems = maintenanceData.filter(item => item.status === 'overdue')
   const favoriteAssets = assets.filter(asset => asset.favorite === true)
 
-  const [hidePopup, togglePopup] = useState(false);
+  useEffect(() => {
+    const toastId = 'overdue-toast';
+    if (overdueItems.length > 0) {
+      toast(
+        (t) => (
+          <div className="flex items-center justify-between w-full">
+            <Link
+              to="/maintenance"
+              onClick={() => toast.dismiss(t.id)}
+              className="flex items-center text-inherit no-underline"
+            >
+              <AlertTriangle className="h-6 w-6 mr-3 flex-shrink-0 text-yellow-500" />
+              <div className="flex flex-col">
+                <p className="font-bold text-yellow-800">
+                  {overdueItems.length} Maintenance Item{overdueItems.length > 1 ? 's are' : ' is'} Overdue
+                </p>
+                <p className="text-sm text-yellow-700">Click here to address these items.</p>
+              </div>
+            </Link>
+            <button onClick={() => toast.dismiss(t.id)} className="p-1 rounded-full hover:bg-yellow-200 transition-colors ml-4 flex-shrink-0">
+              <X className="h-5 w-5 text-yellow-800" />
+            </button>
+          </div>
+        ),
+        {
+          id: toastId,
+          duration: Infinity,
+          style: {
+            background: '#FFFBEB', // bg-yellow-50
+            border: '1px solid #FBBF24', // border-yellow-400
+          },
+        }
+      );
+    }
+    // Clean up the toast when the component unmounts or the condition is no longer met
+    return () => {
+      toast.dismiss(toastId);
+    };
+  }, [overdueItems.length]);
 
-  const getStatusColor = (status: string) => {
+
+  const getStatusClasses = (status: string) => {
     switch (status) {
       case 'overdue':
-        return 'text-red-600 bg-red-50'
+        return 'text-red-800 bg-red-100';
       case 'upcoming':
-        return 'text-yellow-600 bg-yellow-50'
+        return 'text-yellow-800 bg-yellow-100';
       default:
-        return 'text-gray-600 bg-gray-50'
+        return 'text-gray-800 bg-gray-100';
     }
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityIcon = (priority: string) => {
     switch (priority) {
       case 'high':
-        return 'text-red-500'
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
       case 'medium':
-        return 'text-yellow-500'
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
       case 'low':
-        return 'text-green-500'
+        return <AlertTriangle className="h-4 w-4 text-green-500" />;
       default:
-        return 'text-gray-500'
+        return null;
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
-    })
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-full">Loading...</div>;
   }
 
   return (
-    <div className="mx-auto max-w-7xl p-6" >
-      <div className='flex justify-between items-center'>
-        <h1 className='text-4xl font-bold'>Home</h1>
-        {overdueItems.length > 0 && hidePopup === false && (
-          <div className="flex-shrink-0 bg-primary-yellow border border-gray-200 rounded-lg w-80">  
-          <div className="h-1/2 flex items-center justify-between rounded-t-lg bg-chart-4 border-b border-gray-300 px-4">
-            <div className="flex items-center gap-2">
-              <Link 
-                to="/maintenance"
-                className="inline-flex items-center text-inherit no-underline"
-              >
-                <MoveLeft size="1.5em" />
-              </Link>
-              <h1 className="font-bold">Important!</h1>
-            </div>
-            <button onClick={() => togglePopup(!hidePopup)} className="hover:cursor-pointer">
-              <X size="1.5em" />
-            </button>
-          </div>
-          <div className="h-1/2 flex items-start justify-start">
-            <p>
-              Overdue maintenance on {overdueItems[0].itemName}
-              {overdueItems.length > 1 && (
-                <span> and {overdueItems.length - 1} more.</span>
+    <div className="h-full bg-gray-50/50">
+      <main className="p-6 space-y-8">
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Upcoming Maintenance Section */}
+          <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Upcoming Maintenance</h2>
+            <div className="space-y-4">
+              {upcomingItems.length > 0 ? (
+                upcomingItems.map(item => (
+                  <div key={item.id} className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-2 rounded-full ${getStatusClasses(item.status)}`}>
+                        <Calendar className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-gray-900">{item.itemName}</p>
+                        <p className="text-sm text-gray-600">{item.action}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      {getPriorityIcon(item.priority)}
+                      <p className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(item.status)}`}>
+                        {new Date(item.dueDate).toLocaleDateString()}
+                      </p>
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No upcoming maintenance items.</p>
               )}
-            </p>
-          </div>
-        </div >
-        )}
-    </div>
-    <div className='py-2'></div>
-    <div className='flex-shrink-0 bg-white border-2 border-gray-200 rounded-lg'>
-      <h1 className='text-2xl'>Upcoming Maintenance</h1> 
-          {upcomingItems.length === 0 ? (
-            <div className='py-12'>
-              <h2>You have no upcoming maintenance!</h2>
-            </div>
-          ) : (
-          <ul className="flex overflow-x-auto space-x-4 p-4">
-      {upcomingItems.map((item) => (
-        <li
-          key={item.id}
-          className="flex-shrink-0 bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow w-80"
-        >
-          <div className="flex justify-between items-start">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h3 className="text-xl font-semibold text-gray-900">{item.itemName}</h3>
-                <span
-                  className={`px-2 py-1 rounded-full text-sm font-medium ${getStatusColor(item.status)}`}
-                >
-                  {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                </span>
-                <span className={`text-sm font-medium ${getPriorityColor(item.priority)}`}>
-                  {item.priority.charAt(0).toUpperCase() + item.priority.slice(1)} Priority
-                </span>
-              </div>
-              <p className="text-gray-600 mb-2">{item.action}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
-                <span>Due: {formatDate(item.dueDate)}</span>
-                <span>•</span>
-                <span>{item.category}</span>
-              </div>
             </div>
           </div>
-        </li>
-      ))}
-        </ul>
-      )}
-    </div>
-    <div className='py-2'></div>
-    <div className='flex-shrink-0 bg-white border-2 border-gray-200 rounded-lg'>
-      <div className="flex flex-col space-y-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl">Favorite Assets</h1>
-        </div>
-        <div>
-          {isLoading ? (
-            <div className="text-center">Loading assets...</div>
-          ) : favoriteAssets.length === 0 ? (
-            <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
-              <Package className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-4 text-lg font-medium text-gray-900">
-                No assets found
-              </h3>
-              <p className="mt-2 text-sm text-gray-600">
-                {assets.length > 0
-                  ? "Try adjusting your filters to see more results."
-                  : "Get started by adding your first asset."}
-              </p>
-            </div>
-          ) : (
-            <div className="flex overflow-x-auto space-x-4 p-4">
-              {favoriteAssets.map((asset) => (
-                <div key={asset.id} className="flex-shrink-0 w-80">
-                  <AssetCard
-                    asset={asset}
-                    onDelete={handleDeleteAsset}
-                    onToggleFavorite={handleToggleFavorite}
-                    onEdit={() => handleEditAsset(asset)}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-    <div>
-    
-      
-      
-    </div>
-  </div>
-  )
-      
 
-  
+          {/* Favorite Assets Section */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Favorite Assets</h2>
+            <div className="space-y-3">
+              {favoriteAssets.length > 0 ? (
+                favoriteAssets.map(asset => (
+                  <Link to="/assets/my-assets/$id" params={{ id: asset.id }} key={asset.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                    {asset.images && asset.images.length > 0 ? (
+                      <img src={asset.images[0]} alt={asset.itemName} className="w-12 h-12 rounded-md object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
+                        <Package className="h-6 w-6 text-gray-400" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-semibold text-gray-900">{asset.itemName}</p>
+                      <p className="text-sm text-gray-500">{asset.brandName}</p>
+                    </div>
+                    <Star className="h-5 w-5 text-yellow-400 ml-auto" />
+                  </Link>
+                ))
+              ) : (
+                <p className="text-gray-500">No favorite assets yet. Click the star on an asset to add it here.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  )
 }
 
