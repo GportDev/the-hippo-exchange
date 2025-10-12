@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import NotFoundComponent from '@/pages/NotFoundPage'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -40,7 +41,7 @@ function RootComponent() {
           {!shouldHideHeader && <Header />}
           <div className="flex flex-1 overflow-hidden">
             <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto bg-gray-50">
               <Outlet />
             </div>
           </div>
@@ -66,4 +67,5 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       </ClerkProvider>
     </>
   ),
+  notFoundComponent: NotFoundComponent,
 })

@@ -1,16 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSignUp } from '@clerk/clerk-react'
+import { useSignUp, useUser } from '@clerk/clerk-react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { z } from 'zod'
-
-// .refine((data: { password: string; confirmPassword: string }) => data.password === data.confirmPassword, {
-//   message: "Passwords don't match",
-//   path: ['confirmPassword'],
 
 const signUpSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
@@ -27,8 +23,14 @@ export const Route = createFileRoute('/sign-up/')({
 
 function SignUpComponent() {
   const { isLoaded, signUp } = useSignUp()
+  const { isSignedIn, isLoaded: isUserLoaded } = useUser()
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+
+  // Redirect to assets if already signed in
+  if (isUserLoaded && isSignedIn) {
+    return <Navigate to="/assets/my-assets" replace />
+  }
 
   const {
     register,
@@ -79,12 +81,12 @@ function SignUpComponent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center w-1/2 p-12 text-white bg-primary-gray rounded-r-[6rem]">
+        <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
+      <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray md:rounded-r-[6rem] rounded-b-[4rem] md:rounded-bl-none">
         <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
-        <p className="text-2xl text-primary-yellow">don't buy. borrow.</p>
+        <p className="text-2xl text-white">don't buy. borrow.</p>
       </div>
-      <div className="flex flex-col items-center justify-center w-1/2 ">
+      <div className="flex flex-col items-center justify-center md:w-1/2 ">
         <div className="w-full max-w-md p-8 space-y-8">
           <div>
             <h2 className="text-3xl font-bold text-center text-primary-gray">Create Account</h2>
@@ -157,7 +159,7 @@ function SignUpComponent() {
             </div>
 
             <div className='space-y-4'>
-              <Button type="submit" className="w-full text-primary-yellow bg-primary-gray" disabled={isLoading}>
+                            <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="img" aria-label="Loading spinner">

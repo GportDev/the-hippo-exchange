@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
 import { API_BASE_URL } from '@/lib/api'
@@ -26,7 +26,12 @@ export const Route = createFileRoute('/assets/my-assets/$id')({
 
 function RouteComponent() {
   const { id } = Route.useParams()
-  const { user } = useUser()
+  const { user, isSignedIn, isLoaded } = useUser()
+  
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />
+  }
   
   const { data: asset, isLoading, isError } = useQuery<Asset>({
     queryKey: ['assets', id],
@@ -63,7 +68,7 @@ function RouteComponent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-gray-50 flex items-center justify-center h-full">
         <p>Loading asset...</p>
       </div>
     );
@@ -71,7 +76,7 @@ function RouteComponent() {
 
   if (isError || !asset) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="bg-gray-50 flex items-center justify-center h-full">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Asset Not Found</h1>
           <p className="text-gray-600 mb-4">The asset you're looking for doesn't exist or could not be loaded.</p>
@@ -88,7 +93,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,14 +108,34 @@ function RouteComponent() {
               </Link>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
-                asset.status === 'available' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-red-100 text-red-800'
-              }`}>
-                <CheckCircle className="w-4 h-4" />
-                {asset.status}
-              </span>
+              {(() => {
+                const getStatusColor = (status: string) => {
+                  switch (status) {
+                    case 'available':
+                      return 'bg-green-100 text-green-800';
+                    case 'borrowed':
+                      return 'bg-yellow-100 text-yellow-800';
+                    case 'in_repair':
+                      return 'bg-yellow-100 text-yellow-800';
+                    case 'unlisted':
+                      return 'bg-gray-100 text-gray-800';
+                    default:
+                      return 'bg-gray-100 text-gray-800';
+                  }
+                };
+
+                const formattedStatus = asset.status
+                  .split('_')
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ');
+
+                return (
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}`}>
+                    <CheckCircle className="w-4 h-4" />
+                    {formattedStatus}
+                  </span>
+                );
+              })()}
             </div>
           </div>
         </div>

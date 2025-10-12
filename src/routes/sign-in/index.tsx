@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useSignIn } from '@clerk/clerk-react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useSignIn, useUser } from '@clerk/clerk-react'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 
@@ -12,9 +12,15 @@ export const Route = createFileRoute('/sign-in/')({
 
 function SignInComponent() {
   const { isLoaded, signIn, setActive } = useSignIn()
+  const { isSignedIn, isLoaded: isUserLoaded } = useUser()
   const navigate = useNavigate({ from: '/sign-in' })
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+
+  // Redirect to assets if already signed in
+  if (isUserLoaded && isSignedIn) {
+    return <Navigate to="/assets/my-assets" replace />
+  }
 
   const {
     register,
@@ -69,13 +75,13 @@ function SignInComponent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center w-1/2 p-12 text-white bg-primary-gray rounded-r-[6rem]">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
+      <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray rounded-b-[4rem] md:rounded-r-[6rem] md:rounded-bl-none">
         <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
-        <p className="text-2xl text-primary-yellow">don't buy. borrow.</p>
+        <p className="text-2xl text-white">don't buy. borrow.</p>
       </div>
-      <div className="flex flex-col items-center justify-center w-1/2">
-        <div className="w-full max-w-md p-8 space-y-8">
+      <div className="flex flex-col items-center justify-center md:w-1/2">
+        <div className="w-full md:max-w-md p-8 space-y-8">
           <div>
             <h2 className="text-3xl font-bold text-center text-primary-gray">Log In</h2>
           </div>
@@ -118,7 +124,7 @@ function SignInComponent() {
             <div>
               <Button
                 type="submit"
-                className="w-full text-primary-yellow bg-primary-gray"
+                className="w-full text-primary-yellow bg-primary-gray cursor-pointer"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -127,7 +133,7 @@ function SignInComponent() {
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
-                    Signing In...
+                    Logging In...
                   </div>
                 ) : (
                   'Log In'
