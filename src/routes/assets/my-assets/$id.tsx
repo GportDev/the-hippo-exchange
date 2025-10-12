@@ -1,8 +1,15 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
-import { API_BASE_URL } from '@/lib/api'
+import { apiFetch, API_BASE_URL } from '@/lib/api'
 import { ArrowLeft, MapPin, Calendar, DollarSign, Tag, Camera, CheckCircle } from 'lucide-react'
+import type { Maintenance } from '@/lib/Types'
+import { MaintenanceCard } from '@/components/MaintenanceCard'
+import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
+import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
+import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
+import { Button } from "@/components/ui/button";
+import { useState } from 'react';
 
 // Structure of the asset object.
 interface Asset {
@@ -27,6 +34,10 @@ export const Route = createFileRoute('/assets/my-assets/$id')({
 function RouteComponent() {
   const { id } = Route.useParams()
   const { user, isSignedIn, isLoaded } = useUser()
+  const queryClient = useQueryClient()
+  const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Maintenance | null>(null);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
   
   // Redirect to home if not signed in
   if (isLoaded && !isSignedIn) {
@@ -50,6 +61,111 @@ function RouteComponent() {
     },
     enabled: !!user && !!id, // Only run the query when user and id are available
   });
+
+  const { data: maintenances = [], isLoading: isLoadingMaintenance } = useQuery<Maintenance[]>({
+    queryKey: ["maintenance", "asset", id],
+    queryFn: async () => {
+      if (!user) return [];
+      return apiFetch(user.id, `/assets/${id}/maintenance`);
+    },
+    enabled: !!user && !!id,
+  });
+
+  const editMutation = useMutation({
+    mutationFn: async (updatedTask: Maintenance) => {
+      if (!user) throw new Error("User not authenticated");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id: taskId, ...taskData } = updatedTask;
+      return apiFetch(user.id, `/maintenance/${taskId}`, {
+        method: "PUT",
+        body: JSON.stringify(taskData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
+      setEditModalOpen(false);
+      setSelectedTask(null);
+    },
+  });
+
+  const createNextMaintenanceMutation = useMutation({
+    mutationFn: async (newMaintenance: Omit<Maintenance, "id">) => {
+      if (!user) throw new Error("User not authenticated");
+      const { assetId, ...body } = newMaintenance;
+      return apiFetch(user.id, `/assets/${assetId}/maintenance`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
+    },
+  });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({
+      task,
+      newStatus,
+    }: {
+      task: Maintenance;
+      newStatus: string;
+    }) => {
+      if (!user) throw new Error("User not authenticated");
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { id: taskId, ...updatedTaskData } = {
+        ...task,
+        maintenanceStatus: newStatus,
+      };
+      return apiFetch(user.id, `/maintenance/${taskId}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedTaskData),
+      });
+    },
+    onSuccess: (_data, { task, newStatus }) => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
+      if (newStatus === "completed" && task.preserveFromPrior) {
+        const twoWeeksFromNow = new Date();
+        twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { id: _id, ...oldTaskData } = task;
+        const newTask: Omit<Maintenance, "id"> = {
+          ...oldTaskData,
+          maintenanceStatus: "pending",
+          maintenanceDueDate: twoWeeksFromNow.toISOString(),
+        };
+        createNextMaintenanceMutation.mutate(newTask);
+      }
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (taskId: string) => {
+      if (!user) throw new Error("User not authenticated");
+      return apiFetch(user.id, `/maintenance/${taskId}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
+      setSelectedTask(null);
+    },
+  });
+
+  const handleUpdateStatus = (taskId: string, status: string) => {
+    const taskToUpdate = maintenances.find((task) => task.id === taskId);
+    if (taskToUpdate) {
+      updateStatusMutation.mutate({ task: taskToUpdate, newStatus: status });
+    }
+  };
+
+  const handleViewDetails = (task: Maintenance) => setSelectedTask(task);
+  const handleCloseDetails = () => setSelectedTask(null);
+  const handleEdit = (task: Maintenance) => {
+    setSelectedTask(task);
+    setEditModalOpen(true);
+  };
+  const handleSaveEdit = (updatedTask: Maintenance) => editMutation.mutate(updatedTask);
+  const handleDelete = (taskId: string) => deleteMutation.mutate(taskId);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -225,6 +341,63 @@ function RouteComponent() {
           </div>
         </div>
       </div>
+
+      {/* Maintenance Section */}
+      <div className="bg-gray-100 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-primary-gray">
+              Maintenance History
+            </h2>
+            <Button
+              onClick={() => setAddModalOpen(true)}
+              className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+            >
+              Add Maintenance
+            </Button>
+          </div>
+
+          <div className="space-y-4">
+            {isLoadingMaintenance ? (
+              <div className="text-center text-primary-gray">Loading maintenance tasks...</div>
+            ) : maintenances.length === 0 ? (
+              <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
+                <p className="text-lg">No maintenance history for this asset.</p>
+              </div>
+            ) : (
+              maintenances.map((maintenance) => (
+                <MaintenanceCard
+                  key={maintenance.id}
+                  task={maintenance}
+                  onUpdateStatus={handleUpdateStatus}
+                  onViewDetails={handleViewDetails}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      <AddMaintenanceModal
+        isOpen={isAddModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        assetId={id}
+      />
+
+      {selectedTask && !isEditModalOpen && (
+        <MaintenanceDetailsModal
+          task={selectedTask}
+          onClose={handleCloseDetails}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      )}
+
+      <EditMaintenanceModal
+        task={isEditModalOpen ? selectedTask : null}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleSaveEdit}
+      />
     </div>
   )
 }

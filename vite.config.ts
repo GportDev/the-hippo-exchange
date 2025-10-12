@@ -11,6 +11,9 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    'process.env.CLERK_ISSUER_URL': JSON.stringify(process.env.CLERK_ISSUER_URL),
+  },
   plugins: [
     tanstackRouter({ autoCodeSplitting: true }),
     viteReact(),
