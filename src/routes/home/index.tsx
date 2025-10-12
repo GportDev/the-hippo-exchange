@@ -141,7 +141,9 @@ function RouteComponent() {
                 <p className="text-gray-500">Loading maintenance items...</p>
               ) : upcomingItems.length > 0 ? (
                 upcomingItems.map((item) => (
-                  <div
+                  <Link
+                    to="/assets/my-assets/$id"
+                    params={{ id: item.assetId }}
                     key={item.id}
                     className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
                   >
@@ -172,7 +174,7 @@ function RouteComponent() {
                       </p>
                       <ChevronRight className="h-5 w-5 text-gray-400" />
                     </div>
-                  </div>
+                  </Link>
                 ))
               ) : (
                 <p className="text-gray-500">No upcoming maintenance items.</p>
