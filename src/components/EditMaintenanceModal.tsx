@@ -77,7 +77,8 @@ export function EditMaintenanceModal({
         <DialogClose asChild>
           <button
             aria-label="Close"
-            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-10"
+            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-50"
+            onClick={onClose}
           >
             <X className="h-5 w-5" />
           </button>

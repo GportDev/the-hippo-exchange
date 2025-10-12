@@ -83,7 +83,7 @@ export function MaintenanceDetailsModal({
           </div>
 
           {task.maintenanceDescription && (
-            <div>
+            <div className="mt-4">
               <strong className="text-gray-500 mb-1 block">Description:</strong>
               <p className="bg-gray-50 p-3 rounded-md border">{task.maintenanceDescription}</p>
             </div>
@@ -94,7 +94,7 @@ export function MaintenanceDetailsModal({
           <Button
             variant="destructive"
             onClick={handleDelete}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-red-800 hover:bg-red-900"
           >
             <Trash2 className="h-4 w-4" />
             Delete
