@@ -10,14 +10,18 @@ import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import toast from 'react-hot-toast';
 
-type MaintenanceItem = {
-  id: string
-  itemName: string
-  action: string
-  dueDate: string
-  status: 'overdue' | 'upcoming' | 'completed'
-  priority: 'high' | 'medium' | 'low'
-  category: string
+interface MaintenanceItem {
+  id: string;
+  assetId: string;
+  brandName: string;
+  productName: string;
+  costPaid: number;
+  maintenanceDueDate: string;
+  maintenanceTitle: string;
+  maintenanceDescription: string;
+  maintenanceStatus: string;
+  requiredTools: string[];
+  toolLocation: string;
 }
 
 interface Asset {
@@ -35,64 +39,6 @@ interface Asset {
   favorite: boolean;
 }
 
-const maintenanceData: MaintenanceItem[] = [
-  {
-    id: '1',
-    itemName: 'Predator 350 W Power Station',
-    action: 'Recharge Station',
-    dueDate: '2024-01-15',
-    status: 'overdue',
-    priority: 'high',
-    category: 'Electronics'
-  },
-  {
-    id: '2',
-    itemName: 'Sony A7 III Camera Body',
-    action: 'Clean sensor and check firmware',
-    dueDate: '2024-01-20',
-    status: 'upcoming',
-    priority: 'medium',
-    category: 'Electronics'
-  },
-  {
-    id: '3',
-    itemName: 'MacBook Pro 14-inch M3',
-    action: 'Update software and clean keyboard',
-    dueDate: '2024-01-25',
-    status: 'upcoming',
-    priority: 'high',
-    category: 'Electronics'
-  },
-  {
-    id: '4',
-    itemName: 'Dyson V15 Detect Vacuum',
-    action: 'Replace filter and clean brush',
-    dueDate: '2024-01-10',
-    status: 'completed',
-    priority: 'medium',
-    category: 'Home & Garden'
-  },
-  {
-    id: '5',
-    itemName: 'KitchenAid Stand Mixer',
-    action: 'Lubricate gears and clean attachments',
-    dueDate: '2024-01-30',
-    status: 'upcoming',
-    priority: 'low',
-    category: 'Home & Garden'
-  },
-  {
-    id: '6',
-    itemName: 'Peloton Bike',
-    action: 'Tighten bolts and clean bike',
-    dueDate: '2024-01-05',
-    status: 'completed',
-    priority: 'medium',
-    category: 'Sports & Fitness'
-  }
-]
-
-
 export const Route = createFileRoute('/home/')({
   component: RouteComponent,
 })
@@ -106,7 +52,7 @@ function RouteComponent() {
   // const [, setEditingAsset] = useState<Asset | null>(null);
 
 
-  const { data: assets = [], isLoading } = useQuery<Asset[]>({
+  const { data: assets = [], isLoading: isLoadingAssets } = useQuery<Asset[]>({
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -115,6 +61,28 @@ function RouteComponent() {
       });
       if (!res.ok) throw new Error("Failed to fetch assets");
       return res.json();
+    },
+    enabled: !!user,
+  });
+
+  const { data: maintenances = [], isLoading: isLoadingMaintenances } = useQuery<MaintenanceItem[]>({
+    queryKey: ["maintenace", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      const res = await fetch(`${API_BASE_URL}/maintenance`, {
+        headers: { "X-User-Id": user.id },
+      });
+      console.log()
+      if (!res.ok) throw new Error("Failed to fetch maintenance");
+      const data = await res.json();
+      // Normalize status values coming from the API so UI mapping is consistent.
+      // Convert values like "In Repair" or "in-repair" to "in_repair".
+      if (Array.isArray(data)) {
+        return data.map((maintenance: MaintenanceItem) => ({
+          ...maintenance,
+        }));
+      }
+      return data;
     },
     enabled: !!user,
   });
@@ -181,15 +149,15 @@ function RouteComponent() {
     };
     */
 
-  const upcomingItems = maintenanceData.filter(item => item.status === 'upcoming' || item.status === 'overdue');
-  const overdueItems = maintenanceData.filter(item => item.status === 'overdue')
+  const upcomingItems = maintenances.filter(item => item.maintenanceStatus === 'pending' || item.maintenanceStatus === 'overdue');
+  const overdueItems = maintenances.filter(item => item.maintenanceStatus === 'overdue')
   const favoriteAssets = assets.filter(asset => asset.favorite === true)
 
   useEffect(() => {
     const toastId = 'overdue-toast';
     if (overdueItems.length > 0) {
       toast(
-        (t) => (
+        (t: { id: string }) => (
           <div className="flex items-center justify-between w-full">
             <Link
               to="/maintenance"
@@ -230,7 +198,7 @@ function RouteComponent() {
     switch (status) {
       case 'overdue':
         return 'text-red-800 bg-red-100';
-      case 'upcoming':
+      case 'pending':
         return 'text-yellow-800 bg-yellow-100';
       default:
         return 'text-gray-800 bg-gray-100';
@@ -250,7 +218,7 @@ function RouteComponent() {
     }
   }
 
-  if (isLoading) {
+  if (isLoadingAssets || isLoadingMaintenances) {
     return <div className="flex items-center justify-center h-full">Loading...</div>;
   }
 
@@ -265,21 +233,20 @@ function RouteComponent() {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Upcoming Maintenance</h2>
             <div className="space-y-4">
               {upcomingItems.length > 0 ? (
-                upcomingItems.map(item => (
+                upcomingItems.slice(0, 4).map(item => (
                   <div key={item.id} className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className={`p-2 rounded-full ${getStatusClasses(item.status)}`}>
+                      <div className={`p-2 rounded-full ${getStatusClasses(item.maintenanceStatus)}`}>
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">{item.itemName}</p>
-                        <p className="text-sm text-gray-600">{item.action}</p>
+                        <p className="font-semibold text-gray-900">{item.productName}</p>
+                        <p className="text-sm text-gray-600">{item.maintenanceTitle}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      {getPriorityIcon(item.priority)}
-                      <p className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(item.status)}`}>
-                        {new Date(item.dueDate).toLocaleDateString()}
+                      <p className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(item.maintenanceStatus)}`}>
+                        {new Date(item.maintenanceDueDate).toLocaleDateString()}
                       </p>
                       <ChevronRight className="h-5 w-5 text-gray-400" />
                     </div>
