@@ -81,7 +81,7 @@ function SignUpComponent() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
+        <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
       <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray md:rounded-r-[6rem] rounded-b-[4rem] md:rounded-bl-none">
         <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
         <p className="text-2xl text-white">don't buy. borrow.</p>
@@ -159,7 +159,7 @@ function SignUpComponent() {
             </div>
 
             <div className='space-y-4'>
-              <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer" disabled={isLoading}>
+                            <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer" disabled={isLoading}>
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="img" aria-label="Loading spinner">
