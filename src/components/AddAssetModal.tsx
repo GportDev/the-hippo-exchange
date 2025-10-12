@@ -228,12 +228,12 @@ export default function AddAssetModal() {
         <DialogClose asChild>
           <button
             aria-label="Close"
-            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-10"
+            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-60"
           >
             <X className="h-5 w-5" />
           </button>
         </DialogClose>
-        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
+        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg z-60">
           <DialogTitle className="text-center text-primary-yellow">Add New Asset</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
             Fill in the details for your new asset. Click save when you're done.
