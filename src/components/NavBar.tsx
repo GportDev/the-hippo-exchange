@@ -58,7 +58,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                   {showText && <span>Home</span>}
                 </Link>
               </li>
-              <li className="mb-2">
+              <li className="mb-2 w-full">
                 <Link 
                   to="/assets/my-assets"
                   className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
@@ -70,7 +70,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                   {showText && <span>My Assets</span>}
                 </Link>
               </li>
-              <li className="mb-2">
+              <li className="mb-2 w-full">
                 <Link 
                   to="/maintenance"
                   className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
@@ -86,7 +86,9 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             </ul>
 
             <ClerkHeader 
-              className='mt-auto px-4 py-3' 
+              className={`mt-auto mx-2 mb-4 pl-3 pr-6 self-start ${
+                isExpanded ? 'py-1 pl-1 pr-10 hover:bg-gray-700 transition-colors duration-200 rounded-full' 
+                : 'w-10 h-10 justify-center'}`}
               isNavExpanded={isExpanded}
             />
           </div>
