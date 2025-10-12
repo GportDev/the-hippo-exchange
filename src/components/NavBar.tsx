@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
 import * as Lucide from "lucide-react"
 import { useState, useEffect } from 'react'
+import ClerkHeader from '../integrations/clerk/header-user.tsx'
 
 interface NavbarProps {
   isExpanded: boolean
@@ -9,7 +10,6 @@ interface NavbarProps {
 }
 
 function Navbar({ isExpanded, onToggle }: NavbarProps) {
-  
   const [showText, setShowText] = useState(isExpanded);
 
   useEffect(() => {
@@ -45,12 +45,24 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             </div>
             
             {/* Navigation links */}
-            <ul className="flex-1 mt-4">
-              <li className="mb-2">
+            <ul className={`flex flex-col mt-4 ${isExpanded ? 'items-start' : 'items-center'}`}>
+              <li className='mb-2 w-full'>
+                <Link 
+                  to="/home"
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                    isExpanded ? 'justify-start' : 'justify-center'
+                  }`}
+                  title={!isExpanded ? "My Assets" : undefined}
+                >
+                  <Lucide.House size="1.2em"/>
+                  {showText && <span>Home</span>}
+                </Link>
+              </li>
+              <li className="mb-2 w-full">
                 <Link 
                   to="/assets/my-assets"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-start'
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                    isExpanded ? 'justify-start' : 'justify-center'
                   }`}
                   title={!isExpanded ? "My Assets" : undefined}
                 >
@@ -58,11 +70,11 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                   {isExpanded && <span>My Assets</span>}
                 </Link>
               </li>
-              <li className="mb-2">
+              <li className="mb-2 w-full">
                 <Link 
                   to="/maintenance"
-                  className={`flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
-                    isExpanded ? 'justify-start' : 'justify-start'
+                  className={`w-full flex items-center gap-3 px-4 py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200 ${
+                    isExpanded ? 'justify-start' : 'justify-center'
                   }`}
                   title={!isExpanded ? "Maintenance" : undefined}
                 >
@@ -72,6 +84,13 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
               </li>
               
             </ul>
+
+            <ClerkHeader 
+              className={`mt-auto mx-2 mb-4 pl-3 pr-6 self-start ${
+                isExpanded ? 'py-1 pl-1 pr-10 hover:bg-gray-700 transition-colors duration-200 rounded-full' 
+                : 'w-10 h-10 justify-center'}`}
+              isNavExpanded={isExpanded}
+            />
           </div>
         </nav>
       </SignedIn>

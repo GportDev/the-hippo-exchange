@@ -117,7 +117,7 @@ export const ProfilePage = () => {
       </div>
 
       <div className="flex items-center gap-6 mb-8 p-4 border rounded-lg shadow-sm">
-        <img src={user.imageUrl} alt="Profile" className="w-24 h-24 rounded-full" />
+        <img src={user.imageUrl} alt="Profile" className="w-24 h-24 rounded-full object-cover" />
         <div>
           <h2 className="text-2xl font-semibold">{user.fullName}</h2>
         </div>

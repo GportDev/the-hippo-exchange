@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,6 +17,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UploadCloud, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 
 // This interface should match the expected JSON body structure
@@ -210,107 +218,34 @@ export default function AddAssetModal() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add New Asset</Button>
+        <Button
+        className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors">
+        Add New Asset
+        </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] max-h-[90vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
-          <DialogTitle>Add New Asset</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
+        {/* Close Button */}
+        <DialogClose asChild>
+          <button
+            aria-label="Close"
+            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-10"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </DialogClose>
+        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
+          <DialogTitle className="text-center text-primary-yellow">Add New Asset</DialogTitle>
+          <DialogDescription className="text-white/80 text-center">
             Fill in the details for your new asset. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="flex-grow overflow-y-auto pr-4 -mr-4">
-          <form onSubmit={handleSubmit} id="add-asset-form" className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="itemName" className="text-right">
-                Item Name
-              </Label>
-              <Input
-                id="itemName"
-                value={itemName}
-                onChange={(e) => setItemName(e.target.value)}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="brandName" className="text-right">
-                Brand
-              </Label>
-              <Input
-                id="brandName"
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="category" className="text-right">
-                Category
-              </Label>
-              <Input
-                id="category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="purchaseDate" className="text-right">
-                Purchase Date
-              </Label>
-              <Input
-                id="purchaseDate"
-                type="date"
-                value={purchaseDate}
-                onChange={(e) => setPurchaseDate(e.target.value)}
-                className="col-span-3"
-                required
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="purchaseCost" className="text-right">
-                Cost
-              </Label>
-              <div className="col-span-3 flex h-10 w-full items-center rounded-md border border-input bg-background text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-                <span className="pl-3 pr-2 text-muted-foreground">$</span>
-                <Input
-                  id="purchaseCost"
-                  type="number"
-                  value={purchaseCost ?? ''} // Show empty string if state is null
-                  onChange={(e) => setPurchaseCost(e.target.value === '' ? null : Number(e.target.value))}
-                  className="h-full w-full border-0 bg-transparent p-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="currentLocation" className="text-right">
-                Location
-              </Label>
-              <div className="col-span-3 flex items-center gap-2">
-                <Input
-                  id="currentLocation"
-                  value={currentLocation}
-                  onChange={(e) => setCurrentLocation(e.target.value)}
-                  className="flex-grow"
-                  placeholder="e.g., Detroit, MI"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleFetchLocation}
-                  disabled={isFetchingLocation}
-                >
-                  {isFetchingLocation ? "Fetching..." : "Use My Location"}
-                </Button>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 items-start gap-4">
-              <Label className="text-right pt-2">Image</Label>
+
+        <div className="flex-grow overflow-y-auto px-6">
+          <form onSubmit={handleSubmit} id="add-asset-form" className="space-y-6 py-6">
+
+            {/* Image Upload */}
+            <div className="space-y-2">
+              <Label htmlFor="imageUpload">Image</Label>
               <div className="col-span-3">
                 <Input
                   type="file"
@@ -323,7 +258,7 @@ export default function AddAssetModal() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-6 text-center hover:border-gray-400 hover:bg-gray-100"
+                    className="flex w-full flex-col items-center justify-center rounded-md border-2 border-dashed border-gray-300 bg-gray-100 p-6 text-center hover:border-gray-400 hover:bg-gray-100"
                   >
                     <UploadCloud className="h-8 w-8 text-gray-400" />
                     <span className="mt-2 text-sm text-gray-600">
@@ -356,10 +291,98 @@ export default function AddAssetModal() {
                 )}
               </div>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="conditionDescription" className="text-right">
-                Condition
-              </Label>
+
+            {/* Item Name */}
+            <div className="space-y-2">
+              <Label htmlFor="itemName">Item Name</Label>
+              <Input
+                id="itemName"
+                value={itemName}
+                onChange={(e) => setItemName(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+
+            {/* Brand */}
+            <div className="space-y-2">
+              <Label htmlFor="brandName">Brand</Label>
+              <Input
+                id="brandName"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
+              <Input
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="col-span-3"
+                required
+              />
+            </div>
+
+            {/* Purchase Date */}
+            <div className="space-y-2">
+              <Label htmlFor="purchaseDate">Purchase Date</Label>
+              <Input
+                id="purchaseDate"
+                type="date"
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
+                className="col-span-3 cursor-text"
+                required
+              />
+            </div>
+
+            {/* Purchase Cost */}
+            <div className="space-y-2">
+              <Label htmlFor="purchaseCost">Cost</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                <Input
+                  id="purchaseCost"
+                  type="number"
+                  value={purchaseCost ?? ''} // Show empty string if state is null
+                  onChange={(e) => setPurchaseCost(e.target.value === '' ? null : Number(e.target.value))}
+                  className="pl-8"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+
+            {/* Current Location */}
+            <div className="space-y-2">
+              <Label htmlFor="currentLocation">Location</Label>
+              <div className="col-span-3 flex flex-col sm:flex-row items-center gap-2">
+                <Input
+                  id="currentLocation"
+                  value={currentLocation}
+                  onChange={(e) => setCurrentLocation(e.target.value)}
+                  className="flex-grow w-full"
+                  placeholder="e.g., Detroit, MI"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleFetchLocation}
+                  disabled={isFetchingLocation}
+                  className="w-full sm:w-auto"
+                >
+                  {isFetchingLocation ? "Fetching..." : "Use My Location"}
+                </Button>
+              </div>
+            </div>
+
+            {/* Condition Description */}
+            <div className="space-y-2">
+              <Label htmlFor="conditionDescription">Condition</Label>
               <Input
                 id="conditionDescription"
                 value={conditionDescription}
@@ -367,37 +390,43 @@ export default function AddAssetModal() {
                 className="col-span-3"
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="status" className="text-right">
-                Status
-              </Label>
-              <select
-                id="status"
+
+            {/* Status */}
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="col-span-3 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                onValueChange={(value) => setStatus(value)}
               >
-                <option value="available">Available</option>
-                <option value="borrowed">Borrowed</option>
-                <option value="in_repair">In Repair</option>
-              </select>
+                <SelectTrigger id="status" className="w-full">
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="available">Available</SelectItem>
+                  <SelectItem value="in_repair">In Repair</SelectItem>
+                  <SelectItem value="unlisted">Unlisted</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="favorite" className="text-right">
+
+            {/* Favorite */}
+            <div className="flex items-center space-x-2 pt-4">
+              <Label htmlFor="favorite" className="cursor-pointer">
                 Favorite
               </Label>
               <Checkbox
                 id="favorite"
                 checked={favorite}
                 onCheckedChange={(checked) => setFavorite(Boolean(checked))}
-                className="col-span-3"
               />
             </div>
           </form>
         </div>
 
-        <DialogFooter className="flex-shrink-0 border-t pt-4">
-          <Button type="submit" form="add-asset-form" disabled={isSaving}>
+        <DialogFooter className="flex-shrink-0 border-t px-6 py-4">
+          <Button type="submit" form="add-asset-form" disabled={isSaving}
+          className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+          >
             {isSaving ? "Saving..." : "Save Asset"}
           </Button>
         </DialogFooter>

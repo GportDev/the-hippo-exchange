@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { API_BASE_URL } from "@/lib/api";
@@ -38,8 +38,13 @@ export const Route = createFileRoute("/assets/my-assets/")({
 });
 
 function MyAssetsComponent() {
-  const { user } = useUser();
+  const { user, isSignedIn, isLoaded } = useUser();
   const queryClient = useQueryClient();
+
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -54,7 +59,16 @@ function MyAssetsComponent() {
         headers: { "X-User-Id": user.id },
       });
       if (!res.ok) throw new Error("Failed to fetch assets");
-      return res.json();
+      const data = await res.json();
+      // Normalize status values coming from the API so UI mapping is consistent.
+      // Convert values like "In Repair" or "in-repair" to "in_repair".
+      if (Array.isArray(data)) {
+        return data.map((asset: Asset) => ({
+          ...asset,
+          status: String(asset.status).replace(/[-\s]/g, "_").toLowerCase(),
+        }));
+      }
+      return data;
     },
     enabled: !!user,
   });
@@ -156,12 +170,12 @@ function MyAssetsComponent() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="bg-gray-50 p-6">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">My Assets</h1>
+              <h1 className="text-3xl font-bold text-primary-gray">My Assets</h1>
               <p className="text-muted-foreground">
                 Manage and track your valuable assets.
               </p>
@@ -174,14 +188,14 @@ function MyAssetsComponent() {
                 <Package className="h-5 w-5 text-blue-600" />
                 <span>Total Assets</span>
               </div>
-              <div className="mt-1 text-2xl font-bold">{assets.length}</div>
+              <div className="mt-1 text-2xl font-bold text-primary-gray">{assets.length}</div>
             </div>
             <div className="rounded-lg border bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <DollarSign className="h-5 w-5 text-green-600" />
                 <span>Total Value</span>
               </div>
-              <div className="mt-1 text-2xl font-bold">
+              <div className="mt-1 text-2xl font-bold text-primary-gray">
                 ${totalValue.toLocaleString()}
               </div>
             </div>
@@ -190,7 +204,7 @@ function MyAssetsComponent() {
                 <Heart className="h-5 w-5 text-red-600" />
                 <span>Favorites</span>
               </div>
-              <div className="mt-1 text-2xl font-bold">
+              <div className="mt-1 text-2xl font-bold text-primary-gray">
                 {assets.filter((a) => a.favorite).length}
               </div>
             </div>
@@ -209,20 +223,20 @@ function MyAssetsComponent() {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="available">Available</SelectItem>
-                <SelectItem value="borrowed">Borrowed</SelectItem>
                 <SelectItem value="in_repair">In Repair</SelectItem>
+                <SelectItem value="unlisted">Unlisted</SelectItem>
               </SelectContent>
             </Select>
             <Button
               variant={showFavoritesOnly ? "secondary" : "outline"}
               onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 text-primary-gray cursor-pointer"
             >
               <Heart
                 className={`h-4 w-4 ${
@@ -235,11 +249,11 @@ function MyAssetsComponent() {
         </div>
 
         {isLoading ? (
-          <div className="text-center">Loading assets...</div>
+          <div className="text-center text-primary-gray">Loading assets...</div>
         ) : filteredAssets.length === 0 ? (
           <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900">
+            <h3 className="mt-4 text-lg font-medium text-gray-900 text-primary-gray">
               No assets found
             </h3>
             <p className="mt-2 text-sm text-gray-600">

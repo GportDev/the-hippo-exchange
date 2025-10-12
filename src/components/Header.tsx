@@ -1,6 +1,5 @@
+import { SignedOut, SignInButton } from '@clerk/clerk-react'
 import { Link } from '@tanstack/react-router'
-
-import ClerkHeader from '../integrations/clerk/header-user.tsx'
 
 export default function Header() {
   return (
@@ -13,10 +12,13 @@ export default function Header() {
           <h1 className='text-3xl font-bold'>Hippo Exchange</h1>
         </Link>
       </div>
-
-      <div className='flex items-center gap-4'>
-        <ClerkHeader />
-      </div>
+      <SignedOut>
+        <SignInButton>
+          <button className="bg-primary-gray text-primary-yellow px-4 py-2 rounded-md font-semibold text-lg mr-4 hover:bg-primary-yellow hover:text-primary-gray transition-colors">
+            Sign In
+          </button>
+        </SignInButton>
+      </SignedOut>
     </header>
   )
 }
