@@ -1,7 +1,7 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useUser } from '@clerk/clerk-react'
-import { useQuery} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { API_BASE_URL } from "@/lib/api";
 
 
@@ -30,6 +30,7 @@ export const Route = createFileRoute('/maintenance/')({
 function RouteComponent() {
   const {user, isSignedIn, isLoaded } = useUser()
   const [activeFilter, setActiveFilter] = useState<'all' | 'overdue' | 'pending' | 'completed'>('all')
+  const queryClient = useQueryClient();
 
   // Redirect to home if not signed in
   if (isLoaded && !isSignedIn) {
@@ -58,12 +59,45 @@ function RouteComponent() {
     enabled: !!user,
   });
 
+  const completeMutation = useMutation({
+    mutationFn: async (updatedMaintenance: MaintenanceItem) => {
+      if (!user) throw new Error("User not authenticated");
+      // The API expects the full asset object on PUT, but without the ID in the body.
+      const { id, ...maintenanceData } = updatedMaintenance;
+      const res = await fetch(`${API_BASE_URL}/maintenance/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-User-Id": user.id,
+        },
+        body: JSON.stringify(maintenanceData),
+      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(
+          `Failed to update maintenance: ${res.status} ${res.statusText} - ${errorText}`
+        );
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenace", user?.id] });
+    },
+  });
+
+  const handleToggleComplete = (id: string, newStatus: string) => {
+    const maintenanceToUpdate = maintenances.find((maintenace) => maintenace.id === id);
+    if (maintenanceToUpdate) {
+      // Create a new object with the updated favorite status
+      const updatedMaintenance = { ...maintenanceToUpdate, maintenanceStatus: newStatus };
+      completeMutation.mutate(updatedMaintenance);
+    }
+  };
+
   const filteredItems = maintenances.filter((maintenace) => {
     const matchesStatus =
       activeFilter === "all" || maintenace.maintenanceStatus === activeFilter;
     return matchesStatus;
   });
-  console.log(maintenances)
   return (
     <div className='bg-gray-50 p-6'>
       <section className='mx-auto max-w-7xl'>
@@ -108,6 +142,7 @@ function RouteComponent() {
               <MaintenaceCard
               key = {maintenance.id}
               maintenance={maintenance}
+              onToggleComplete={handleToggleComplete}
               />
               ))
           )}
