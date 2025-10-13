@@ -29,7 +29,7 @@ function SignUpComponent() {
 
   // Redirect to assets if already signed in
   if (isUserLoaded && isSignedIn) {
-    return <Navigate to="/assets/my-assets" replace />
+    return <Navigate to="/assets/home" replace />
   }
 
   const {
