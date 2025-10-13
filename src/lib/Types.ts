@@ -24,6 +24,7 @@ export interface Maintenance {
   maintenanceStatus: string;
   purchaseLocation: string;
   costPaid: number;
+  assetCategory: string;
   preserveFromPrior: boolean;
   requiredTools: string[];
   toolLocation: string;
