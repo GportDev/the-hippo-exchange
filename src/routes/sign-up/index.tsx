@@ -11,9 +11,21 @@ import { z } from 'zod'
 const signUpSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters'),
   email: z.string().email('Invalid email address'),
+  first_name: z.string().min(1, 'First name is required'),
+  last_name: z.string().min(1, 'Last name is required'),
+  city: z.string().min(1, 'City is required'),
+  state: z.string().min(1, 'State is required'),
+  street: z.string().min(1, 'Street is required'),
+  country: z.string().min(1, 'Country is required'),
+  postalCode: z.string().min(1, 'Postal code is required'),
+  phoneNumber: z.string().min(1, 'Phone number is required'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
 })
+.refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords must match!",
+  path: ["confirmPassword"],
+});
 
 type SignUpSchema = z.infer<typeof signUpSchema>
 
@@ -29,7 +41,7 @@ function SignUpComponent() {
 
   // Redirect to assets if already signed in
   if (isUserLoaded && isSignedIn) {
-    return <Navigate to="/assets/home" replace />
+    return <Navigate to="/home" replace />
   }
 
   const {
@@ -38,6 +50,7 @@ function SignUpComponent() {
     formState: { errors },
   } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
+    mode: 'onChange',
   })
 
   const parseClerkError = (error: unknown) => {
@@ -68,6 +81,16 @@ function SignUpComponent() {
         username: data.username,
         emailAddress: data.email,
         password: data.password,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        phoneNumber: data.phoneNumber,
+        address: {
+          city: data.city,
+          state: data.state,
+          street: data.street,
+          country: data.country,
+          postalCode: data.postalCode,
+        },
       })
 
     } catch (err: unknown) {
@@ -91,9 +114,9 @@ function SignUpComponent() {
           <div>
             <h2 className="text-3xl font-bold text-center text-primary-gray">Create Account</h2>
           </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-4 rounded-md">
-              <div className='space-y-4 text-primary-gray'>
+          <form className="mt-8 space-y-0" onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-0 rounded-md">
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
@@ -102,14 +125,43 @@ function SignUpComponent() {
                   className="border border-primary-gray"
                   {...register('username')}
                 />
-                {errors.username && (
-                  <p className="text-red-500">{errors.username.message}</p>
-                )}
-                {clerkErrors.username && (
-                  <p className="text-red-500">{clerkErrors.username}</p>
-                )}
               </div>
-              <div className='space-y-4 text-primary-gray'>
+              <p className="text-red-500 text-xs min-h-[1.25rem] my-2">
+                {errors.username?.message || clerkErrors.username || '\u00A0'}
+              </p>
+              
+              {/* First and Last Name - Side by side on larger screens */}
+              <div className='space-y-2'>
+                <div className='flex flex-col md:flex-row gap-4'>
+                  <div className='flex-1 space-y-2 text-primary-gray'>
+                    <Label htmlFor="first_name">First Name</Label>
+                    <Input
+                      id="first_name"
+                      type="text"
+                      placeholder="First Name"
+                      className="border border-primary-gray"
+                      {...register('first_name')}
+                    />
+                  </div>
+                  <div className='flex-1 space-y-2 text-primary-gray'>
+                    <Label htmlFor="last_name">Last Name</Label>
+                    <Input
+                      id="last_name"
+                      type="text"
+                      placeholder="Last Name"
+                      className="border border-primary-gray"
+                      {...register('last_name')}
+                    />
+                  </div>
+                </div>
+              </div>
+              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                {[
+                  errors.first_name?.message || clerkErrors.first_name,
+                  errors.last_name?.message || clerkErrors.last_name
+                ].filter(Boolean).join(', ') || '\u00A0'}
+              </p>
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -118,14 +170,11 @@ function SignUpComponent() {
                   className="border border-primary-gray"
                   {...register('email')}
                 />
-                {errors.email && (
-                  <p className="text-red-500">{errors.email.message}</p>
-                )}
-                {clerkErrors.emailAddress && (
-                  <p className="text-red-500">{clerkErrors.emailAddress}</p>
-                )}
               </div>
-              <div className='space-y-4 text-primary-gray'>
+              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                {errors.email?.message || clerkErrors.emailAddress || '\u00A0'}
+              </p>
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="password ">Password</Label>
                 <Input
                   id="password"
@@ -134,14 +183,11 @@ function SignUpComponent() {
                   className="border border-primary-gray"
                   {...register('password')}
                 />
-                {errors.password && (
-                  <p className="text-red-500">{errors.password.message}</p>
-                )}
-                {clerkErrors.password && (
-                  <p className="text-red-500">{clerkErrors.password}</p>
-                )}
               </div>
-              <div className='space-y-4 text-primary-gray'>
+              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                {errors.password?.message || clerkErrors.password || '\u00A0'}
+              </p>
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
@@ -150,12 +196,10 @@ function SignUpComponent() {
                   className="border border-primary-gray"
                   {...register('confirmPassword')}
                 />
-                {errors.confirmPassword && (
-                  <p className="text-red-500">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
               </div>
+              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                {errors.confirmPassword?.message || '\u00A0'}
+              </p>
             </div>
 
             <div className='space-y-4'>
@@ -174,7 +218,7 @@ function SignUpComponent() {
               </Button>
             </div>
           </form>
-          <div className="text-sm text-center">
+          <div className="text-xs text-center">
             <p className='text-primary-gray'>
               Already Have an Account?{' '}
               <a href="/sign-in" className="text-primary-gray underline-offset-2 underline hover:text-indigo-500">

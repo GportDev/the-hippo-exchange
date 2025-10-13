@@ -86,8 +86,8 @@ function SignInComponent() {
             <h2 className="text-3xl font-bold text-center text-primary-gray">Log In</h2>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <div className='space-y-4 text-primary-gray'>
+            <div className="space-y-6">
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
@@ -96,14 +96,11 @@ function SignInComponent() {
                   className="border border-primary-gray"
                   {...register('username', { required: true })}
                 />
-                {errors.username && (
-                  <p className="text-red-500">Username is required</p>
-                )}
-                {clerkErrors.identifier && (
-                  <p className="text-red-500">{clerkErrors.identifier}</p>
-                )}
               </div>
-              <div className='space-y-4 text-primary-gray'>
+              <p className="text-red-500 text-sm min-h-[1.25rem] my-4">
+                {errors.username ? 'Username is required' : clerkErrors.identifier || '\u00A0'}
+              </p>
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -112,13 +109,10 @@ function SignInComponent() {
                   className="border border-primary-gray"
                   {...register('password', { required: true })}
                 />
-                {errors.password && (
-                  <p className="text-red-500">Password is required</p>
-                )}
-                {clerkErrors.password && (
-                  <p className="text-red-500">{clerkErrors.password}</p>
-                )}
               </div>
+              <p className="text-red-500 text-sm min-h-[1.25rem] my-4">
+                {errors.password ? 'Password is required' : clerkErrors.password || '\u00A0'}
+              </p>
             </div>
 
             <div>
