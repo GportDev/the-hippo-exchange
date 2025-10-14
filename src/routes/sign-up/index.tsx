@@ -5,22 +5,16 @@ import { useSignUp, useUser } from '@clerk/clerk-react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { z } from 'zod'
 
 const signUpSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.string().email('Invalid email address'),
-  first_name: z.string().min(1, 'First name is required'),
-  last_name: z.string().min(1, 'Last name is required'),
-  city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  street: z.string().min(1, 'Street is required'),
-  country: z.string().min(1, 'Country is required'),
-  postalCode: z.string().min(1, 'Postal code is required'),
-  phoneNumber: z.string().min(1, 'Phone number is required'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string().min(1, 'Please confirm your password'),
+  username: z.string({ required_error: 'Username is required' }).min(3, 'Username must be at least 3 characters long.'),
+  email: z.string({ required_error: 'Email is required' }).email('Please enter a valid email address.'),
+  firstName: z.string({ required_error: 'First name is required' }).min(1, 'First name cannot be empty.'),
+  lastName: z.string({ required_error: 'Last name is required' }).min(1, 'Last name cannot be empty.'),
+  password: z.string({ required_error: 'Password is required' }).min(8, 'Password must be at least 8 characters long.'),
+  confirmPassword: z.string({ required_error: 'Please confirm your password' }),
 })
 .refine((data) => data.password === data.confirmPassword, {
   message: "Passwords must match!",
@@ -34,7 +28,7 @@ export const Route = createFileRoute('/sign-up/')({
 })
 
 function SignUpComponent() {
-  const { isLoaded, signUp } = useSignUp()
+  const { isLoaded, signUp, setActive } = useSignUp()
   const { isSignedIn, isLoaded: isUserLoaded } = useUser()
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -48,10 +42,31 @@ function SignUpComponent() {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     mode: 'onChange',
   })
+
+  useEffect(() => {
+    const subscription = watch((value) => {
+      const { password, confirmPassword, ...rest } = value
+      localStorage.setItem('signUpFormCache', JSON.stringify(rest))
+    })
+    return () => subscription.unsubscribe()
+  }, [watch])
+
+  useEffect(() => {
+    const cachedValues = localStorage.getItem('signUpFormCache')
+    if (cachedValues) {
+      const parsedValues = JSON.parse(cachedValues)
+      setValue('username', parsedValues.username)
+      setValue('firstName', parsedValues.firstName)
+      setValue('lastName', parsedValues.lastName)
+      setValue('email', parsedValues.email)
+    }
+  }, [setValue])
 
   const parseClerkError = (error: unknown) => {
     const fieldErrors: Record<string, string> = {}
@@ -77,22 +92,17 @@ function SignUpComponent() {
     setClerkErrors({})
 
     try {
-      await signUp.create({
+      const result = await signUp.create({
         username: data.username,
         emailAddress: data.email,
         password: data.password,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        phoneNumber: data.phoneNumber,
-        address: {
-          city: data.city,
-          state: data.state,
-          street: data.street,
-          country: data.country,
-          postalCode: data.postalCode,
-        },
+        firstName: data.firstName,
+        lastName: data.lastName,
       })
 
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId })
+      }
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2))
       
@@ -134,31 +144,31 @@ function SignUpComponent() {
               <div className='space-y-2'>
                 <div className='flex flex-col md:flex-row gap-4'>
                   <div className='flex-1 space-y-2 text-primary-gray'>
-                    <Label htmlFor="first_name">First Name</Label>
+                    <Label htmlFor="firstName">First Name</Label>
                     <Input
-                      id="first_name"
+                      id="firstName"
                       type="text"
                       placeholder="First Name"
                       className="border border-primary-gray"
-                      {...register('first_name')}
+                      {...register('firstName')}
                     />
                   </div>
                   <div className='flex-1 space-y-2 text-primary-gray'>
-                    <Label htmlFor="last_name">Last Name</Label>
+                    <Label htmlFor="lastName">Last Name</Label>
                     <Input
-                      id="last_name"
+                      id="lastName"
                       type="text"
                       placeholder="Last Name"
                       className="border border-primary-gray"
-                      {...register('last_name')}
+                      {...register('lastName')}
                     />
                   </div>
                 </div>
               </div>
               <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
                 {[
-                  errors.first_name?.message || clerkErrors.first_name,
-                  errors.last_name?.message || clerkErrors.last_name
+                  errors.firstName?.message || clerkErrors.firstName,
+                  errors.lastName?.message || clerkErrors.lastName
                 ].filter(Boolean).join(', ') || '\u00A0'}
               </p>
               <div className='space-y-2 text-primary-gray'>
