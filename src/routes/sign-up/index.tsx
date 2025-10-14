@@ -32,6 +32,7 @@ function SignUpComponent() {
   const { isSignedIn, isLoaded: isUserLoaded } = useUser()
   const [clerkErrors, setClerkErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
+  const [pendingVerification, setPendingVerification] = useState(false)
 
   // Redirect to assets if already signed in
   if (isUserLoaded && isSignedIn) {
@@ -102,6 +103,9 @@ function SignUpComponent() {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
+      } else {
+        await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
+      setPendingVerification(true)
       }
     } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2))
@@ -113,123 +117,190 @@ function SignUpComponent() {
     }
   }
 
+  const onVerify = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isLoaded) {
+      return
+    }
+
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code: (e.target as HTMLFormElement).code.value,
+      })
+      if (completeSignUp.status !== 'complete') {
+        /*  investigate the signup process flow.  */
+        console.log(JSON.stringify(completeSignUp, null, 2))
+      }
+      if (completeSignUp.status === 'complete') {
+        await setActive({ session: completeSignUp.createdSessionId })
+      }
+    } catch (err: unknown) {
+      console.error(JSON.stringify(err, null, 2))
+      const fieldErrors = parseClerkError(err)
+      setClerkErrors(fieldErrors)
+    }
+  }
+
   return (
-        <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
+    <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
       <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray md:rounded-r-[6rem] rounded-b-[4rem] md:rounded-bl-none">
         <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
         <p className="text-2xl text-white">don't buy. borrow.</p>
       </div>
       <div className="flex flex-col items-center justify-center md:w-1/2 ">
         <div className="w-full max-w-md p-8 space-y-8">
-          <div>
-            <h2 className="text-3xl font-bold text-center text-primary-gray">Create Account</h2>
-          </div>
-          <form className="mt-8 space-y-0" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-0 rounded-md">
-              <div className='space-y-2 text-primary-gray'>
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Username"
-                  className="border border-primary-gray"
-                  {...register('username')}
-                />
-              </div>
-              <p className="text-red-500 text-xs min-h-[1.25rem] my-2">
-                {errors.username?.message || clerkErrors.username || '\u00A0'}
+          {!pendingVerification && (
+            <div>
+              <h2 className="text-3xl font-bold text-center text-primary-gray">Create Account</h2>
+            </div>
+          )}
+          {pendingVerification ? (
+            <>
+              <h2 className="text-3xl font-bold text-center text-primary-gray">Verify Your Email</h2>
+              <p className="text-center text-primary-gray">
+                Please enter the verification code sent to your email address.
               </p>
-              
-              {/* First and Last Name - Side by side on larger screens */}
-              <div className='space-y-2'>
-                <div className='flex flex-col md:flex-row gap-4'>
-                  <div className='flex-1 space-y-2 text-primary-gray'>
-                    <Label htmlFor="firstName">First Name</Label>
+              <form className="mt-8 space-y-6" onSubmit={onVerify}>
+                <div className="rounded-md shadow-sm -space-y-px">
+                  <div>
+                    <Label htmlFor="code" className="sr-only">
+                      Verification Code
+                    </Label>
                     <Input
-                      id="firstName"
+                      id="code"
+                      name="code"
                       type="text"
-                      placeholder="First Name"
-                      className="border border-primary-gray"
-                      {...register('firstName')}
-                    />
-                  </div>
-                  <div className='flex-1 space-y-2 text-primary-gray'>
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      type="text"
-                      placeholder="Last Name"
-                      className="border border-primary-gray"
-                      {...register('lastName')}
+                      required
+                      className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                      placeholder="Verification Code"
                     />
                   </div>
                 </div>
-              </div>
-              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
-                {[
-                  errors.firstName?.message || clerkErrors.firstName,
-                  errors.lastName?.message || clerkErrors.lastName
-                ].filter(Boolean).join(', ') || '\u00A0'}
-              </p>
-              <div className='space-y-2 text-primary-gray'>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Email"
-                  className="border border-primary-gray"
-                  {...register('email')}
-                />
-              </div>
-              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
-                {errors.email?.message || clerkErrors.emailAddress || '\u00A0'}
-              </p>
-              <div className='space-y-2 text-primary-gray'>
-                <Label htmlFor="password ">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Password"
-                  className="border border-primary-gray"
-                  {...register('password')}
-                />
-              </div>
-              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
-                {errors.password?.message || clerkErrors.password || '\u00A0'}
-              </p>
-              <div className='space-y-2 text-primary-gray'>
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirm Password"
-                  className="border border-primary-gray"
-                  {...register('confirmPassword')}
-                />
-              </div>
-              <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
-                {errors.confirmPassword?.message || '\u00A0'}
-              </p>
-            </div>
+                <p className="text-red-500 text-xs min-h-[1.25rem] py-3">{clerkErrors.code || '\u00A0'}</p>
 
-            <div className='space-y-4'>
-                            <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer" disabled={isLoading}>
-                {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" role="img" aria-label="Loading spinner">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Signing Up...
+                <div>
+                  <Button type="submit" className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md group hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Verify
+                  </Button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <form className="mt-8 space-y-0" onSubmit={handleSubmit(onSubmit)}>
+              <div className="space-y-0 rounded-md">
+                <div className="space-y-2 text-primary-gray">
+                  <Label htmlFor="username">Username</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Username"
+                    className="border border-primary-gray"
+                    {...register('username')}
+                  />
+                </div>
+                <p className="text-red-500 text-xs min-h-[1.25rem] my-2">
+                  {errors.username?.message || clerkErrors.username || '\u00A0'}
+                </p>
+
+                {/* First and Last Name - Side by side on larger screens */}
+                <div className="space-y-2">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 space-y-2 text-primary-gray">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input
+                        id="firstName"
+                        type="text"
+                        placeholder="First Name"
+                        className="border border-primary-gray"
+                        {...register('firstName')}
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2 text-primary-gray">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input
+                        id="lastName"
+                        type="text"
+                        placeholder="Last Name"
+                        className="border border-primary-gray"
+                        {...register('lastName')}
+                      />
+                    </div>
                   </div>
-                ) : (
-                  'Sign Up'
-                )}
-              </Button>
-            </div>
-          </form>
+                </div>
+                <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                  {[errors.firstName?.message || clerkErrors.firstName, errors.lastName?.message || clerkErrors.lastName]
+                    .filter(Boolean)
+                    .join(', ') || '\u00A0'}
+                </p>
+                <div className="space-y-2 text-primary-gray">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Email"
+                    className="border border-primary-gray"
+                    {...register('email')}
+                  />
+                </div>
+                <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                  {errors.email?.message || clerkErrors.emailAddress || '\u00A0'}
+                </p>
+                <div className="space-y-2 text-primary-gray">
+                  <Label htmlFor="password ">Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Password"
+                    className="border border-primary-gray"
+                    {...register('password')}
+                  />
+                </div>
+                <p className="text-red-500 text-xs min-h-[1.25rem] py-3">
+                  {errors.password?.message || clerkErrors.password || '\u00A0'}
+                </p>
+                <div className="space-y-2 text-primary-gray">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="border border-primary-gray"
+                    {...register('confirmPassword')}
+                  />
+                </div>
+                <p className="text-red-500 text-xs min-h-[1.25rem] py-3">{errors.confirmPassword?.message || '\u00A0'}</p>
+              </div>
+
+              <div className="space-y-4">
+                <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer" disabled={isLoading}>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 mr-3 -ml-1 text-white animate-spin"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        role="img"
+                        aria-label="Loading spinner"
+                      >
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      Signing Up...
+                    </div>
+                  ) : (
+                    'Sign Up'
+                  )}
+                </Button>
+              </div>
+            </form>
+          )}
           <div className="text-xs text-center">
-            <p className='text-primary-gray'>
+            <p className="text-primary-gray">
               Already Have an Account?{' '}
               <a href="/sign-in" className="text-primary-gray underline-offset-2 underline hover:text-indigo-500">
                 Log In
