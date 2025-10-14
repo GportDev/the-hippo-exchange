@@ -160,26 +160,22 @@ function SignUpComponent() {
               <p className="text-center text-primary-gray">
                 Please enter the verification code sent to your email address.
               </p>
-              <form className="mt-8 space-y-6" onSubmit={onVerify}>
-                <div className="rounded-md shadow-sm -space-y-px">
-                  <div>
-                    <Label htmlFor="code" className="sr-only">
-                      Verification Code
-                    </Label>
-                    <Input
-                      id="code"
-                      name="code"
-                      type="text"
-                      required
-                      className="relative block w-full px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-none appearance-none rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                      placeholder="Verification Code"
-                    />
-                  </div>
+              <form className="mt-8 space-y-4" onSubmit={onVerify}>
+                <div className="space-y-2 text-primary-gray">
+                  <Label htmlFor="code">Verification Code</Label>
+                  <Input
+                    id="code"
+                    name="code"
+                    type="text"
+                    required
+                    className="border border-primary-gray"
+                    placeholder="Verification Code"
+                  />
                 </div>
-                <p className="text-red-500 text-xs min-h-[1.25rem] py-3">{clerkErrors.code || '\u00A0'}</p>
+                <p className="text-red-500 text-xs min-h-[1.25rem] my-2">{clerkErrors.code || '\u00A0'}</p>
 
                 <div>
-                  <Button type="submit" className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md group hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                  <Button type="submit" className="w-full text-primary-yellow bg-primary-gray cursor-pointer">
                     Verify
                   </Button>
                 </div>
