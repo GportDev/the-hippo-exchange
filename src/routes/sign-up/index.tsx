@@ -82,9 +82,10 @@ function SignUpComponent() {
 
   return (
         <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray md:rounded-r-[6rem] rounded-b-[4rem] md:rounded-bl-none">
-        <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
-        <p className="text-2xl text-white">don't buy. borrow.</p>
+      <div className="flex flex-col justify-center items-center md:w-1/2 p-12 text-white bg-primary-gray md:rounded-r-[6rem] rounded-b-[4rem] md:rounded-bl-none flex-grow">
+        <img src="/HippoTransparent.png" alt="Hippo Exchange Logo" className="w-40 h-40 mb-4"/>
+        <h1 className="text-6xl font-bold text-primary-yellow mb-2 text-center">Hippo Exchange</h1>
+        <p className="text-2xl text-white text-center">don't buy. borrow.</p>
       </div>
       <div className="flex flex-col items-center justify-center md:w-1/2 ">
         <div className="w-full max-w-md p-8 space-y-8">
