@@ -60,6 +60,8 @@ export function MaintenanceCard({
           </p>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>Due: {formatDate(task.maintenanceDueDate)}</span>
+            <span> • </span>
+            <span>{task.assetCategory}</span>
           </div>
         </div>
         <div className="ml-4 grid space-y-4 flex-shrink-0">
