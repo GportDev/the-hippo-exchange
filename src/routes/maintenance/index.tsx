@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import type { Maintenance } from "@/lib/Types";
 
-import { MaintenanceCard } from "@/components/MaintenanceCard";
+import { MaintenanceCardWithImage } from "@/components/MaintenanceCardWithImage";
 import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
 import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
@@ -286,11 +286,12 @@ function RouteComponent() {
             </div>
           ) : (
             sortedAndFilteredItems.map((maintenance) => (
-              <MaintenanceCard
+              <MaintenanceCardWithImage
                 key={maintenance.id}
                 task={maintenance}
                 onUpdateStatus={handleUpdateStatus}
                 onViewDetails={handleViewDetails}
+                userId={user?.id ?? ''}
               />
             ))
           )}

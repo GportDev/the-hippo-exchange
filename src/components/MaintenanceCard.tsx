@@ -14,12 +14,14 @@ interface MaintenanceCardProps {
   task: Maintenance;
   onUpdateStatus?: (maintenanceId: string, status: string) => void;
   onViewDetails: (task: Maintenance) => void;
+  picture: string;
 }
 
 export function MaintenanceCard({
   task,
   onUpdateStatus,
   onViewDetails,
+  picture,
 }: MaintenanceCardProps) {
   const getStatusColor = () => {
     switch (task.maintenanceStatus) {
@@ -37,6 +39,13 @@ export function MaintenanceCard({
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start">
+        <div className="pr-2">
+          <img
+            src={picture || '/public/placeholder.jpg'}
+            alt={task.productName}
+            className="w-[150px] h-[150px] rounded-xl"
+          />  
+        </div>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h3 className="text-xl font-semibold text-primary-gray">
