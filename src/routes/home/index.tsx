@@ -2,7 +2,7 @@ import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import {
   X,
   Package,
@@ -68,13 +68,13 @@ function RouteComponent() {
   useEffect(() => {
     const toastId = "overdue-toast";
     if (!isLoading && overdueItems.length > 0) {
-      toast(
-        (t) => (
-          <div className="flex items-center justify-between w-full">
+      toast.custom(
+        (id) => (
+          <div className="flex items-center justify-between w-full bg-yellow-50 border border-yellow-400 rounded p-3">
             <Link
               to="/maintenance"
               search={{ filter: "overdue" }}
-              onClick={() => toast.dismiss(t.id)}
+              onClick={() => toast.dismiss(id)}
               className="flex items-center text-inherit no-underline"
             >
               <AlertTriangle className="h-6 w-6 mr-3 flex-shrink-0 text-yellow-500" />
@@ -89,21 +89,14 @@ function RouteComponent() {
               </div>
             </Link>
             <button
-              onClick={() => toast.dismiss(t.id)}
+              onClick={() => toast.dismiss(id)}
               className="p-1 rounded-full hover:bg-yellow-200 transition-colors ml-4 flex-shrink-0"
             >
               <X className="h-5 w-5 text-yellow-800" />
             </button>
           </div>
         ),
-        {
-          id: toastId,
-          duration: Infinity,
-          style: {
-            background: "#FFFBEB", // bg-yellow-50
-            border: "1px solid #FBBF24", // border-yellow-400
-          },
-        }
+        { id: toastId, duration: Infinity }
       );
     }
     return () => {

@@ -3,7 +3,6 @@ import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react
 import Header from '@/components/Header'
 import ClerkProvider from '@/integrations/clerk/provider'
 import Navbar from '@/components/NavBar'
-import { Toaster } from 'react-hot-toast'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
@@ -35,7 +34,6 @@ function RootComponent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Toaster position="bottom-right" reverseOrder={false} />
       <SignedIn>
         <main className='flex flex-col h-screen overflow-hidden'>
           {!shouldHideHeader && <Header />}
