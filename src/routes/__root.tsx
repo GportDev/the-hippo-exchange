@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react'
-import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router'
-import Header from '@/components/Header'
-import ClerkProvider from '@/integrations/clerk/provider'
-import Navbar from '@/components/NavBar'
-
-import type { QueryClient } from '@tanstack/react-query'
+import {
+  Outlet,
+  createRootRouteWithContext,
+  useLocation,
+} from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { SignedIn, SignedOut } from '@clerk/clerk-react'
+import { Toaster } from 'sonner'
+import { QueryClient } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+import Header from '@/components/Header'
+import Navbar from '@/components/NavBar'
 import NotFoundComponent from '@/pages/NotFoundPage'
 
 interface MyRouterContext {
@@ -38,17 +44,34 @@ function RootComponent() {
   const shouldHideHeader = location.pathname === '/sign-in' || location.pathname === '/sign-up' || location.pathname === '/verify-email'
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <SignedIn>
-        <main className='flex flex-col h-screen overflow-hidden'>
-          {!shouldHideHeader && <Header />}
-          <div className="flex flex-1 overflow-hidden">
+        <div className="flex h-screen">
+          <Toaster />
+          <aside
+            className={`group h-full bg-gray-800 text-white transition-all duration-300 ease-in-out ${
+              sidebarExpanded ? 'transform translate-x-0' : 'transform -translate-x-full'
+            }`}
+            style={{
+              width: '250px',
+              height: '100vh',
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              zIndex: '10',
+            }}
+          >
             <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
-            <div className="flex-1 overflow-auto bg-gray-50">
-              <Outlet />
+          </aside>
+          <main className='flex flex-col h-screen overflow-hidden'>
+            {!shouldHideHeader && <Header />}
+            <div className="flex flex-1 overflow-hidden">
+              <div className="flex-1 overflow-y-auto">
+                <Outlet />
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </SignedIn>
       <SignedOut>
         <div className="flex flex-col min-h-screen">
@@ -58,17 +81,11 @@ function RootComponent() {
           </div>
         </div>
       </SignedOut>
-    </div>
+    </>
   )
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  component: () => (
-    <>
-      <ClerkProvider>
-        <RootComponent />
-      </ClerkProvider>
-    </>
-  ),
+  component: RootComponent,
   notFoundComponent: NotFoundComponent,
 })

@@ -50,6 +50,9 @@ importers:
       '@tanstack/react-router-devtools':
         specifier: ^1.131.5
         version: 1.133.3(@tanstack/react-router@1.133.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.133.3)(@types/node@24.7.2)(csstype@3.1.3)(jiti@2.6.1)(lightningcss@1.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(solid-js@1.9.9)(tiny-invariant@1.3.3)(tsx@4.20.6)
+      '@tanstack/router-devtools':
+        specifier: ^1.133.3
+        version: 1.133.3(@tanstack/react-router@1.133.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.133.3)(@types/node@24.7.2)(csstype@3.1.3)(jiti@2.6.1)(lightningcss@1.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(solid-js@1.9.9)(tiny-invariant@1.3.3)(tsx@4.20.6)
       '@tanstack/router-plugin':
         specifier: ^1.121.2
         version: 1.133.3(@tanstack/react-router@1.133.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(vite@6.4.0(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6))
@@ -1578,6 +1581,18 @@ packages:
       csstype: ^3.0.10
       solid-js: '>=1.9.5'
       tiny-invariant: ^1.3.3
+    peerDependenciesMeta:
+      csstype:
+        optional: true
+
+  '@tanstack/router-devtools@1.133.3':
+    resolution: {integrity: sha512-MaWnFxjvsRjMRhD+5i9e+AOxvfIm9BraiD/DCH5aGGpTNbDHjEwdqkb1YEqr7yl3Da9dh3nbG5XGZHuVIutBmQ==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@tanstack/react-router': ^1.133.3
+      csstype: ^3.0.10
+      react: '>=18.0.0 || >=19.0.0'
+      react-dom: '>=18.0.0 || >=19.0.0'
     peerDependenciesMeta:
       csstype:
         optional: true
@@ -4053,6 +4068,33 @@ snapshots:
       - stylus
       - sugarss
       - terser
+      - tsx
+      - yaml
+
+  '@tanstack/router-devtools@1.133.3(@tanstack/react-router@1.133.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.133.3)(@types/node@24.7.2)(csstype@3.1.3)(jiti@2.6.1)(lightningcss@1.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(solid-js@1.9.9)(tiny-invariant@1.3.3)(tsx@4.20.6)':
+    dependencies:
+      '@tanstack/react-router': 1.133.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-router-devtools': 1.133.3(@tanstack/react-router@1.133.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@tanstack/router-core@1.133.3)(@types/node@24.7.2)(csstype@3.1.3)(jiti@2.6.1)(lightningcss@1.30.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(solid-js@1.9.9)(tiny-invariant@1.3.3)(tsx@4.20.6)
+      clsx: 2.1.1
+      goober: 2.1.18(csstype@3.1.3)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      vite: 7.1.10(@types/node@24.7.2)(jiti@2.6.1)(lightningcss@1.30.1)(tsx@4.20.6)
+    optionalDependencies:
+      csstype: 3.1.3
+    transitivePeerDependencies:
+      - '@tanstack/router-core'
+      - '@types/node'
+      - jiti
+      - less
+      - lightningcss
+      - sass
+      - sass-embedded
+      - solid-js
+      - stylus
+      - sugarss
+      - terser
+      - tiny-invariant
       - tsx
       - yaml
 

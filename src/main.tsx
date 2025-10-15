@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { Toaster } from 'sonner'
+import { ClerkProvider } from '@clerk/clerk-react'
 
 import * as TanStackQueryProvider from './integrations/tanstack-query/root-provider.tsx'
 
@@ -43,10 +43,11 @@ const rootElement = document.getElementById('app')
 if (rootElement) {
   const app = (
     <StrictMode>
-      <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
-        <Toaster />
-        <RouterProvider router={router} />
-      </TanStackQueryProvider.Provider>
+      <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+          <RouterProvider router={router} />
+        </TanStackQueryProvider.Provider>
+      </ClerkProvider>
     </StrictMode>
   )
   if (rootElement.innerHTML) {
