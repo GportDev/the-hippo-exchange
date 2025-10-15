@@ -40,16 +40,20 @@ if (!PUBLISHABLE_KEY) {
 
 // Render the app
 const rootElement = document.getElementById('app')
-if (rootElement && !rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement)
-  root.render(
+if (rootElement) {
+  const app = (
     <StrictMode>
       <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
         <Toaster />
         <RouterProvider router={router} />
       </TanStackQueryProvider.Provider>
-    </StrictMode>,
+    </StrictMode>
   )
+  if (rootElement.innerHTML) {
+    ReactDOM.hydrateRoot(rootElement, app)
+  } else {
+    ReactDOM.createRoot(rootElement).render(app)
+  }
 }
 
 // If you want to start measuring performance in your app, pass a function
