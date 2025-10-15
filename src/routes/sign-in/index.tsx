@@ -76,9 +76,12 @@ function SignInComponent() {
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray rounded-b-[4rem] md:rounded-r-[6rem] md:rounded-bl-none">
-        <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
-        <p className="text-2xl text-white">don't buy. borrow.</p>
+      <div className="flex flex-col justify-center items-center md:w-1/2 p-12 text-white bg-primary-gray rounded-b-[4rem] md:rounded-r-[6rem] md:rounded-bl-none flex-grow">
+        <img src="/HippoTransparent.png" alt="Hippo Exchange Logo" className="w-70 h-70 mb-4"/>
+        <div className="text-center">
+          <h1 className="text-7xl font-bold text-primary-yellow mb-2">Hippo Exchange</h1>
+          <p className="text-3xl text-white">don't buy. borrow.</p>
+        </div>
       </div>
       <div className="flex flex-col items-center justify-center md:w-1/2">
         <div className="w-full md:max-w-md p-8 space-y-8">
@@ -86,8 +89,8 @@ function SignInComponent() {
             <h2 className="text-3xl font-bold text-center text-primary-gray">Log In</h2>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-4">
-              <div className='space-y-4 text-primary-gray'>
+            <div className="space-y-6">
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="username">Username</Label>
                 <Input
                   id="username"
@@ -96,14 +99,11 @@ function SignInComponent() {
                   className="border border-primary-gray"
                   {...register('username', { required: true })}
                 />
-                {errors.username && (
-                  <p className="text-red-500">Username is required</p>
-                )}
-                {clerkErrors.identifier && (
-                  <p className="text-red-500">{clerkErrors.identifier}</p>
-                )}
               </div>
-              <div className='space-y-4 text-primary-gray'>
+              <p className="text-red-500 text-sm min-h-[1.25rem] my-4">
+                {errors.username ? 'Username is required' : clerkErrors.identifier || '\u00A0'}
+              </p>
+              <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -112,13 +112,10 @@ function SignInComponent() {
                   className="border border-primary-gray"
                   {...register('password', { required: true })}
                 />
-                {errors.password && (
-                  <p className="text-red-500">Password is required</p>
-                )}
-                {clerkErrors.password && (
-                  <p className="text-red-500">{clerkErrors.password}</p>
-                )}
               </div>
+              <p className="text-red-500 text-sm min-h-[1.25rem] my-4">
+                {errors.password ? 'Password is required' : clerkErrors.password || '\u00A0'}
+              </p>
             </div>
 
             <div>

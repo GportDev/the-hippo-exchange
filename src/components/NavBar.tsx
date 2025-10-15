@@ -13,7 +13,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
   const [showText, setShowText] = useState(isExpanded);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
     if (isExpanded) {
       timer = setTimeout(() => setShowText(true), 100);
@@ -21,7 +21,9 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
       setShowText(false);
     }
 
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isExpanded]);
   
   return (
