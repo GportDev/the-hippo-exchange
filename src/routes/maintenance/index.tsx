@@ -213,16 +213,31 @@ function RouteComponent() {
   return (
     <div className="bg-gray-50 p-6 min-h-screen">
       <section className="mx-auto max-w-7xl">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 pr-6">
           <div>
             <h1 className="text-3xl font-bold text-primary-gray">My Maintenance</h1>
             <p className="text-gray-500 mt-1">Keep track of all your maintenance tasks.</p>
           </div>
           <Button
             onClick={() => setAddModalOpen(true)}
-            className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors px-4 py-2 h-auto text-base"
+            className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors px-6 py-2 h-auto text-base flex items-center gap-2 mr-2"
           >
-            Add Maintenance
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-plus"
+            >
+              <path d="M5 12h14" />
+              <path d="M12 5v14" />
+            </svg>
+            Add Task
           </Button>
         </div>
 
