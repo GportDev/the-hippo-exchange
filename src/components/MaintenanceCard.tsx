@@ -43,7 +43,7 @@ export function MaintenanceCard({
           <img
             src={picture || '/public/placeholder.jpg'}
             alt={task.productName}
-            className="w-[150px] h-[150px] rounded-xl"
+            className="w-[150px] h-[150px] rounded-xl object-cover"
           />  
         </div>
         <div className="flex-1">

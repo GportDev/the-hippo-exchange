@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import {
   X,
   Package,
-  Star,
+  Heart,
   AlertTriangle,
   Calendar,
   ChevronRight,
@@ -217,12 +217,12 @@ function RouteComponent() {
                         {asset.brandName}
                       </p>
                     </div>
-                    <Star className="h-5 w-5 text-yellow-400 ml-auto" />
+                    <Heart className={`h-5 w-5 ${asset.favorite ? 'fill-red-500 text-red-500' : 'text-gray-400'} ml-auto`} />
                   </Link>
                 ))
               ) : (
                 <p className="text-gray-500">
-                  No favorite assets yet. Click the star on an asset to add it
+                  No favorite assets yet. Click the heart on an asset to add it
                   here.
                 </p>
               )}

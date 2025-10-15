@@ -371,6 +371,7 @@ function RouteComponent() {
                   task={maintenance}
                   onUpdateStatus={handleUpdateStatus}
                   onViewDetails={handleViewDetails}
+                  picture={asset.images && asset.images.length > 0 ? asset.images[0] : ''}
                 />
               ))
             )}

@@ -16,7 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Package, Heart, DollarSign } from "lucide-react";
+import { Search, Package, Heart, DollarSign, X, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface Asset {
   id: string;
@@ -128,6 +129,57 @@ function MyAssetsComponent() {
           `Failed to update asset: ${res.status} ${res.statusText} - ${errorText}`
         );
       }
+
+      if (res.status === 204) {
+        return null; 
+      }
+
+      return res.json();
+    },
+    onMutate: async (updatedAsset: Asset) => {
+      await queryClient.cancelQueries({ queryKey: ["assets", user?.id] });
+      const previousAssets = queryClient.getQueryData<Asset[]>(["assets", user?.id]);
+      queryClient.setQueryData(['assets', user?.id], (old: Asset[] | undefined) => {
+        if (!old) return [];
+        return old.map(asset => asset.id === updatedAsset.id ? updatedAsset : asset);
+      });
+      return { previousAssets };
+    },
+    onError: (err, updatedAsset, context) => {
+      if (context?.previousAssets) {
+        queryClient.setQueryData(["assets", user?.id], context.previousAssets);
+      }
+      toast(
+        (t) => (
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
+              <AlertTriangle className="h-6 w-6 mr-3 flex-shrink-0 text-red-500" />
+              <div className="flex flex-col">
+                <p className="font-bold text-red-800">
+                  Update Failed
+                </p>
+                <p className="text-sm text-red-700">
+                  Could not update {updatedAsset.itemName}.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="p-1 rounded-full hover:bg-red-200 transition-colors ml-4 flex-shrink-0"
+            >
+              <X className="h-5 w-5 text-red-800" />
+            </button>
+          </div>
+        ),
+        {
+          id: `favorite-error-${updatedAsset.id}`,
+          duration: 5000,
+          style: {
+            background: "#FEF2F2", // bg-red-50
+            border: "1px solid #F87171", // border-red-400
+          },
+        }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
