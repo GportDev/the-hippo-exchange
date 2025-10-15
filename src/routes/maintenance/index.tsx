@@ -71,7 +71,31 @@ function RouteComponent() {
     enabled: !!user,
   });
 
-  const editMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
+  const addMaintenanceMutation = useMutation({
+    mutationFn: (newMaintenance: Omit<Maintenance, "id">) => {
+      if (!user) throw new Error("User not authenticated");
+      return apiFetch(
+        user.id,
+        `/assets/${newMaintenance.assetId}/maintenance`,
+        {
+          method: "POST",
+          body: JSON.stringify(newMaintenance),
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+    },
+    onError: (error) => {
+      console.error("Failed to create recurring maintenance task:", error);
+    },
+  });
+
+  const editMutation = useMutation<
+    Maintenance,
+    Error,
+    Partial<Maintenance> & { id: string }
+  >({
     mutationFn: async (updatedTask) => {
       if (!user) throw new Error("User not authenticated");
       const { id, ...payload } = updatedTask;
@@ -110,20 +134,82 @@ function RouteComponent() {
     },
   });
 
-  const patchMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
-    mutationFn: async (updatedTask) => {
+  const updateMaintenanceMutation = useMutation<
+    Maintenance,
+    Error,
+    { taskId: string; payload: Partial<Maintenance> },
+    { originalTask?: Maintenance }
+  >({
+    mutationFn: async ({ taskId, payload }) => {
       if (!user) throw new Error("User not authenticated");
-      const { id, ...payload } = updatedTask;
-      return apiFetch(user.id, `/maintenance/${id}`, {
+      return apiFetch(user.id, `/maintenance/${taskId}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+    onSuccess: (_data, variables, context) => {
+      const originalTask = context?.originalTask;
+
+      if (variables.payload.isCompleted && originalTask?.preserveFromPrior) {
+        const oldDueDate = new Date(originalTask.maintenanceDueDate);
+        const interval = originalTask.recurrenceInterval || 0;
+
+        switch (originalTask.recurrenceUnit) {
+          case "Days":
+            oldDueDate.setDate(oldDueDate.getDate() + interval);
+            break;
+          case "Weeks":
+            oldDueDate.setDate(oldDueDate.getDate() + interval * 7);
+            break;
+          case "Months":
+            oldDueDate.setMonth(oldDueDate.getMonth() + interval);
+            break;
+          case "Years":
+            oldDueDate.setFullYear(oldDueDate.getFullYear() + interval);
+            break;
+        }
+        const newDueDate = oldDueDate.toISOString();
+
+        const nextTaskPayload: Omit<Maintenance, "id"> = {
+          ...originalTask,
+          maintenanceDueDate: newDueDate,
+          isCompleted: false,
+          maintenanceStatus: "Upcoming",
+        };
+
+        delete (nextTaskPayload as Partial<Maintenance>).id;
+
+        addMaintenanceMutation.mutate(nextTaskPayload);
+      } else {
+        queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+      }
     },
-    onError: (error) => {
-      console.error("Failed to patch maintenance task:", error);
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({
+        queryKey: ["maintenance", user?.id],
+      });
+      const previousMaintenance = queryClient.getQueryData<Maintenance[]>([
+        "maintenance",
+        user?.id,
+      ]);
+      const originalTask = previousMaintenance?.find(
+        (task) => task.id === variables.taskId,
+      );
+      return { originalTask };
+    },
+    onError: (err, _variables, context) => {
+      console.error("Update failed:", err);
+      if (context?.originalTask) {
+        queryClient.setQueryData(
+          ["maintenance", user?.id],
+          (old: Maintenance[] = []) =>
+            old.map((task) =>
+              task.id === context.originalTask?.id
+                ? context.originalTask
+                : task,
+            ),
+        );
+      }
     },
   });
 
@@ -145,7 +231,7 @@ function RouteComponent() {
   });
 
   const handleUpdateStatus = (id: string, isCompleted: boolean) => {
-    patchMutation.mutate({ id, isCompleted });
+    updateMaintenanceMutation.mutate({ taskId: id, payload: { isCompleted } });
   };
 
   const handleDelete = (taskId: string) => {

@@ -77,20 +77,29 @@ export function EditMaintenanceModal({
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
+  const {
+    maintenanceTitle = "",
+    maintenanceDescription = "",
+    maintenanceDueDate = "",
+    costPaid,
+    toolLocation = "",
+    isCompleted = false,
+    preserveFromPrior = false,
+    recurrenceInterval,
+    recurrenceUnit = 'Weeks',
+  } = formData;
+
   const handleSave = () => {
     const validationErrors: Record<string, string> = {};
 
-    if (!formData.maintenanceTitle || formData.maintenanceTitle.length < 2) {
+    if (!maintenanceTitle || maintenanceTitle.length < 2) {
       validationErrors.maintenanceTitle = "Title must be at least 2 characters.";
     }
-    if ((formData.costPaid ?? 0) < 0.01 && formData.costPaid !== 0) {
+    if ((costPaid ?? 0) < 0.01 && costPaid !== 0) {
       validationErrors.costPaid = "Cost must be $0.00 or greater.";
     }
-    if (!formData.toolLocation || formData.toolLocation.length < 2) {
+    if (!toolLocation || toolLocation.length < 2) {
       validationErrors.toolLocation = "Tool location must be at least 2 characters.";
-    }
-    if (!toolsInput.trim()) {
-      validationErrors.requiredTools = "At least one tool is required.";
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -100,38 +109,36 @@ export function EditMaintenanceModal({
 
     setErrors({});
 
-    // Filter out empty/null values from formData, but preserve 0 values and false booleans
-    const cleanFormData = Object.fromEntries(
-      Object.entries(formData).filter(([_, v]) => {
-        if (v === false || v === 0) return true; // Preserve false and 0 values
-        return v !== "" && v !== null && v !== undefined;
-      })
-    );
+    // Create a new Date object from the dueDate string
+    const date = new Date(maintenanceDueDate + "T00:00:00");
 
+    // Format the date to ISO 8601 format in UTC
+    const isoDate = date.toISOString();
     const updatedTask: Maintenance = {
       ...task,
-      ...cleanFormData,
+      maintenanceTitle,
+      maintenanceDescription,
+      maintenanceDueDate: isoDate,
+      isCompleted,
+      preserveFromPrior,
+      requiredTools: toolsInput.split(',').map(tool => tool.trim()).filter(Boolean),
       id: task.id,
       assetId: task.assetId,
       brandName: task.brandName,
       productName: task.productName,
       assetCategory: task.assetCategory || "Electronics", // Provide a valid default category
       purchaseLocation: task.purchaseLocation || undefined,
-      maintenanceDueDate: formData.maintenanceDueDate || task.maintenanceDueDate,
-      requiredTools: toolsInput.split(',').map(tool => tool.trim()).filter(tool => tool), // Convert to string array
-      maintenanceStatus: formData.isCompleted ? "Completed" : (task.maintenanceStatus || "Upcoming"),
-      preserveFromPrior: formData.preserveFromPrior ?? task.preserveFromPrior ?? false,
-      isCompleted: formData.isCompleted ?? task.isCompleted ?? false,
+      maintenanceStatus: isCompleted ? "Completed" : (task.maintenanceStatus || "Upcoming"),
     };
     
-    if (formData.preserveFromPrior === false) {
+    if (preserveFromPrior === false) {
       updatedTask.recurrenceInterval = undefined;
       updatedTask.recurrenceUnit = undefined;
     } else {
       // Ensure recurrence fields have valid values when preserveFromPrior is true
-      if (formData.preserveFromPrior === true) {
-        updatedTask.recurrenceInterval = formData.recurrenceInterval ?? task.recurrenceInterval ?? 2;
-        updatedTask.recurrenceUnit = formData.recurrenceUnit ?? task.recurrenceUnit ?? 'Weeks';
+      if (preserveFromPrior === true) {
+        updatedTask.recurrenceInterval = recurrenceInterval ?? task.recurrenceInterval ?? 2;
+        updatedTask.recurrenceUnit = recurrenceUnit ?? task.recurrenceUnit ?? 'Weeks';
         
         // Validate that recurrenceInterval is not null when preserveFromPrior is true
         if (updatedTask.recurrenceInterval === null || updatedTask.recurrenceInterval === undefined) {
@@ -191,7 +198,7 @@ export function EditMaintenanceModal({
               <Label htmlFor="maintenanceTitle">Title</Label>
               <Input
                 id="maintenanceTitle"
-                value={formData.maintenanceTitle || ""}
+                value={maintenanceTitle}
                 onChange={handleChange}
               />
               {errors.maintenanceTitle && <p className="text-sm text-red-500 mt-1">{errors.maintenanceTitle}</p>}
@@ -202,7 +209,7 @@ export function EditMaintenanceModal({
                 <Input
                   id="maintenanceDueDate"
                   type="date"
-                  value={formData.maintenanceDueDate || ""}
+                  value={maintenanceDueDate}
                   onChange={handleChange}
                 />
               </div>
@@ -211,7 +218,7 @@ export function EditMaintenanceModal({
                 <Input
                   id="costPaid"
                   type="number"
-                  value={formData.costPaid ?? ''}
+                  value={costPaid ?? ''}
                   onChange={handleNumberChange}
                   placeholder="e.g. 29.99"
                 />
@@ -221,7 +228,7 @@ export function EditMaintenanceModal({
             <div className="flex items-center space-x-2 pt-2">
               <Checkbox
                 id="isCompleted"
-                checked={formData.isCompleted}
+                checked={isCompleted}
                 onCheckedChange={(checked) =>
                   handleSelectChange("isCompleted", checked as boolean)
                 }
@@ -237,7 +244,7 @@ export function EditMaintenanceModal({
               <Label htmlFor="maintenanceDescription">Description</Label>
               <Textarea
                 id="maintenanceDescription"
-                value={formData.maintenanceDescription || ""}
+                value={maintenanceDescription}
                 onChange={handleChange}
                 placeholder="Add any relevant notes or instructions..."
               />
@@ -246,7 +253,7 @@ export function EditMaintenanceModal({
               <Label htmlFor="toolLocation">Tool Location</Label>
               <Input
                 id="toolLocation"
-                value={formData.toolLocation || ""}
+                value={toolLocation}
                 onChange={handleChange}
                 placeholder="e.g. Garage, Shed"
               />
@@ -267,7 +274,7 @@ export function EditMaintenanceModal({
             <div className="flex items-center space-x-2 pt-2">
               <Checkbox
                 id="preserveFromPrior"
-                checked={formData.preserveFromPrior}
+                checked={preserveFromPrior}
                 onCheckedChange={(checked) =>
                   handleSelectChange("preserveFromPrior", checked as boolean)
                 }
@@ -280,14 +287,14 @@ export function EditMaintenanceModal({
               </label>
             </div>
 
-            {formData.preserveFromPrior && (
+            {preserveFromPrior && (
               <div className="grid grid-cols-2 gap-4 p-4 border rounded-md bg-gray-50/50">
                 <div className="space-y-2">
                   <Label htmlFor="recurrenceInterval">Repeat Every</Label>
                   <Input
                     id="recurrenceInterval"
                     type="number"
-                    value={formData.recurrenceInterval ?? 2}
+                    value={recurrenceInterval ?? 2}
                     onChange={(e) => setFormData(prev => ({ ...prev, recurrenceInterval: Number(e.target.value) }))}
                     min="1"
                   />
@@ -295,7 +302,7 @@ export function EditMaintenanceModal({
                 <div className="space-y-2">
                   <Label htmlFor="recurrenceUnit">Unit</Label>
                   <Select
-                    value={formData.recurrenceUnit ?? 'Weeks'}
+                    value={recurrenceUnit}
                     onValueChange={(value) => handleSelectChange('recurrenceUnit', value as 'Days' | 'Weeks' | 'Months' | 'Years')}
                   >
                     <SelectTrigger>

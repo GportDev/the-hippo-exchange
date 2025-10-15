@@ -116,7 +116,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
         // Fields from form state
         maintenanceTitle: title,
         maintenanceDescription: description,
-        maintenanceDueDate: new Date(dueDate).toISOString(),
+        maintenanceDueDate: new Date(dueDate + 'T00:00:00').toISOString(),
         isCompleted,
         
         // Fields for recurrence
@@ -179,9 +179,6 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
     }
     if (toolLocation.length < 2) {
       validationErrors.toolLocation = "Tool location must be at least 2 characters.";
-    }
-    if (requiredTools.split(',').map(t => t.trim()).filter(Boolean).length < 1) {
-      validationErrors.requiredTools = "At least one tool is required.";
     }
     if (!dueDate) {
       validationErrors.dueDate = "Due date is required.";
