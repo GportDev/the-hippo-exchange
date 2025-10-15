@@ -36,15 +36,43 @@ interface AddMaintenanceModalProps {
 export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenanceModalProps) {
   const queryClient = useQueryClient();
   const { user } = useUser();
+  const today = new Date().toISOString().split("T")[0];
 
   const [selectedAssetId, setSelectedAssetId] = useState(assetId || "");
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("pending");
-  const [preserveFromPrior, setPreserveFromPrior] = useState(false);
-  const [requiredTools, setRequiredTools] = useState("");
+  const [isCompleted, setIsCompleted] = useState(false);
   const [toolLocation, setToolLocation] = useState("");
+  const [requiredTools, setRequiredTools] = useState<string>("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  
+  // Use localStorage to persist recurrence settings
+  const [preserveFromPrior, setPreserveFromPrior] = useState(() => {
+    const saved = localStorage.getItem("preserveFromPrior");
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [recurrenceInterval, setRecurrenceInterval] = useState(() => {
+    const saved = localStorage.getItem("recurrenceInterval");
+    return saved ? Number(JSON.parse(saved)) : 2;
+  });
+  const [recurrenceUnit, setRecurrenceUnit] = useState<'Days' | 'Weeks' | 'Months' | 'Years'>(() => {
+    const saved = localStorage.getItem("recurrenceUnit");
+    return saved ? JSON.parse(saved) : 'Weeks';
+  });
+
+  // Effects to save recurrence settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("preserveFromPrior", JSON.stringify(preserveFromPrior));
+  }, [preserveFromPrior]);
+
+  useEffect(() => {
+    localStorage.setItem("recurrenceInterval", JSON.stringify(recurrenceInterval));
+  }, [recurrenceInterval]);
+
+  useEffect(() => {
+    localStorage.setItem("recurrenceUnit", JSON.stringify(recurrenceUnit));
+  }, [recurrenceUnit]);
 
   // Effect to sync state if assetId prop changes
   useEffect(() => {
@@ -62,40 +90,59 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
     enabled: !!user && isOpen && !assetId, // Only fetch if no specific asset is provided
   });
 
-  const { data: singleAsset } = useQuery<Asset>({
-    queryKey: ["assets", assetId],
+  // Fetch details for the currently selected asset
+  const { data: selectedAsset } = useQuery<Asset>({
+    queryKey: ["asset", selectedAssetId],
     queryFn: async () => {
-      if (!user || !assetId) throw new Error("Missing user or assetId");
-      return apiFetch(user.id, `/assets/${assetId}`);
+      if (!user || !selectedAssetId) return null;
+      return apiFetch(user.id, `/assets/${selectedAssetId}`);
     },
-    enabled: !!user && isOpen && !!assetId,
+    enabled: !!user && !!selectedAssetId,
   });
 
   const addMaintenanceMutation = useMutation({
     mutationFn: async () => {
-      if (!user || !selectedAssetId) throw new Error("Missing required information.");
+      if (!user || !selectedAssetId || !selectedAsset) throw new Error("Missing required information.");
 
-      const asset = assetId ? singleAsset : assets.find((a) => a.id === selectedAssetId);
-      if (!asset) throw new Error("Selected asset not found.");
-
-      const newMaintenance = {
+      const newMaintenancePayload = {
         assetId: selectedAssetId,
-        brandName: asset.brandName,
-        productName: asset.itemName,
-        purchaseLocation: asset.currentLocation,
-        costPaid: asset.purchaseCost,
+        // Fields from selected asset
+        brandName: selectedAsset.brandName,
+        productName: selectedAsset.itemName,
+        assetCategory: selectedAsset.category || "Electronics",
+        costPaid: selectedAsset.purchaseCost,
+        purchaseLocation: selectedAsset.purchaseLocation || undefined,
+        
+        // Fields from form state
         maintenanceTitle: title,
         maintenanceDescription: description,
         maintenanceDueDate: new Date(dueDate).toISOString(),
-        maintenanceStatus: status,
-        preserveFromPrior: preserveFromPrior,
-        requiredTools: requiredTools.split(",").map((t) => t.trim()),
+        isCompleted,
+        
+        // Fields for recurrence
+        preserveFromPrior,
+        recurrenceInterval: preserveFromPrior ? recurrenceInterval : undefined,
+        recurrenceUnit: preserveFromPrior ? recurrenceUnit : undefined,
+
+        // Use state for tool location and required tools
         toolLocation: toolLocation,
+        requiredTools: requiredTools.split(',').map(t => t.trim()).filter(Boolean),
+
+        // Hardcoded or default values to satisfy backend validation
+        maintenanceStatus: isCompleted ? "Completed" : "Upcoming",
       };
+
+      // Clean the payload: remove any keys with null or empty string values
+      const cleanedPayload = Object.fromEntries(
+        Object.entries(newMaintenancePayload).filter(([_, v]) => v !== "" && v != null)
+      );
+
+      console.log("AddMaintenance payload:", cleanedPayload);
+      console.log("AddMaintenance JSON:", JSON.stringify(cleanedPayload));
 
       return apiFetch(user.id, `/assets/${selectedAssetId}/maintenance`, {
         method: "POST",
-        body: JSON.stringify(newMaintenance),
+        body: JSON.stringify(cleanedPayload),
       });
     },
     onSuccess: () => {
@@ -112,10 +159,10 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
       setTitle("");
       setDueDate("");
       setDescription("");
-      setStatus("pending");
-      setPreserveFromPrior(false);
-      setRequiredTools("");
+      setIsCompleted(false);
       setToolLocation("");
+      setRequiredTools("");
+      // Note: We no longer reset cost as it's derived from the asset
     },
     onError: (error) => {
       console.error("Failed to add maintenance:", error);
@@ -125,6 +172,29 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const validationErrors: Record<string, string> = {};
+
+    if (title.length < 2) {
+      validationErrors.title = "Title must be at least 2 characters.";
+    }
+    if (toolLocation.length < 2) {
+      validationErrors.toolLocation = "Tool location must be at least 2 characters.";
+    }
+    if (requiredTools.split(',').map(t => t.trim()).filter(Boolean).length < 1) {
+      validationErrors.requiredTools = "At least one tool is required.";
+    }
+    if (!dueDate) {
+      validationErrors.dueDate = "Due date is required.";
+    } else if (new Date(dueDate) < new Date(today)) {
+      validationErrors.dueDate = "Due date cannot be in the past.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
     addMaintenanceMutation.mutate();
   };
 
@@ -175,42 +245,45 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
               </div>
             )}
 
+            {selectedAsset && (
+              <div className="p-4 border rounded-md bg-gray-50/80 text-sm">
+                <h4 className="font-semibold text-primary-gray mb-2">Asset Details</h4>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                  <strong className="text-gray-500">Name:</strong>
+                  <span>{selectedAsset.itemName}</span>
+                  <strong className="text-gray-500">Brand:</strong>
+                  <span>{selectedAsset.brandName}</span>
+                  <strong className="text-gray-500">Category:</strong>
+                  <span>{selectedAsset.category}</span>
+                  <strong className="text-gray-500">Cost:</strong>
+                  <span>${selectedAsset.purchaseCost.toFixed(2)}</span>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">Maintenance Title</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g., Oil Change, Filter Replacement"
                 required
               />
+              {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title}</p>}
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="dueDate">Due Date</Label>
-                <Input
-                  id="dueDate"
-                  type="date"
-                  value={dueDate}
-                  onChange={(e) => setDueDate(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="status">Status</Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="overdue">Overdue</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="dueDate">Due Date</Label>
+              <Input
+                id="dueDate"
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                min={today}
+                required
+              />
+              {errors.dueDate && <p className="text-sm text-red-500 mt-1">{errors.dueDate}</p>}
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -221,24 +294,27 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="requiredTools">Required Tools</Label>
-                <Input
-                  id="requiredTools"
-                  value={requiredTools}
-                  onChange={(e) => setRequiredTools(e.target.value)}
-                  placeholder="Comma-separated tools"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="toolLocation">Tool Location</Label>
-                <Input
-                  id="toolLocation"
-                  value={toolLocation}
-                  onChange={(e) => setToolLocation(e.target.value)}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="toolLocation">Tool Location</Label>
+              <Input
+                id="toolLocation"
+                value={toolLocation}
+                onChange={(e) => setToolLocation(e.target.value)}
+                placeholder="e.g., Garage, Shed, Toolbox"
+              />
+              {errors.toolLocation && <p className="text-sm text-red-500 mt-1">{errors.toolLocation}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="requiredTools">Required Tools</Label>
+              <Input
+                id="requiredTools"
+                value={requiredTools}
+                onChange={(e) => setRequiredTools(e.target.value)}
+                placeholder="e.g., Wrench, Screwdriver"
+              />
+              {errors.requiredTools && <p className="text-sm text-red-500 mt-1">{errors.requiredTools}</p>}
+              <p className="text-xs text-gray-500">Separate multiple tools with a comma.</p>
             </div>
 
             <div className="flex items-center space-x-2 pt-2">
@@ -256,6 +332,38 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
                 Preserve for future recurrence
               </label>
             </div>
+
+            {preserveFromPrior && (
+              <div className="grid grid-cols-2 gap-4 p-4 border rounded-md bg-gray-50/50">
+                  <div className="space-y-2">
+                    <Label htmlFor="recurrenceInterval">Repeat Every</Label>
+                    <Input
+                      id="recurrenceInterval"
+                      type="number"
+                      value={recurrenceInterval}
+                      onChange={(e) => setRecurrenceInterval(Number(e.target.value))}
+                      min="1"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="recurrenceUnit">Unit</Label>
+                    <Select
+                      value={recurrenceUnit}
+                      onValueChange={(value) => setRecurrenceUnit(value as 'Days' | 'Weeks' | 'Months' | 'Years')}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Days">Days</SelectItem>
+                        <SelectItem value="Weeks">Weeks</SelectItem>
+                        <SelectItem value="Months">Months</SelectItem>
+                        <SelectItem value="Years">Years</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+              </div>
+            )}
           </form>
         </div>
         <DialogFooter className="flex-shrink-0 border-t px-6 py-4">

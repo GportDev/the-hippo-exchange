@@ -36,7 +36,6 @@ interface CreateAssetRequest {
   currentLocation: string;
   images: string[];
   conditionDescription: string;
-  ownerUserId: string;
   status: string;
   favorite: boolean;
 }
@@ -58,8 +57,9 @@ export default function AddAssetModal() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [conditionDescription, setConditionDescription] = useState("");
-  const [status, setStatus] = useState("available");
+  const [status, setStatus] = useState("Available");
   const [favorite, setFavorite] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Mutation for uploading the image file
   const uploadImageMutation = useMutation({
@@ -112,7 +112,19 @@ export default function AddAssetModal() {
       // Invalidate and refetch the assets query to show the new asset
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
       setOpen(false); // Close the modal on success
-      // You could also add a success toast notification here
+      // Reset form state after successful submission
+      setItemName("");
+      setBrandName("");
+      setCategory("");
+      setPurchaseDate("");
+      setPurchaseCost(null);
+      setCurrentLocation("");
+      setConditionDescription("");
+      setStatus("Available");
+      setFavorite(false);
+      setSelectedFile(null);
+      setPreviewUrl(null);
+      setErrors({});
     },
     onError: (error) => {
       // You can handle errors here, e.g., show a toast notification
@@ -176,26 +188,65 @@ export default function AddAssetModal() {
   const createAsset = (imageUrl: string) => {
     if (!user) return;
 
+    const purchaseDateUTC = purchaseDate 
+      ? `${purchaseDate}T00:00:00.000Z` 
+      : new Date().toISOString();
+
     const newAsset: CreateAssetRequest = {
       itemName,
       brandName,
       category,
-      purchaseDate: purchaseDate ? new Date(purchaseDate).toISOString() : new Date().toISOString(),
+      purchaseDate: purchaseDateUTC,
       purchaseCost: purchaseCost ?? 0,
       currentLocation,
       images: imageUrl ? [imageUrl] : [],
       conditionDescription,
-      ownerUserId: user.id,
       status,
       favorite,
     };
     addAssetMutation.mutate(newAsset);
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (itemName.length < 3) {
+      newErrors.itemName = "Item name must be at least 3 characters long.";
+    }
+    if (brandName.length < 3) {
+      newErrors.brandName = "Brand name must be at least 3 characters long.";
+    }
+    if (category.length < 3) {
+      newErrors.category = "Category must be at least 3 characters long.";
+    }
+    if (!currentLocation) {
+      newErrors.currentLocation = "Location is required.";
+    } else if (currentLocation.length < 3) {
+      newErrors.currentLocation = "Location must be at least 3 characters long.";
+    }
+    if (purchaseDate && new Date(purchaseDate) > new Date()) {
+      newErrors.purchaseDate = "Purchase date cannot be in the future.";
+    }
+    // Add more validation rules here if needed
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
       alert("You must be logged in to add an asset.");
+      return;
+    }
+
+    if (!validateForm()) {
+      // Find the first error and alert the user
+      const firstErrorKey = Object.keys(errors).find(key => errors[key]);
+      const firstErrorMessage = firstErrorKey ? errors[firstErrorKey] : "Please fix the errors before submitting.";
+      // A more user-friendly approach would be to scroll to the field
+      // and display the error message next to it.
+      alert(firstErrorMessage);
       return;
     }
 
@@ -302,6 +353,7 @@ export default function AddAssetModal() {
                 className="col-span-3"
                 required
               />
+              {errors.itemName && <p className="text-red-500 text-sm">{errors.itemName}</p>}
             </div>
 
             {/* Brand */}
@@ -314,6 +366,7 @@ export default function AddAssetModal() {
                 className="col-span-3"
                 required
               />
+              {errors.brandName && <p className="text-red-500 text-sm">{errors.brandName}</p>}
             </div>
 
             {/* Category */}
@@ -326,6 +379,7 @@ export default function AddAssetModal() {
                 className="col-span-3"
                 required
               />
+              {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
             </div>
 
             {/* Purchase Date */}
@@ -338,7 +392,9 @@ export default function AddAssetModal() {
                 onChange={(e) => setPurchaseDate(e.target.value)}
                 className="col-span-3 cursor-text"
                 required
+                max={new Date().toISOString().split("T")[0]}
               />
+              {errors.purchaseDate && <p className="text-red-500 text-sm">{errors.purchaseDate}</p>}
             </div>
 
             {/* Purchase Cost */}
@@ -367,6 +423,7 @@ export default function AddAssetModal() {
                   onChange={(e) => setCurrentLocation(e.target.value)}
                   className="flex-grow w-full"
                   placeholder="e.g., Detroit, MI"
+                  required
                 />
                 <Button
                   type="button"
@@ -378,6 +435,7 @@ export default function AddAssetModal() {
                   {isFetchingLocation ? "Fetching..." : "Use My Location"}
                 </Button>
               </div>
+              {errors.currentLocation && <p className="text-red-500 text-sm">{errors.currentLocation}</p>}
             </div>
 
             {/* Condition Description */}
@@ -402,9 +460,9 @@ export default function AddAssetModal() {
                   <SelectValue placeholder="Select a status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="available">Available</SelectItem>
-                  <SelectItem value="in_repair">In Repair</SelectItem>
-                  <SelectItem value="unlisted">Unlisted</SelectItem>
+                  <SelectItem value="Available">Available</SelectItem>
+                  <SelectItem value="In_Repair">In Repair</SelectItem>
+                  <SelectItem value="Unlisted">Unlisted</SelectItem>
                 </SelectContent>
               </Select>
             </div>

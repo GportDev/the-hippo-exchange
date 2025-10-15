@@ -11,7 +11,8 @@ import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
 import { Button } from "@/components/ui/button";
 
-type MaintenanceFilter = "all" | "overdue" | "pending" | "completed";
+type MaintenanceStatus = "overdue" | "pending" | "completed";
+type MaintenanceFilter = "all" | MaintenanceStatus;
 
 const validateFilter = (filter: unknown): MaintenanceFilter => {
   const validFilters: MaintenanceFilter[] = [
@@ -40,7 +41,7 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<MaintenanceFilter>(filter);
-  const [selectedTask, setSelectedTask] = useState<Maintenance | null>(null);
+  const [selectedTask, setSelectedTask] = useState<(Maintenance & { status: MaintenanceStatus }) | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
@@ -70,14 +71,33 @@ function RouteComponent() {
     enabled: !!user,
   });
 
-  const editMutation = useMutation({
-    mutationFn: async (updatedTask: Maintenance) => {
+  const editMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
+    mutationFn: async (updatedTask) => {
       if (!user) throw new Error("User not authenticated");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id, ...taskData } = updatedTask;
+      const { id, ...payload } = updatedTask;
+      
+      // Clean the payload: convert null to undefined and handle empty strings
+      const cleanPayload = Object.fromEntries(
+        Object.entries(payload).map(([key, value]) => {
+          if (value === null) {
+            return [key, undefined];
+          }
+          if (value === "" && ['purchaseLocation'].includes(key)) {
+            return [key, undefined];
+          }
+          // Ensure assetCategory has a valid value if it's empty
+          if (key === 'assetCategory' && (value === "" || value === null || value === undefined)) {
+            return [key, "Electronics"];
+          }
+          return [key, value];
+        })
+      );
+      
+      console.log("Mutation payload:", cleanPayload);
+      console.log("JSON stringified payload:", JSON.stringify(cleanPayload));
       return apiFetch(user.id, `/maintenance/${id}`, {
         method: "PUT",
-        body: JSON.stringify(taskData),
+        body: JSON.stringify(cleanPayload),
       });
     },
     onSuccess: () => {
@@ -85,10 +105,30 @@ function RouteComponent() {
       setEditModalOpen(false);
       setSelectedTask(null);
     },
+    onError: (error) => {
+      console.error("Failed to update maintenance task:", error);
+    },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: async (taskId: string) => {
+  const patchMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
+    mutationFn: async (updatedTask) => {
+      if (!user) throw new Error("User not authenticated");
+      const { id, ...payload } = updatedTask;
+      return apiFetch(user.id, `/maintenance/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+    },
+    onError: (error) => {
+      console.error("Failed to patch maintenance task:", error);
+    },
+  });
+
+  const deleteMutation = useMutation<void, Error, string>({
+    mutationFn: async (taskId) => {
       if (!user) throw new Error("User not authenticated");
       return apiFetch(user.id, `/maintenance/${taskId}`, {
         method: "DELETE",
@@ -104,69 +144,15 @@ function RouteComponent() {
     },
   });
 
-  const createNextMaintenanceMutation = useMutation({
-    mutationFn: async (newMaintenance: Omit<Maintenance, "id">) => {
-      if (!user) throw new Error("User not authenticated");
-      const { assetId, ...body } = newMaintenance;
-      return apiFetch(user.id, `/assets/${assetId}/maintenance`, {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
-    },
-    onError: (error) => {
-      console.error("Failed to create next maintenance task:", error);
-    },
-  });
-
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({
-      task,
-      newStatus,
-    }: {
-      task: Maintenance;
-      newStatus: string;
-    }) => {
-      if (!user) throw new Error("User not authenticated");
-      const { id, ...updatedTaskData } = { ...task, maintenanceStatus: newStatus };
-      return apiFetch(user.id, `/maintenance/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(updatedTaskData),
-      });
-    },
-    onSuccess: (_data, { task, newStatus }) => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
-      if (newStatus === "completed" && task.preserveFromPrior) {
-        const twoWeeksFromNow = new Date();
-        twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
-        const { id, ...oldTaskData } = task;
-        const newTask: Omit<Maintenance, "id"> = {
-          ...oldTaskData,
-          maintenanceStatus: "pending",
-          maintenanceDueDate: twoWeeksFromNow.toISOString(),
-        };
-        createNextMaintenanceMutation.mutate(newTask);
-      }
-    },
-    onError: (error) => {
-      console.error("Failed to update status:", error);
-    },
-  });
-
-  const handleUpdateStatus = (id: string, status: string) => {
-    const taskToUpdate = maintenances.find((task) => task.id === id);
-    if (taskToUpdate) {
-      updateStatusMutation.mutate({ task: taskToUpdate, newStatus: status });
-    }
+  const handleUpdateStatus = (id: string, isCompleted: boolean) => {
+    patchMutation.mutate({ id, isCompleted });
   };
 
   const handleDelete = (taskId: string) => {
     deleteMutation.mutate(taskId);
   };
 
-  const handleViewDetails = (task: Maintenance) => {
+  const handleViewDetails = (task: Maintenance & { status: MaintenanceStatus }) => {
     setSelectedTask(task);
     setIsDetailsModalOpen(true);
   };
@@ -176,23 +162,32 @@ function RouteComponent() {
     setSelectedTask(null);
   };
 
-  const handleEdit = (task: Maintenance) => {
+  const handleEdit = (task: Maintenance & { status: MaintenanceStatus }) => {
     setSelectedTask(task);
-    setIsDetailsModalOpen(false); // Close details modal
-    setEditModalOpen(true); // Open edit modal
+    setIsDetailsModalOpen(false);
+    setEditModalOpen(true);
   };
 
   const handleSaveEdit = (updatedTask: Maintenance) => {
-    editMutation.mutate(updatedTask);
+    if (updatedTask.id) {
+      editMutation.mutate({ ...updatedTask, id: updatedTask.id });
+    }
   };
 
   const sortedAndFilteredItems = useMemo(() => {
     const now = new Date();
+    now.setHours(0, 0, 0, 0); 
+
     const itemsWithStatus = maintenances.map((task) => {
-      const isOverdue =
-        task.maintenanceStatus === "pending" &&
-        new Date(task.maintenanceDueDate) < now;
-      return { ...task, status: isOverdue ? "overdue" : task.maintenanceStatus };
+      let status: MaintenanceStatus;
+      if (task.isCompleted) {
+        status = "completed";
+      } else if (new Date(task.maintenanceDueDate) < now) {
+        status = "overdue";
+      } else {
+        status = "pending";
+      }
+      return { ...task, status };
     });
 
     const filtered = itemsWithStatus.filter((item) => {
@@ -204,9 +199,9 @@ function RouteComponent() {
       const dateA = new Date(a.maintenanceDueDate).getTime();
       const dateB = new Date(b.maintenanceDueDate).getTime();
       if (activeFilter === "completed") {
-        return dateB - dateA; // Most recent first for history
+        return dateB - dateA; 
       }
-      return dateA - dateB; // Soonest first for all others
+      return dateA - dateB;
     });
   }, [maintenances, activeFilter]);
 
@@ -249,7 +244,6 @@ function RouteComponent() {
           onSave={handleSaveEdit}
         />
 
-        {/* Filter Tabs */}
         <div className="flex gap-6 border-b border-gray-200 mb-6">
           {[
             { key: "all", label: "All" },
@@ -272,7 +266,6 @@ function RouteComponent() {
           ))}
         </div>
 
-        {/* Maintenance Items List */}
         <div className="space-y-4">
           {isLoading ? (
             <div className="text-center text-primary-gray">
