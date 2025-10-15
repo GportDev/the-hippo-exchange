@@ -14,14 +14,19 @@ interface MyRouterContext {
 
 function RootComponent() {
   const location = useLocation()
-  const [sidebarExpanded, setSidebarExpanded] = useState(() => {
-    // Load from localStorage on initial render
+  const [sidebarExpanded, setSidebarExpanded] = useState(false);
+
+  useEffect(() => {
+    // This effect runs only on the client, after the initial render.
     const saved = localStorage.getItem('sidebar-expanded')
-    return saved ? JSON.parse(saved) : false
-  })
+    if (saved !== null) {
+      setSidebarExpanded(JSON.parse(saved))
+    }
+  }, []);
 
   // Save to localStorage whenever state changes
   useEffect(() => {
+    // This also runs only on the client.
     localStorage.setItem('sidebar-expanded', JSON.stringify(sidebarExpanded))
   }, [sidebarExpanded])
 
