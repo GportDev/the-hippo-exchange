@@ -32,21 +32,27 @@ function RouteComponent() {
   });
 
   const { data: maintenanceTasks = [], isLoading: maintenanceLoading } =
-    useQuery<Maintenance[]>({
+    useQuery< (Maintenance & { status: "overdue" | "pending" | "completed" })[] >({
       queryKey: ["maintenance", user?.id],
       queryFn: async () => {
         if (!user) return [];
         return apiFetch(user.id, "/maintenance");
       },
       enabled: !!user,
-      select: (data) => {
+      select: (data: Maintenance[]) => {
         const now = new Date();
-        return data.map((task) =>
-          task.maintenanceStatus === "pending" &&
-          new Date(task.maintenanceDueDate) < now
-            ? { ...task, maintenanceStatus: "overdue" }
-            : task
-        );
+        now.setHours(0, 0, 0, 0);
+        return data.map((task) => {
+          let status: "overdue" | "pending" | "completed";
+          if (task.isCompleted) {
+            status = "completed";
+          } else if (new Date(task.maintenanceDueDate) < now) {
+            status = "overdue";
+          } else {
+            status = "pending";
+          }
+          return { ...task, status };
+        });
       },
     });
 
@@ -54,13 +60,13 @@ function RouteComponent() {
   const isLoading = assetsLoading || maintenanceLoading;
   const upcomingItems = maintenanceTasks
     .filter(
-      (item) => item.maintenanceStatus === "pending" || item.maintenanceStatus === "overdue"
+      (item) => item.status === "pending" || item.status === "overdue"
     )
     .sort((a, b) => new Date(a.maintenanceDueDate).getTime() - new Date(b.maintenanceDueDate).getTime())
     .slice(0, 5); // Cap the list to the top 5
 
   const overdueItems = maintenanceTasks.filter(
-    (item) => item.maintenanceStatus === "overdue"
+    (item) => item.status === "overdue"
   );
   const favoriteAssets = assets.filter((asset) => asset.favorite);
 
@@ -105,7 +111,7 @@ function RouteComponent() {
   }, [isLoading, overdueItems.length]);
 
   // Helper function for status styling
-  const getStatusClasses = (status: string) => {
+  const getStatusClasses = (status: "overdue" | "pending" | "completed") => {
     switch (status) {
       case "overdue":
         return "text-red-800 bg-red-100";
@@ -143,14 +149,14 @@ function RouteComponent() {
                     <div className="flex items-center gap-4">
                       <div
                         className={`p-2 rounded-full ${getStatusClasses(
-                          item.maintenanceStatus
+                          item.status
                         )}`}
                       >
                         <Calendar className="h-5 w-5" />
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900">
-                          {item.productName}
+                          {item.maintenanceTitle}
                         </p>
                         <p className="text-sm text-gray-600">
                           {item.maintenanceTitle}
@@ -160,7 +166,7 @@ function RouteComponent() {
                     <div className="flex items-center gap-4">
                       <p
                         className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
-                          item.maintenanceStatus
+                          item.status
                         )}`}
                       >
                         {new Date(item.maintenanceDueDate).toLocaleDateString()}
