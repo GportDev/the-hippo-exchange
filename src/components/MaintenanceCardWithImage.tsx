@@ -6,9 +6,9 @@ import type { Maintenance } from "@/lib/Types";
 
 interface MaintenanceCardWithImageProps {
   task: Maintenance;
-  onUpdateStatus: (id: string, newStatus: string) => void;
+  onUpdateStatus?: (maintenanceId: string, status: string) => void;
   onViewDetails: (task: Maintenance) => void;
-  userId: string;
+  picture: string;
 }
 
 function useAssetImage(userId:string, assetId?: string) {
