@@ -1,23 +1,66 @@
-Welcome to your new TanStack app! 
+# Hippo Exchange Frontend
 
-# Getting Started
+A React + TanStack Router single-page application that powers the Hippo Exchange dashboard.
 
-To run this application:
+## 1. Prerequisites
+
+Make sure the following tools are installed **before** you start:
+
+- **Node.js 18+** (LTS recommended). Check with `node --version`.
+- **pnpm 8+** for package management. Install via `npm install -g pnpm`.
+- **Git** for version control.
+- (Optional) **direnv** or another env-manager if you prefer automatic environment variable loading.
+
+## 2. Clone the Repository
+
+```bash
+git clone https://github.com/GportDev/the-hippo-exchange.git
+cd the-hippo-exchange
+```
+
+## 3. Install Dependencies
+
+Use pnpm to install everything declared in `package.json`.
 
 ```bash
 pnpm install
-pnpm start
 ```
 
-# Building For Production
+If this is the first time using pnpm on your machine, allow it to set up the global store when prompted.
 
-To build this application for production:
+## 4. Environment Configuration
+
+The application consumes several environment variables at build time through `import.meta.env`. Create a local environment file and populate it with the required values:
 
 ```bash
-pnpm build
+cp .env .env.local
 ```
 
-## Testing
+Open `.env.local` and provide the following values:
+
+```
+VITE_CLERK_PUBLISHABLE_KEY=pk_live_your_clerk_key
+VITE_API_KEY=046475c03f54e6fc65e47a65030f3938df32ed4295cc595bcaa54630678dbe3b
+```
+
+> **Notes**
+> - `VITE_CLERK_PUBLISHABLE_KEY` comes from your Clerk dashboard.
+> - `VITE_API_KEY` is the shared HippoExchange API key exposed to the frontend.
+> - Any additional `VITE_*` variables you add will be automatically injected into the Vite build, so do **not** include secrets that must remain server-side.
+
+For production or preview deployments (e.g., Vercel), add the same variables in the provider’s environment settings.
+
+## 5. Launch the Development Server
+
+```bash
+pnpm dev
+```
+
+Vite boots on <http://localhost:3000> by default. If you encounter port conflicts, specify an alternate port via `pnpm dev -- --port 3001`.
+
+Hot Module Replacement (HMR) is enabled out of the box; saving a file refreshes the UI instantly.
+
+## 6. Useful Scripts
 
 This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
 
@@ -34,7 +77,6 @@ This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
 
 This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
 
-
 ```bash
 pnpm lint
 pnpm format
@@ -42,7 +84,7 @@ pnpm check
 ```
 
 
-## Setting up Clerk
+## 7. Setting up Clerk
 
 - Set the `VITE_CLERK_PUBLISHABLE_KEY` in your `.env.local`.
 
