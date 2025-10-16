@@ -10,10 +10,12 @@ const formatDate = (dateString: string) => {
   });
 };
 
+type MaintenanceStatus = "overdue" | "pending" | "completed";
+
 interface MaintenanceCardProps {
-  task: Maintenance;
-  onUpdateStatus?: (maintenanceId: string, status: string) => void;
-  onViewDetails: (task: Maintenance) => void;
+  task: Maintenance & { status: MaintenanceStatus };
+  onUpdateStatus?: (maintenanceId: string, isCompleted: boolean) => void;
+  onViewDetails: (task: Maintenance & { status: MaintenanceStatus }) => void;
   picture: string;
 }
 
@@ -24,7 +26,7 @@ export function MaintenanceCard({
   picture,
 }: MaintenanceCardProps) {
   const getStatusColor = () => {
-    switch (task.maintenanceStatus) {
+    switch (task.status) {
       case "completed":
         return "bg-green-100 text-green-800";
       case "pending":
@@ -49,30 +51,38 @@ export function MaintenanceCard({
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h3 className="text-xl font-semibold text-primary-gray">
-              {task.productName}
+              {task.maintenanceTitle}
             </h3>
             <span
               className={`px-2 py-1 rounded-full text-sm font-medium ${getStatusColor()}`}
             >
               <Badge className={getStatusColor()}>
-                {task.maintenanceStatus === "pending"
+                {task.status === "pending"
                   ? "Upcoming"
-                  : task.maintenanceStatus.charAt(0).toUpperCase() +
-                    task.maintenanceStatus.slice(1)}
+                  : task.status.charAt(0).toUpperCase() +
+                    task.status.slice(1)}
               </Badge>
             </span>
           </div>
-          <p className="text-gray-600 mb-2">{task.maintenanceTitle}</p>
+          <p className="text-gray-600 mb-2">
+            {task.maintenanceDescription || "No description provided."}
+          </p>
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <span>Due: {formatDate(task.maintenanceDueDate)}</span>
+            <span> • </span>
+            <span>{task.assetCategory}</span>
           </div>
         </div>
         <div className="ml-4 grid space-y-4 flex-shrink-0">
-          {onUpdateStatus && task.maintenanceStatus !== "completed" && (
+          {onUpdateStatus && !task.isCompleted && (
             <button
               type="button"
               className="px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer"
-              onClick={() => onUpdateStatus(task.id, "completed")}
+              onClick={() => {
+                if (task.id) {
+                  onUpdateStatus(task.id, true);
+                }
+              }}
             >
               Mark Complete
             </button>

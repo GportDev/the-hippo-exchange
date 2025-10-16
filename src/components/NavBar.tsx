@@ -3,6 +3,7 @@ import { SignedIn, SignedOut } from '@clerk/clerk-react'
 import * as Lucide from "lucide-react"
 import { useState, useEffect } from 'react'
 import ClerkHeader from '../integrations/clerk/header-user.tsx'
+import { useIsClient } from '@/hooks/useIsClient.ts'
 
 interface NavbarProps {
   isExpanded: boolean
@@ -11,6 +12,7 @@ interface NavbarProps {
 
 function Navbar({ isExpanded, onToggle }: NavbarProps) {
   const [showText, setShowText] = useState(isExpanded);
+  const isClient = useIsClient();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -23,6 +25,10 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
 
     return () => clearTimeout(timer);
   }, [isExpanded]);
+
+  if (!isClient) {
+    return null;
+  }
   
   return (
     <>
