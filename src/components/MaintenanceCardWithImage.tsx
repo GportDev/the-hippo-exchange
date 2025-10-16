@@ -3,12 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import type { Maintenance } from "@/lib/Types";
 
+type MaintenanceStatus = "overdue" | "pending" | "completed";
 
 interface MaintenanceCardWithImageProps {
-  task: Maintenance;
-  onUpdateStatus?: (maintenanceId: string, status: string) => void;
-  onViewDetails: (task: Maintenance) => void;
-  picture: string;
+  task: Maintenance & { status: MaintenanceStatus };
+  onUpdateStatus?: (maintenanceId: string, isCompleted: boolean) => void;
+  onViewDetails: (task: Maintenance & { status: MaintenanceStatus }) => void;
+  userId: string;
 }
 
 function useAssetImage(userId:string, assetId?: string) {
