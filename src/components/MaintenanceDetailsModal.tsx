@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import type { Maintenance } from "@/lib/Types";
 import { X, Trash2, Edit } from "lucide-react";
+import { toast } from "sonner";
 
 type MaintenanceStatus = "overdue" | "pending" | "completed";
 
@@ -41,21 +42,33 @@ export function MaintenanceDetailsModal({
   const recurrenceUnitString = task.recurrenceUnit || "";
 
   const handleDelete = () => {
-    if (
-      task.id &&
-      window.confirm(
-        "Are you sure you want to delete this maintenance record? This action cannot be undone."
-      )
-    ) {
-      onDelete(task.id);
-    }
+    if (!task.id) return;
+    toast.warning("Delete this maintenance record?", {
+      action: {
+        label: "Delete",
+        onClick: () => onDelete(task.id),
+      },
+      cancel: {
+        label: "Cancel",
+      },
+      duration: 5000,
+    });
   };
+
+  const toolKeyCounts = new Map<string, number>();
+  const normalizedRequiredTools =
+    Array.isArray(task.requiredTools)
+      ? task.requiredTools
+      : typeof task.requiredTools === "string"
+        ? task.requiredTools.split(",").map((tool) => tool.trim()).filter(Boolean)
+        : [];
 
   return (
     <Dialog open={!!task} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-lg max-h-[90vh] flex flex-col p-0">
         <DialogClose asChild>
           <button
+            type="button"
             aria-label="Close"
             className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-10"
             onClick={onClose}
@@ -118,15 +131,18 @@ export function MaintenanceDetailsModal({
             </div>
           )}
 
-          {task.requiredTools && task.requiredTools.length > 0 && (
+          {normalizedRequiredTools.length > 0 && (
             <div>
               <strong className="text-gray-500 mb-1 block">
                 Required Tools:
               </strong>
               <ul className="list-disc list-inside bg-gray-50 p-3 rounded-md border text-gray-800">
-                {task.requiredTools.map((tool: string, index: number) => (
-                  <li key={index}>{tool}</li>
-                ))}
+                {normalizedRequiredTools.map((tool: string) => {
+                  const occurrence = toolKeyCounts.get(tool) ?? 0;
+                  toolKeyCounts.set(tool, occurrence + 1);
+                  const key = `${tool}-${occurrence}`;
+                  return <li key={key}>{tool}</li>;
+                })}
               </ul>
             </div>
           )}

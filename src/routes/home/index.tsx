@@ -26,7 +26,7 @@ function RouteComponent() {
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, "/assets");
+      return apiFetch<Asset[]>(user.id, "/assets");
     },
     enabled: !!user,
   });
@@ -36,7 +36,7 @@ function RouteComponent() {
       queryKey: ["maintenance", user?.id],
       queryFn: async () => {
         if (!user) return [];
-        return apiFetch(user.id, "/maintenance");
+        return apiFetch<Maintenance[]>(user.id, "/maintenance");
       },
       enabled: !!user,
       select: (data: Maintenance[]) => {
@@ -95,6 +95,7 @@ function RouteComponent() {
               </div>
             </Link>
             <button
+              type="button"
               onClick={() => toast.dismiss(id)}
               className="p-1 rounded-full hover:bg-yellow-200 transition-colors ml-4 flex-shrink-0"
             >
@@ -102,7 +103,7 @@ function RouteComponent() {
             </button>
           </div>
         ),
-        { id: toastId, duration: Infinity }
+        { id: toastId, duration: Number.POSITIVE_INFINITY }
       );
     }
     return () => {
@@ -232,4 +233,3 @@ function RouteComponent() {
     </div>
   );
 }
-

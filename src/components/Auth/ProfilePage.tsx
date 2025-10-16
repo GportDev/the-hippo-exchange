@@ -1,9 +1,9 @@
-import { API_BASE_URL } from '@/lib/api';
+import { apiFetch } from '@/lib/api';
 import { useUser } from '@clerk/clerk-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
@@ -31,33 +31,37 @@ export const ProfilePage = () => {
   const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
-      return fetch(`${API_BASE_URL}/users/${user?.id}`, {
-        headers: {
-          'X-User-Id': `${user?.id}`
-        }
-      }).then((res) => res.json())
+      if (!user?.id) {
+        throw new Error("User not authenticated");
+      }
+      const profile = await apiFetch<UserProfile | null>(user.id, `/users/${user.id}`);
+      if (!profile) {
+        return {
+          phone: '',
+          address: '',
+          city: '',
+          state: '',
+        };
+      }
+      return profile;
     },
+    enabled: !!user?.id,
   })
 
   if (getProfileError) {
-    console.log(getProfileError)
+    console.error(getProfileError)
     toast.error('Error fetching profile data')
   }
 
   const { mutateAsync, isPending } = useMutation({
       mutationFn: async (updatedData: ProfileFormValues) => {
-        const response = await fetch(`${API_BASE_URL}/users/${user?.id}`, {
-          method: 'PATCH',
-          headers: {
-            'X-User-Id': `${user?.id}`
-          },
-          body: JSON.stringify(updatedData),
-        })
-        if (!response.ok) {
-          console.log(response)
-          throw new Error('Failed to update profile')
+        if (!user?.id) {
+          throw new Error("User not authenticated");
         }
-        return response.json()
+        return apiFetch<void>(user.id, `/users/${user.id}`, {
+          method: 'PATCH',
+          body: JSON.stringify(updatedData),
+        });
       }
     })
 
@@ -65,15 +69,22 @@ export const ProfilePage = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema) as any,
-    defaultValues: data ?? {
+    resolver: zodResolver<ProfileFormValues>(profileFormSchema),
+    defaultValues: {
       phone: '',
       address: '',
       city: '',
       state: '',
     },
   })
+
+  useEffect(() => {
+    if (data) {
+      reset(data)
+    }
+  }, [data, reset])
 
 
   const onSubmit = async (formValues: ProfileFormValues) => {

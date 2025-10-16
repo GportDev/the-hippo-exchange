@@ -40,7 +40,6 @@ export function EditMaintenanceModal({
 
   useEffect(() => {
     if (task) {
-      console.log("Task data received:", task);
       setFormData({
         ...task,
         maintenanceDueDate: task.maintenanceDueDate
@@ -71,10 +70,6 @@ export function EditMaintenanceModal({
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value === '' ? undefined : Number(value) }));
-  };
-
-  const handleSelectChange = (id: keyof Maintenance | 'requiredToolsString', value: any) => {
-    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const {
@@ -110,15 +105,21 @@ export function EditMaintenanceModal({
     setErrors({});
 
     // Create a new Date object from the dueDate string
-    const date = new Date(maintenanceDueDate + "T00:00:00");
+    const date = new Date(`${maintenanceDueDate}T00:00:00`);
 
     // Format the date to ISO 8601 format in UTC
     const isoDate = date.toISOString();
+    const { status: _ignoredStatus, ...taskWithoutStatus } = task as Maintenance & {
+      status?: string;
+    };
+
     const updatedTask: Maintenance = {
-      ...task,
+      ...taskWithoutStatus,
       maintenanceTitle,
       maintenanceDescription,
       maintenanceDueDate: isoDate,
+      costPaid: costPaid ?? task.costPaid,
+      toolLocation,
       isCompleted,
       preserveFromPrior,
       requiredTools: toolsInput.split(',').map(tool => tool.trim()).filter(Boolean),
@@ -130,7 +131,7 @@ export function EditMaintenanceModal({
       purchaseLocation: task.purchaseLocation || undefined,
       maintenanceStatus: isCompleted ? "Completed" : (task.maintenanceStatus || "Upcoming"),
     };
-    
+
     if (preserveFromPrior === false) {
       updatedTask.recurrenceInterval = undefined;
       updatedTask.recurrenceUnit = undefined;
@@ -147,39 +148,23 @@ export function EditMaintenanceModal({
       }
     }
 
-    // Remove any extra fields that shouldn't be in the API payload
-    delete (updatedTask as any).status;
-
-    // Debug: Log the payload being sent
-    console.log("Sending maintenance update:", updatedTask);
-    
-    // Test JSON stringification
-    try {
-      const jsonString = JSON.stringify(updatedTask);
-      console.log("JSON stringified successfully:", jsonString);
-      console.log("JSON length:", jsonString.length);
-    } catch (error) {
-      console.error("JSON stringification failed:", error);
-      console.error("Problematic data:", updatedTask);
-      return;
-    }
-
     onSave(updatedTask);
   };
 
   return (
     <Dialog open={!!task} onOpenChange={onClose}>
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-lg max-h-[90vh] flex flex-col p-0">
-        <DialogClose asChild>
-          <button
-            aria-label="Close"
-            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-50"
-            onClick={onClose}
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </DialogClose>
-        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
+        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg relative">
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label="Close"
+              className="absolute right-4 top-4 text-primary-yellow transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              onClick={onClose}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </DialogClose>
           <DialogTitle className="text-center text-primary-yellow">Edit Maintenance Task</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
             Update the details for the maintenance task.
@@ -230,7 +215,10 @@ export function EditMaintenanceModal({
                 id="isCompleted"
                 checked={isCompleted}
                 onCheckedChange={(checked) =>
-                  handleSelectChange("isCompleted", checked as boolean)
+                  setFormData((prev) => ({
+                    ...prev,
+                    isCompleted: Boolean(checked),
+                  }))
                 }
               />
               <label
@@ -276,7 +264,10 @@ export function EditMaintenanceModal({
                 id="preserveFromPrior"
                 checked={preserveFromPrior}
                 onCheckedChange={(checked) =>
-                  handleSelectChange("preserveFromPrior", checked as boolean)
+                  setFormData((prev) => ({
+                    ...prev,
+                    preserveFromPrior: Boolean(checked),
+                  }))
                 }
               />
               <label
@@ -303,7 +294,12 @@ export function EditMaintenanceModal({
                   <Label htmlFor="recurrenceUnit">Unit</Label>
                   <Select
                     value={recurrenceUnit}
-                    onValueChange={(value) => handleSelectChange('recurrenceUnit', value as 'Days' | 'Weeks' | 'Months' | 'Years')}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        recurrenceUnit: value as 'Days' | 'Weeks' | 'Months' | 'Years',
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />

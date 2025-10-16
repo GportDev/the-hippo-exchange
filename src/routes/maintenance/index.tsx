@@ -4,6 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
 import type { Maintenance } from "@/lib/Types";
+import { toast } from "sonner";
 
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
@@ -66,7 +67,7 @@ function RouteComponent() {
     queryKey: ["maintenance", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, "/maintenance");
+      return apiFetch<Maintenance[]>(user.id, "/maintenance");
     },
     enabled: !!user,
   });
@@ -74,7 +75,7 @@ function RouteComponent() {
   const addMaintenanceMutation = useMutation({
     mutationFn: (newMaintenance: Omit<Maintenance, "id">) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(
+      return apiFetch<void>(
         user.id,
         `/assets/${newMaintenance.assetId}/maintenance`,
         {
@@ -85,9 +86,12 @@ function RouteComponent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+      toast.success("Maintenance task created");
     },
     onError: (error) => {
       console.error("Failed to create recurring maintenance task:", error);
+      const message = error instanceof Error ? error.message : "Failed to create maintenance task.";
+      toast.error(message);
     },
   });
 
@@ -117,9 +121,7 @@ function RouteComponent() {
         })
       );
       
-      console.log("Mutation payload:", cleanPayload);
-      console.log("JSON stringified payload:", JSON.stringify(cleanPayload));
-      return apiFetch(user.id, `/maintenance/${id}`, {
+      return apiFetch<Maintenance>(user.id, `/maintenance/${id}`, {
         method: "PUT",
         body: JSON.stringify(cleanPayload),
       });
@@ -128,9 +130,12 @@ function RouteComponent() {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
       setEditModalOpen(false);
       setSelectedTask(null);
+      toast.success("Maintenance task updated");
     },
     onError: (error) => {
       console.error("Failed to update maintenance task:", error);
+      const message = error instanceof Error ? error.message : "Failed to update maintenance task.";
+      toast.error(message);
     },
   });
 
@@ -142,7 +147,7 @@ function RouteComponent() {
   >({
     mutationFn: async ({ taskId, payload }) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
+      return apiFetch<Maintenance>(user.id, `/maintenance/${taskId}`, {
         method: "PATCH",
         body: JSON.stringify(payload),
       });
@@ -170,18 +175,19 @@ function RouteComponent() {
         }
         const newDueDate = oldDueDate.toISOString();
 
+        const { id: _ignoredId, ...taskWithoutId } = originalTask;
+
         const nextTaskPayload: Omit<Maintenance, "id"> = {
-          ...originalTask,
+          ...taskWithoutId,
           maintenanceDueDate: newDueDate,
           isCompleted: false,
           maintenanceStatus: "Upcoming",
         };
 
-        delete (nextTaskPayload as Partial<Maintenance>).id;
-
         addMaintenanceMutation.mutate(nextTaskPayload);
       } else {
         queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+        toast.success("Maintenance status updated");
       }
     },
     onMutate: async (variables) => {
@@ -210,6 +216,8 @@ function RouteComponent() {
             ),
         );
       }
+      const message = err instanceof Error ? err.message : "Failed to update maintenance.";
+      toast.error(message);
     },
   });
 

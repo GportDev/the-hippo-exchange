@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { API_BASE_URL } from "@/lib/api";
+import { API_BASE_URL, buildApiHeaders } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useRef } from "react";
@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 
 // This interface should match the expected JSON body structure
@@ -70,9 +71,7 @@ export default function AddAssetModal() {
 
       const res = await fetch(`${API_BASE_URL}/assets/upload-image`, {
         method: "POST",
-        headers: {
-          "X-User-Id": user.id,
-        },
+        headers: buildApiHeaders(user.id),
         body: formData,
       });
 
@@ -92,10 +91,9 @@ export default function AddAssetModal() {
 
       const res = await fetch(`${API_BASE_URL}/assets`, {
         method: "POST",
-        headers: {
+        headers: buildApiHeaders(user.id, {
           "Content-Type": "application/json",
-          "X-User-Id": user.id,
-        },
+        }),
         body: JSON.stringify(newAsset),
       });
 
@@ -125,17 +123,18 @@ export default function AddAssetModal() {
       setSelectedFile(null);
       setPreviewUrl(null);
       setErrors({});
+      toast.success("Asset created successfully");
     },
     onError: (error) => {
-      // You can handle errors here, e.g., show a toast notification
       console.error("Error creating asset:", error);
-      alert(error.message);
+      const message = error instanceof Error ? error.message : "Unable to create asset.";
+      toast.error(message);
     },
   });
 
   const handleFetchLocation = async () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported by your browser.");
+      toast.error("Geolocation is not supported by your browser.");
       return;
     }
 
@@ -159,19 +158,19 @@ export default function AddAssetModal() {
           if (city && state) {
             setCurrentLocation(`${city}, ${state}`);
           } else {
-            console.log("Could not determine location from data:", data);
-            alert("Could not determine a valid location.");
+            console.debug("Could not determine location from data:", data);
+            toast.error("Could not determine a valid location.");
           }
         } catch (error) {
           console.error("Error reverse geocoding:", error);
-          alert("Failed to retrieve location address.");
+          toast.error("Failed to retrieve location address.");
         } finally {
           setIsFetchingLocation(false);
         }
       },
       (error) => {
         console.error("Error getting location:", error);
-        alert(`Error getting location: ${error.message}`);
+        toast.error(`Error getting location: ${error.message}`);
         setIsFetchingLocation(false);
       },
     );
@@ -229,24 +228,24 @@ export default function AddAssetModal() {
     // Add more validation rules here if needed
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    const firstKey = Object.keys(newErrors)[0];
+    return {
+      isValid: Object.keys(newErrors).length === 0,
+      firstErrorMessage: firstKey ? newErrors[firstKey] : undefined,
+    };
   };
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      alert("You must be logged in to add an asset.");
+      toast.error("You must be logged in to add an asset.");
       return;
     }
 
-    if (!validateForm()) {
-      // Find the first error and alert the user
-      const firstErrorKey = Object.keys(errors).find(key => errors[key]);
-      const firstErrorMessage = firstErrorKey ? errors[firstErrorKey] : "Please fix the errors before submitting.";
-      // A more user-friendly approach would be to scroll to the field
-      // and display the error message next to it.
-      alert(firstErrorMessage);
+    const { isValid, firstErrorMessage } = validateForm();
+    if (!isValid) {
+      toast.error(firstErrorMessage ?? "Please fix the errors before submitting.");
       return;
     }
 
@@ -256,7 +255,7 @@ export default function AddAssetModal() {
         createAsset(url);
       } catch (error) {
         console.error("Upload failed:", error);
-        alert("Could not upload image. Please try again.");
+        toast.error("Could not upload image. Please try again.");
       }
     } else {
       // Create asset without an image or with a manually entered URL (if you keep that option)
@@ -276,15 +275,16 @@ export default function AddAssetModal() {
       </DialogTrigger>
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
         {/* Close Button */}
-        <DialogClose asChild>
-          <button
-            aria-label="Close"
-            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-60"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </DialogClose>
-        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg z-60">
+        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg z-60 relative">
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label="Close"
+              className="absolute right-4 top-4 text-primary-yellow transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </DialogClose>
           <DialogTitle className="text-center text-primary-yellow">Add New Asset</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
             Fill in the details for your new asset. Click save when you're done.

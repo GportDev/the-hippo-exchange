@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { API_BASE_URL } from "@/lib/api";
+import { API_BASE_URL, buildApiHeaders } from "@/lib/api";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "@tanstack/react-query";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 // This interface must match the one in your `my-assets/index.tsx`
 interface Asset {
@@ -70,9 +71,7 @@ export function EditAssetModal({
 
       const res = await fetch(`${API_BASE_URL}/assets/upload-image`, {
         method: "POST",
-        headers: {
-          "X-User-Id": user.id,
-        },
+        headers: buildApiHeaders(user.id),
         body: formData,
       });
 
@@ -116,7 +115,7 @@ export function EditAssetModal({
         });
       } catch (error) {
         console.error("Image upload failed during save:", error);
-        alert("Failed to upload new image. Please try again.");
+        toast.error("Failed to upload new image. Please try again.");
       }
     } else {
       onSave(formData);
@@ -138,17 +137,16 @@ export function EditAssetModal({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
 
-        {/* Close Button */}
-        <DialogClose asChild>
-          <button
-            aria-label="Close"
-            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-60"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </DialogClose>
-        {/* Header */}
-        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
+        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg relative">
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label="Close"
+              className="absolute right-4 top-4 text-primary-yellow transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </DialogClose>
           <DialogTitle className="text-center text-primary-yellow">Edit Asset</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
             Update the details for your asset. Click save when you're done.

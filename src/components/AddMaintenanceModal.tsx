@@ -4,6 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { apiFetch } from "@/lib/api";
 import type { Asset } from "@/lib/Types";
 import { X } from "lucide-react";
+import { toast } from "sonner";
 
 import {
   Dialog,
@@ -85,7 +86,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, "/assets");
+      return apiFetch<Asset[]>(user.id, "/assets");
     },
     enabled: !!user && isOpen && !assetId, // Only fetch if no specific asset is provided
   });
@@ -95,7 +96,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
     queryKey: ["asset", selectedAssetId],
     queryFn: async () => {
       if (!user || !selectedAssetId) return null;
-      return apiFetch(user.id, `/assets/${selectedAssetId}`);
+      return apiFetch<Asset>(user.id, `/assets/${selectedAssetId}`);
     },
     enabled: !!user && !!selectedAssetId,
   });
@@ -116,7 +117,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
         // Fields from form state
         maintenanceTitle: title,
         maintenanceDescription: description,
-        maintenanceDueDate: new Date(dueDate + 'T00:00:00').toISOString(),
+        maintenanceDueDate: new Date(`${dueDate}T00:00:00`).toISOString(),
         isCompleted,
         
         // Fields for recurrence
@@ -136,9 +137,6 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
       const cleanedPayload = Object.fromEntries(
         Object.entries(newMaintenancePayload).filter(([_, v]) => v !== "" && v != null)
       );
-
-      console.log("AddMaintenance payload:", cleanedPayload);
-      console.log("AddMaintenance JSON:", JSON.stringify(cleanedPayload));
 
       return apiFetch(user.id, `/assets/${selectedAssetId}/maintenance`, {
         method: "POST",
@@ -162,11 +160,13 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
       setIsCompleted(false);
       setToolLocation("");
       setRequiredTools("");
+      toast.success("Maintenance task added");
       // Note: We no longer reset cost as it's derived from the asset
     },
     onError: (error) => {
       console.error("Failed to add maintenance:", error);
-      // Here you could add a toast notification to inform the user
+      const message = error instanceof Error ? error.message : "Failed to add maintenance.";
+      toast.error(message);
     },
   });
 
@@ -198,16 +198,17 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-lg max-h-[90vh] flex flex-col p-0">
-        <DialogClose asChild>
-          <button
-            aria-label="Close"
-            className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-50"
-            onClick={onClose}
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </DialogClose>
-        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
+        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg relative">
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label="Close"
+              className="absolute right-4 top-4 text-primary-yellow transition-colors hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              onClick={onClose}
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </DialogClose>
           <DialogTitle className="text-center text-primary-yellow">Add New Maintenance Task</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
             Select an asset and fill in the details for the new maintenance task.

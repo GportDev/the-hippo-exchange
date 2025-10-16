@@ -25,12 +25,14 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
             <UserButton />
           </div>
           {isNavExpanded && (
-            <div className='flex flex-col cursor-pointer'
+            <button
+              type="button"
+              className='flex flex-col cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-yellow/60 rounded-sm'
               onClick={handleUserButtonClick}
             >
               <p className='text-primary-yellow font-medium'>{user?.firstName} {user?.lastName}</p>
               <p className='text-primary-yellow text-sm'>{user?.username}</p>
-            </div>
+            </button>
           )}
         </div>
     </div>

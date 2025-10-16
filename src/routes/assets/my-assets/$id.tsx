@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
-import { apiFetch, API_BASE_URL } from '@/lib/api'
+import { apiFetch } from '@/lib/api'
 import { ArrowLeft, MapPin, Calendar, DollarSign, Tag, Camera, CheckCircle } from 'lucide-react'
 import type { Maintenance } from '@/lib/Types'
 import { MaintenanceCard } from '@/components/MaintenanceCard'
@@ -10,6 +10,7 @@ import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 
 // Structure of the asset object.
 interface Asset {
@@ -51,15 +52,7 @@ function RouteComponent() {
     queryFn: async () => {
       if (!user) throw new Error("User not authenticated");
 
-      const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
-        headers: {
-          'X-User-Id': user.id,
-        },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to fetch asset');
-      }
-      return res.json();
+      return apiFetch<Asset>(user.id, `/assets/${id}`);
     },
     enabled: !!user && !!id, // Only run the query when user and id are available
   });
@@ -68,7 +61,7 @@ function RouteComponent() {
     queryKey: ["maintenance", "asset", id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, `/assets/${id}/maintenance`);
+      return apiFetch<Maintenance[]>(user.id, `/assets/${id}/maintenance`);
     },
     enabled: !!user && !!id,
   });
@@ -95,9 +88,7 @@ function RouteComponent() {
         })
       );
       
-      console.log("Asset page mutation payload:", cleanPayload);
-      console.log("Asset page JSON stringified payload:", JSON.stringify(cleanPayload));
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
+      return apiFetch<Maintenance>(user.id, `/maintenance/${taskId}`, {
         method: "PUT",
         body: JSON.stringify(cleanPayload),
       });
@@ -106,22 +97,31 @@ function RouteComponent() {
       queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
       setEditModalOpen(false);
       setSelectedTask(null);
+      toast.success("Maintenance task updated");
     },
     onError: (error) => {
       console.error("Failed to update maintenance task:", error);
+      const message = error instanceof Error ? error.message : "Failed to update maintenance task.";
+      toast.error(message);
     },
   });
 
   const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (taskId: string) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
+      return apiFetch<void>(user.id, `/maintenance/${taskId}`, {
         method: "DELETE",
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
       setSelectedTask(null);
+      toast.success("Maintenance task deleted");
+    },
+    onError: (error) => {
+      console.error("Failed to delete maintenance task:", error);
+      const message = error instanceof Error ? error.message : "Failed to delete maintenance task.";
+      toast.error(message);
     },
   });
 
@@ -280,11 +280,11 @@ function RouteComponent() {
             {/* Additional Images */}
             {asset.images && asset.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
-                {asset.images.slice(1, 5).map((image, index) => (
-                  <div key={index} className="aspect-square rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200">
-                    <img 
-                      src={image} 
-                      alt={`${asset.itemName} ${index + 1}`}
+                {asset.images.slice(1, 5).map((image, idx) => (
+                  <div key={`${asset.id}-${image}`} className="aspect-square rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200">
+                    <img
+                      src={image}
+                      alt={`${asset.itemName} ${idx + 2}`}
                       className="w-full h-full object-cover"
                     />
                   </div>

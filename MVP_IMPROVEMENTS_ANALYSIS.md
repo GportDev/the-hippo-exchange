@@ -257,7 +257,7 @@ export const formatDate = (date: string | Date, format: 'short' | 'long' = 'shor
 
 ### API Considerations
 - API base URL: `https://api.thehippoexchange.com`
-- All requests use `X-User-Id` header
+- All requests require `X-User-Id` and `X-Api-Key` headers
 - Some improvements may require backend changes (marked above)
 
 ---
