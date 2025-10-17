@@ -134,9 +134,10 @@ function RouteComponent() {
   }
 
   return (
-    <div className="h-full bg-gray-50/50">
-      <main className="p-6 space-y-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="h-full bg-gray-50/50 p-6">
+      <main className="mx-auto max-w-7xl">
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Upcoming Maintenance Section */}
           <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
@@ -233,6 +234,7 @@ function RouteComponent() {
                 </p>
               )}
             </div>
+          </div>
           </div>
         </div>
       </main>
