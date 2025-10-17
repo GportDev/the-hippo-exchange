@@ -161,9 +161,8 @@ function RouteComponent() {
         };
         delete (nextTaskPayload as Partial<Maintenance>).id;
         addMaintenanceMutation.mutate(nextTaskPayload);
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
       }
+      queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: ["maintenance", user?.id] });
