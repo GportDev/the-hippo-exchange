@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 import {
   X,
@@ -20,6 +20,17 @@ export const Route = createFileRoute("/home/")({
 
 function RouteComponent() {
   const { user, isLoaded, isSignedIn } = useUser();
+
+  const greeting = useMemo(() => {
+    const greetings = [
+      "Hello",
+      "Welcome back",
+      "Hi there",
+      "Hey",
+      "Greetings",
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  }, []);
 
   // Data Fetching
   const { data: assets = [], isLoading: assetsLoading } = useQuery<Asset[]>({
@@ -136,105 +147,113 @@ function RouteComponent() {
   return (
     <div className="h-full bg-gray-50/50 p-6">
       <main className="mx-auto max-w-7xl">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">
+            {greeting}, {user?.firstName}
+          </h1>
+          <p className="text-gray-500">
+            Here's what's happening with your assets today.
+          </p>
+        </div>
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Upcoming Maintenance Section */}
-          <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Upcoming Maintenance
-            </h2>
-            <div className="space-y-4">
-              {isLoading ? (
-                <p className="text-gray-500">Loading maintenance items...</p>
-              ) : upcomingItems.length > 0 ? (
-                upcomingItems.map((item) => (
-                  <Link
-                    to="/assets/my-assets/$id"
-                    params={{ id: item.assetId }}
-                    key={item.id}
-                    className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`p-2 rounded-full ${getStatusClasses(
-                          item.status
-                        )}`}
-                      >
-                        <Calendar className="h-5 w-5" />
+            {/* Upcoming Maintenance Section */}
+            <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Upcoming Maintenance
+              </h2>
+              <div className="space-y-4">
+                {isLoading ? (
+                  <p className="text-gray-500">Loading maintenance items...</p>
+                ) : upcomingItems.length > 0 ? (
+                  upcomingItems.map((item) => (
+                    <Link
+                      to="/assets/my-assets/$id"
+                      params={{ id: item.assetId }}
+                      key={item.id}
+                      className="flex items-center justify-between p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`p-2 rounded-full ${getStatusClasses(
+                            item.status
+                          )}`}
+                        >
+                          <Calendar className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900">
+                            {item.maintenanceTitle}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            {item.maintenanceTitle}
+                          </p>
+                        </div>
                       </div>
+                      <div className="flex items-center gap-4">
+                        <p
+                          className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
+                            item.status
+                          )}`}
+                        >
+                          {new Date(item.maintenanceDueDate).toLocaleDateString()}
+                        </p>
+                        <ChevronRight className="h-5 w-5 text-gray-400" />
+                      </div>
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-gray-500">No upcoming maintenance items.</p>
+                )}
+              </div>
+            </div>
+
+            {/* Favorite Assets Section */}
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Favorite Assets
+              </h2>
+              <div className="space-y-3">
+                {isLoading ? (
+                   <p className="text-gray-500">Loading assets...</p>
+                ) : favoriteAssets.length > 0 ? (
+                  favoriteAssets.map((asset) => (
+                    <Link
+                      to="/assets/my-assets/$id"
+                      params={{ id: asset.id }}
+                      key={asset.id}
+                      className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      {asset.images && asset.images.length > 0 ? (
+                        <img
+                          src={asset.images[0]}
+                          alt={asset.itemName}
+                          className="w-12 h-12 rounded-md object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
+                          <Package className="h-6 w-6 text-gray-400" />
+                        </div>
+                      )}
                       <div>
                         <p className="font-semibold text-gray-900">
-                          {item.maintenanceTitle}
+                          {asset.itemName}
                         </p>
-                        <p className="text-sm text-gray-600">
-                          {item.maintenanceTitle}
+                        <p className="text-sm text-gray-500">
+                          {asset.brandName}
                         </p>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <p
-                        className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
-                          item.status
-                        )}`}
-                      >
-                        {new Date(item.maintenanceDueDate).toLocaleDateString()}
-                      </p>
-                      <ChevronRight className="h-5 w-5 text-gray-400" />
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <p className="text-gray-500">No upcoming maintenance items.</p>
-              )}
+                      <Star className="h-5 w-5 text-yellow-400 ml-auto" />
+                    </Link>
+                  ))
+                ) : (
+                  <p className="text-gray-500">
+                    No favorite assets yet. Click the heart on an asset to add it
+                    here.
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-
-          {/* Favorite Assets Section */}
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Favorite Assets
-            </h2>
-            <div className="space-y-3">
-              {isLoading ? (
-                 <p className="text-gray-500">Loading assets...</p>
-              ) : favoriteAssets.length > 0 ? (
-                favoriteAssets.map((asset) => (
-                  <Link
-                    to="/assets/my-assets/$id"
-                    params={{ id: asset.id }}
-                    key={asset.id}
-                    className="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    {asset.images && asset.images.length > 0 ? (
-                      <img
-                        src={asset.images[0]}
-                        alt={asset.itemName}
-                        className="w-12 h-12 rounded-md object-cover"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
-                        <Package className="h-6 w-6 text-gray-400" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {asset.itemName}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {asset.brandName}
-                      </p>
-                    </div>
-                    <Star className="h-5 w-5 text-yellow-400 ml-auto" />
-                  </Link>
-                ))
-              ) : (
-                <p className="text-gray-500">
-                  No favorite assets yet. Click the star on an asset to add it
-                  here.
-                </p>
-              )}
-            </div>
-          </div>
           </div>
         </div>
       </main>
