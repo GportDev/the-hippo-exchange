@@ -58,10 +58,14 @@ function RouteComponent() {
           let status: "overdue" | "pending" | "completed";
           if (task.isCompleted) {
             status = "completed";
-          } else if (new Date(task.maintenanceDueDate) < now) {
-            status = "overdue";
           } else {
-            status = "pending";
+            const dueDate = new Date(task.maintenanceDueDate);
+            dueDate.setHours(0, 0, 0, 0);
+            if (dueDate < now) {
+              status = "overdue";
+            } else {
+              status = "pending";
+            }
           }
           return { ...task, status };
         });
@@ -70,9 +74,12 @@ function RouteComponent() {
 
   // Derived State
   const isLoading = assetsLoading || maintenanceLoading;
-  const overdueItems = maintenanceTasks.filter(
-    (item) => item.status === "overdue"
-  );
+  const pendingItems = maintenanceTasks.filter(
+      (item) => item.status === "pending"
+    );
+    const overdueItems = maintenanceTasks.filter(
+      (item) => item.status === "overdue"
+    );
   const upcomingItems = maintenanceTasks
     .filter(
       (item) => item.status === "pending" || item.status === "overdue"
@@ -88,7 +95,8 @@ function RouteComponent() {
   // Overdue Items Toast Notification
   useEffect(() => {
     const toastId = "overdue-toast";
-    if (!isLoading && overdueItems.length > 0) {
+    const overdueItemsLength = overdueItems.length-pendingItems.length;
+    if (!isLoading && overdueItemsLength > 0) {
       toast(
         (t) => (
           <div className="flex items-center justify-between w-full">
@@ -101,8 +109,8 @@ function RouteComponent() {
               <AlertTriangle className="h-6 w-6 mr-3 flex-shrink-0 text-yellow-500" />
               <div className="flex flex-col">
                 <p className="font-bold text-yellow-800">
-                  {overdueItems.length} Maintenance Item
-                  {overdueItems.length > 1 ? "s are" : " is"} Overdue
+                  {overdueItemsLength} Maintenance Item
+                  {overdueItemsLength > 1 ? "s are" : " is"} Overdue
                 </p>
                 <p className="text-sm text-yellow-700">
                   Click here to address these items.
@@ -185,7 +193,7 @@ function RouteComponent() {
                 <span>Upcoming Tasks</span>
               </div>
               <div className="mt-1 text-2xl font-bold text-primary-gray">
-                {upcomingItems.length}
+                {pendingItems.length}
               </div>
             </div>
           </div>
