@@ -168,7 +168,7 @@ function RouteComponent() {
               Here's what's happening with your assets today.
             </p>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-6">
             <div className="rounded-lg border bg-white p-4 shadow-sm w-48">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Package className="h-5 w-5 text-blue-600" />
