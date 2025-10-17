@@ -289,7 +289,7 @@ function RouteComponent() {
             >
               {label}
               <span
-                className={`ml-2 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
+                className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
                   key === "overdue"
                     ? "bg-red-100 text-red-800"
                     : key === "pending"
