@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import {
   X,
   Package,
-  Star,
+  Heart,
   AlertTriangle,
   Calendar,
   ChevronRight,
@@ -278,7 +278,7 @@ function RouteComponent() {
                           {asset.brandName}
                         </p>
                       </div>
-                      <Star className="h-5 w-5 text-yellow-400 ml-auto" />
+                      <Heart className="h-5 w-5 text-red-500 fill-red-500 ml-auto" />
                     </Link>
                   ))
                 ) : (
