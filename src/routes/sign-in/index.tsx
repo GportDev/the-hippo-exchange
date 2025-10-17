@@ -80,7 +80,7 @@ function SignInComponent() {
         <img src="/HippoTransparent.png" alt="Hippo Exchange Logo" className="w-70 h-70 mb-4"/>
         <div className="text-center">
           <h1 className="text-7xl font-bold text-primary-yellow mb-2">Hippo Exchange</h1>
-          <p className="text-3xl text-white">don't buy. borrow.</p>
+          <p className="text-3xl text-white">Don't Buy. Borrow.</p>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center md:w-1/2">
