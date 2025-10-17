@@ -272,7 +272,7 @@ function RouteComponent() {
           onSave={handleSaveEdit}
         />
 
-        <div className="flex gap-6 border-b border-gray-200 mb-6">
+        <div className="flex gap-6 border-b border-gray-200 mb-4">
           {[
             { key: "all", label: "All" },
             { key: "overdue", label: "Overdue" },
