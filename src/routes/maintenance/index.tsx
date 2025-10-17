@@ -242,7 +242,7 @@ function RouteComponent() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-primary-gray">My Maintenance</h1>
-            <p className="text-gray-500 mt-1">Keep track of all your maintenance tasks.</p>
+            <p className="text-gray-500">Keep track of all your maintenance tasks.</p>
           </div>
           <Button
             onClick={() => setAddModalOpen(true)}
