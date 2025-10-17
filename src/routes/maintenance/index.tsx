@@ -248,6 +248,7 @@ function RouteComponent() {
             onClick={() => setAddModalOpen(true)}
             className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors px-4 py-2 h-auto text-base"
           >
+            <span className="mb-1 text-2xl">+</span>
             Add Maintenance
           </Button>
         </div>
