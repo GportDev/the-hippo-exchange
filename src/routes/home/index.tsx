@@ -70,16 +70,15 @@ function RouteComponent() {
 
   // Derived State
   const isLoading = assetsLoading || maintenanceLoading;
+  const overdueItems = maintenanceTasks.filter(
+    (item) => item.status === "overdue"
+  );
   const upcomingItems = maintenanceTasks
     .filter(
       (item) => item.status === "pending" || item.status === "overdue"
     )
     .sort((a, b) => new Date(a.maintenanceDueDate).getTime() - new Date(b.maintenanceDueDate).getTime())
     .slice(0, 5); // Cap the list to the top 5
-
-  const overdueItems = maintenanceTasks.filter(
-    (item) => item.status === "overdue"
-  );
   const favoriteAssets = assets.filter((asset) => asset.favorite);
   const totalAssetValue = assets.reduce(
     (sum, asset) => sum + (asset.purchaseCost || 0),
@@ -152,9 +151,9 @@ function RouteComponent() {
   return (
     <div className="h-full bg-gray-50/50 p-6">
       <main className="mx-auto max-w-7xl">
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex justify-between items-start mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-gray-800 py-3">
               {greeting}, {user?.firstName}
             </h1>
             <p className="text-gray-500">
