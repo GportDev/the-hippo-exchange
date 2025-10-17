@@ -35,20 +35,32 @@ export function EditMaintenanceModal({
   onSave,
 }: EditMaintenanceModalProps) {
   const [formData, setFormData] = useState<Partial<Maintenance>>({});
+  const [toolsInput, setToolsInput] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (task) {
+      console.log("Task data received:", task);
       setFormData({
         ...task,
         maintenanceDueDate: task.maintenanceDueDate
-          ? new Date(task.maintenanceDueDate).toISOString().split("T")[0]
+          ? task.maintenanceDueDate.split("T")[0]
           : "",
       });
+      // Handle both string and array formats for backward compatibility
+      if (typeof task.requiredTools === 'string') {
+        setToolsInput(task.requiredTools);
+      } else if (Array.isArray(task.requiredTools)) {
+        setToolsInput((task.requiredTools as string[]).join(", "));
+      } else {
+        setToolsInput("");
+      }
+      setErrors({});
     }
   }, [task]);
 
   if (!task) return null;
-
+  
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -56,18 +68,102 @@ export function EditMaintenanceModal({
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSelectChange = (id: keyof Maintenance, value: any) => {
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value === '' ? undefined : Number(value) }));
+  };
+
+  const handleSelectChange = (id: keyof Maintenance | 'requiredToolsString', value: any) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
+  const {
+    maintenanceTitle = "",
+    maintenanceDescription = "",
+    maintenanceDueDate = "",
+    costPaid,
+    toolLocation = "",
+    isCompleted = false,
+    preserveFromPrior = false,
+    recurrenceInterval,
+    recurrenceUnit = 'Weeks',
+  } = formData;
+
   const handleSave = () => {
-    const updatedTask = {
+    const validationErrors: Record<string, string> = {};
+
+    if (!maintenanceTitle || maintenanceTitle.length < 2) {
+      validationErrors.maintenanceTitle = "Title must be at least 2 characters.";
+    }
+    if ((costPaid ?? 0) < 0.01 && costPaid !== 0) {
+      validationErrors.costPaid = "Cost must be $0.00 or greater.";
+    }
+    if (!toolLocation || toolLocation.length < 2) {
+      validationErrors.toolLocation = "Tool location must be at least 2 characters.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+
+    // Create a new Date object from the dueDate string
+    const date = new Date(maintenanceDueDate + "T00:00:00");
+
+    // Format the date to ISO 8601 format in UTC
+    const isoDate = date.toISOString();
+    const updatedTask: Maintenance = {
       ...task,
-      ...formData,
-      maintenanceDueDate: formData.maintenanceDueDate
-        ? new Date(formData.maintenanceDueDate).toISOString()
-        : task.maintenanceDueDate,
-    } as Maintenance;
+      maintenanceTitle,
+      maintenanceDescription,
+      maintenanceDueDate: isoDate,
+      isCompleted,
+      preserveFromPrior,
+      requiredTools: toolsInput.split(',').map(tool => tool.trim()).filter(Boolean),
+      id: task.id,
+      assetId: task.assetId,
+      brandName: task.brandName,
+      productName: task.productName,
+      assetCategory: task.assetCategory || "Electronics", // Provide a valid default category
+      purchaseLocation: task.purchaseLocation || undefined,
+      maintenanceStatus: isCompleted ? "Completed" : (task.maintenanceStatus || "Upcoming"),
+    };
+    
+    if (preserveFromPrior === false) {
+      updatedTask.recurrenceInterval = undefined;
+      updatedTask.recurrenceUnit = undefined;
+    } else {
+      // Ensure recurrence fields have valid values when preserveFromPrior is true
+      if (preserveFromPrior === true) {
+        updatedTask.recurrenceInterval = recurrenceInterval ?? task.recurrenceInterval ?? 2;
+        updatedTask.recurrenceUnit = recurrenceUnit ?? task.recurrenceUnit ?? 'Weeks';
+        
+        // Validate that recurrenceInterval is not null when preserveFromPrior is true
+        if (updatedTask.recurrenceInterval === null || updatedTask.recurrenceInterval === undefined) {
+          updatedTask.recurrenceInterval = 2;
+        }
+      }
+    }
+
+    // Remove any extra fields that shouldn't be in the API payload
+    delete (updatedTask as any).status;
+
+    // Debug: Log the payload being sent
+    console.log("Sending maintenance update:", updatedTask);
+    
+    // Test JSON stringification
+    try {
+      const jsonString = JSON.stringify(updatedTask);
+      console.log("JSON stringified successfully:", jsonString);
+      console.log("JSON length:", jsonString.length);
+    } catch (error) {
+      console.error("JSON stringification failed:", error);
+      console.error("Problematic data:", updatedTask);
+      return;
+    }
+
     onSave(updatedTask);
   };
 
@@ -86,7 +182,7 @@ export function EditMaintenanceModal({
         <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg">
           <DialogTitle className="text-center text-primary-yellow">Edit Maintenance Task</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
-            Update the details for {task.productName}.
+            Update the details for the maintenance task.
           </DialogDescription>
         </DialogHeader>
         <div className="flex-grow overflow-y-auto px-6">
@@ -102,9 +198,10 @@ export function EditMaintenanceModal({
               <Label htmlFor="maintenanceTitle">Title</Label>
               <Input
                 id="maintenanceTitle"
-                value={formData.maintenanceTitle || ""}
+                value={maintenanceTitle}
                 onChange={handleChange}
               />
+              {errors.maintenanceTitle && <p className="text-sm text-red-500 mt-1">{errors.maintenanceTitle}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -112,70 +209,72 @@ export function EditMaintenanceModal({
                 <Input
                   id="maintenanceDueDate"
                   type="date"
-                  value={formData.maintenanceDueDate || ""}
+                  value={maintenanceDueDate}
                   onChange={handleChange}
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="maintenanceStatus">Status</Label>
-                <Select
-                  value={formData.maintenanceStatus || ""}
-                  onValueChange={(value) =>
-                    handleSelectChange("maintenanceStatus", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="overdue">Overdue</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="costPaid">Cost</Label>
+                <Input
+                  id="costPaid"
+                  type="number"
+                  value={costPaid ?? ''}
+                  onChange={handleNumberChange}
+                  placeholder="e.g. 29.99"
+                />
+                {errors.costPaid && <p className="text-sm text-red-500 mt-1">{errors.costPaid}</p>}
               </div>
+            </div>
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox
+                id="isCompleted"
+                checked={isCompleted}
+                onCheckedChange={(checked) =>
+                  handleSelectChange("isCompleted", checked as boolean)
+                }
+              />
+              <label
+                htmlFor="isCompleted"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Is Completed
+              </label>
             </div>
             <div className="space-y-2">
               <Label htmlFor="maintenanceDescription">Description</Label>
               <Textarea
                 id="maintenanceDescription"
-                value={formData.maintenanceDescription || ""}
+                value={maintenanceDescription}
                 onChange={handleChange}
                 placeholder="Add any relevant notes or instructions..."
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="requiredTools">Required Tools</Label>
-                <Input
-                  id="requiredTools"
-                  value={
-                    Array.isArray(formData.requiredTools)
-                      ? formData.requiredTools.join(", ")
-                      : ""
-                  }
-                  onChange={(e) =>
-                    handleSelectChange(
-                      "requiredTools",
-                      e.target.value.split(",").map((t) => t.trim())
-                    )
-                  }
-                  placeholder="Comma-separated tools"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="toolLocation">Tool Location</Label>
-                <Input
-                  id="toolLocation"
-                  value={formData.toolLocation || ""}
-                  onChange={handleChange}
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="toolLocation">Tool Location</Label>
+              <Input
+                id="toolLocation"
+                value={toolLocation}
+                onChange={handleChange}
+                placeholder="e.g. Garage, Shed"
+              />
+              {errors.toolLocation && <p className="text-sm text-red-500 mt-1">{errors.toolLocation}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="requiredTools">Required Tools</Label>
+              <Input
+                id="requiredTools"
+                value={toolsInput}
+                onChange={(e) => setToolsInput(e.target.value)}
+                placeholder="e.g., Wrench, Screwdriver"
+              />
+              {errors.requiredTools && (
+                <p className="text-sm text-red-500 mt-1">{errors.requiredTools}</p>
+              )}
             </div>
             <div className="flex items-center space-x-2 pt-2">
               <Checkbox
                 id="preserveFromPrior"
-                checked={formData.preserveFromPrior}
+                checked={preserveFromPrior}
                 onCheckedChange={(checked) =>
                   handleSelectChange("preserveFromPrior", checked as boolean)
                 }
@@ -187,6 +286,38 @@ export function EditMaintenanceModal({
                 Preserve for future recurrence
               </label>
             </div>
+
+            {preserveFromPrior && (
+              <div className="grid grid-cols-2 gap-4 p-4 border rounded-md bg-gray-50/50">
+                <div className="space-y-2">
+                  <Label htmlFor="recurrenceInterval">Repeat Every</Label>
+                  <Input
+                    id="recurrenceInterval"
+                    type="number"
+                    value={recurrenceInterval ?? 2}
+                    onChange={(e) => setFormData(prev => ({ ...prev, recurrenceInterval: Number(e.target.value) }))}
+                    min="1"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="recurrenceUnit">Unit</Label>
+                  <Select
+                    value={recurrenceUnit}
+                    onValueChange={(value) => handleSelectChange('recurrenceUnit', value as 'Days' | 'Weeks' | 'Months' | 'Years')}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Days">Days</SelectItem>
+                      <SelectItem value="Weeks">Weeks</SelectItem>
+                      <SelectItem value="Months">Months</SelectItem>
+                      <SelectItem value="Years">Years</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
           </form>
         </div>
         <DialogFooter className="flex-shrink-0 border-t px-6 py-4">

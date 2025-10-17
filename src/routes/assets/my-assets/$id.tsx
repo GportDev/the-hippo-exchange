@@ -9,7 +9,7 @@ import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
 import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
 import { Button } from "@/components/ui/button";
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 // Structure of the asset object.
 interface Asset {
@@ -27,6 +27,8 @@ interface Asset {
   favorite: boolean;
 }
 
+type MaintenanceStatus = "overdue" | "pending" | "completed";
+
 export const Route = createFileRoute('/assets/my-assets/$id')({
   component: RouteComponent,
 })
@@ -36,7 +38,7 @@ function RouteComponent() {
   const { user, isSignedIn, isLoaded } = useUser()
   const queryClient = useQueryClient()
   const [isAddModalOpen, setAddModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Maintenance | null>(null);
+  const [selectedTask, setSelectedTask] = useState<(Maintenance & { status: MaintenanceStatus }) | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   
   // Redirect to home if not signed in
@@ -71,14 +73,33 @@ function RouteComponent() {
     enabled: !!user && !!id,
   });
 
-  const editMutation = useMutation({
-    mutationFn: async (updatedTask: Maintenance) => {
+  const editMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
+    mutationFn: async (updatedTask) => {
       if (!user) throw new Error("User not authenticated");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id: taskId, ...taskData } = updatedTask;
+      const { id: taskId, ...payload } = updatedTask;
+      
+      // Clean the payload: convert null to undefined and handle empty strings
+      const cleanPayload = Object.fromEntries(
+        Object.entries(payload).map(([key, value]) => {
+          if (value === null) {
+            return [key, undefined];
+          }
+          if (value === "" && ['purchaseLocation'].includes(key)) {
+            return [key, undefined];
+          }
+          // Ensure assetCategory has a valid value if it's empty
+          if (key === 'assetCategory' && (value === "" || value === null || value === undefined)) {
+            return [key, "Electronics"];
+          }
+          return [key, value];
+        })
+      );
+      
+      console.log("Asset page mutation payload:", cleanPayload);
+      console.log("Asset page JSON stringified payload:", JSON.stringify(cleanPayload));
       return apiFetch(user.id, `/maintenance/${taskId}`, {
         method: "PUT",
-        body: JSON.stringify(taskData),
+        body: JSON.stringify(cleanPayload),
       });
     },
     onSuccess: () => {
@@ -86,59 +107,12 @@ function RouteComponent() {
       setEditModalOpen(false);
       setSelectedTask(null);
     },
-  });
-
-  const createNextMaintenanceMutation = useMutation({
-    mutationFn: async (newMaintenance: Omit<Maintenance, "id">) => {
-      if (!user) throw new Error("User not authenticated");
-      const { assetId, ...body } = newMaintenance;
-      return apiFetch(user.id, `/assets/${assetId}/maintenance`, {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
+    onError: (error) => {
+      console.error("Failed to update maintenance task:", error);
     },
   });
 
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({
-      task,
-      newStatus,
-    }: {
-      task: Maintenance;
-      newStatus: string;
-    }) => {
-      if (!user) throw new Error("User not authenticated");
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { id: taskId, ...updatedTaskData } = {
-        ...task,
-        maintenanceStatus: newStatus,
-      };
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
-        method: "PUT",
-        body: JSON.stringify(updatedTaskData),
-      });
-    },
-    onSuccess: (_data, { task, newStatus }) => {
-      queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
-      if (newStatus === "completed" && task.preserveFromPrior) {
-        const twoWeeksFromNow = new Date();
-        twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { id: _id, ...oldTaskData } = task;
-        const newTask: Omit<Maintenance, "id"> = {
-          ...oldTaskData,
-          maintenanceStatus: "pending",
-          maintenanceDueDate: twoWeeksFromNow.toISOString(),
-        };
-        createNextMaintenanceMutation.mutate(newTask);
-      }
-    },
-  });
-
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (taskId: string) => {
       if (!user) throw new Error("User not authenticated");
       return apiFetch(user.id, `/maintenance/${taskId}`, {
@@ -151,21 +125,49 @@ function RouteComponent() {
     },
   });
 
-  const handleUpdateStatus = (taskId: string, status: string) => {
-    const taskToUpdate = maintenances.find((task) => task.id === taskId);
-    if (taskToUpdate) {
-      updateStatusMutation.mutate({ task: taskToUpdate, newStatus: status });
-    }
+  const handleUpdateStatus = (taskId: string, isCompleted: boolean) => {
+    editMutation.mutate({ id: taskId, isCompleted });
   };
 
-  const handleViewDetails = (task: Maintenance) => setSelectedTask(task);
+  const handleViewDetails = (task: Maintenance & { status: MaintenanceStatus }) => setSelectedTask(task);
   const handleCloseDetails = () => setSelectedTask(null);
   const handleEdit = (task: Maintenance) => {
-    setSelectedTask(task);
+    const taskWithStatus = maintenanceItemsWithStatus.find(t => t.id === task.id);
+    setSelectedTask(taskWithStatus || { ...task, status: 'pending' });
     setEditModalOpen(true);
   };
-  const handleSaveEdit = (updatedTask: Maintenance) => editMutation.mutate(updatedTask);
+  const handleSaveEdit = (updatedTask: Maintenance) => {
+    if (updatedTask.id) {
+      editMutation.mutate({ ...updatedTask, id: updatedTask.id });
+    }
+  };
   const handleDelete = (taskId: string) => deleteMutation.mutate(taskId);
+
+  const maintenanceItemsWithStatus = useMemo(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    return maintenances
+      .map((task) => {
+        let status: MaintenanceStatus;
+        if (task.isCompleted) {
+          status = "completed";
+        } else if (new Date(task.maintenanceDueDate) < now) {
+          status = "overdue";
+        } else {
+          status = "pending";
+        }
+        return { ...task, status };
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.maintenanceDueDate).getTime();
+        const dateB = new Date(b.maintenanceDueDate).getTime();
+        if (a.status === 'completed' && b.status !== 'completed') return 1;
+        if (a.status !== 'completed' && b.status === 'completed') return -1;
+        if (a.status === 'completed' && b.status === 'completed') return dateB - dateA;
+        return dateA - dateB;
+      });
+  }, [maintenances]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -360,12 +362,12 @@ function RouteComponent() {
           <div className="space-y-4">
             {isLoadingMaintenance ? (
               <div className="text-center text-primary-gray">Loading maintenance tasks...</div>
-            ) : maintenances.length === 0 ? (
+            ) : maintenanceItemsWithStatus.length === 0 ? (
               <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
                 <p className="text-lg">No maintenance history for this asset.</p>
               </div>
             ) : (
-              maintenances.map((maintenance) => (
+              maintenanceItemsWithStatus.map((maintenance) => (
                 <MaintenanceCard
                   key={maintenance.id}
                   task={maintenance}
@@ -395,7 +397,10 @@ function RouteComponent() {
 
       <EditMaintenanceModal
         task={isEditModalOpen ? selectedTask : null}
-        onClose={() => setEditModalOpen(false)}
+        onClose={() => {
+          setEditModalOpen(false);
+          setSelectedTask(null);
+        }}
         onSave={handleSaveEdit}
       />
     </div>
