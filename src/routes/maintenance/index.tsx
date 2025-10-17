@@ -221,10 +221,10 @@ function RouteComponent() {
   }, [maintenances]);
 
   const counts = useMemo(() => ({
-      pending: itemsWithStatus.filter((t) => t.status === "pending").length,
-      overdue: itemsWithStatus.filter((t) => t.status === "overdue").length - itemsWithStatus.filter((t) => t.status === "pending").length,
-      completed: itemsWithStatus.filter((t) => t.status === "completed").length,
-      all: itemsWithStatus.length - itemsWithStatus.filter((t) => t.status === "pending").length,
+    all: itemsWithStatus.length,
+    overdue: itemsWithStatus.filter((t) => t.status === "overdue").length,
+    pending: itemsWithStatus.filter((t) => t.status === "pending").length,
+    completed: itemsWithStatus.filter((t) => t.status === "completed").length,
   }), [itemsWithStatus]);
 
   const sortedAndFilteredItems = useMemo(() => {
@@ -232,7 +232,23 @@ function RouteComponent() {
     return [...base].sort((a, b) => {
       const dateA = new Date(a.maintenanceDueDate).getTime();
       const dateB = new Date(b.maintenanceDueDate).getTime();
-      return activeFilter === "completed" ? dateB - dateA : dateA - dateB;
+
+      if (activeFilter === "all") {
+        // Push completed items to the bottom regardless of date; sort others by date asc
+        const aCompleted = a.status === "completed";
+        const bCompleted = b.status === "completed";
+        if (aCompleted && !bCompleted) return 1;
+        if (!aCompleted && bCompleted) return -1;
+        return dateA - dateB;
+      }
+
+      if (activeFilter === "completed") {
+        // History: newest completed first
+        return dateB - dateA;
+      }
+
+      // Overdue/Upcoming: earliest due first
+      return dateA - dateB;
     });
   }, [itemsWithStatus, activeFilter]);
 
