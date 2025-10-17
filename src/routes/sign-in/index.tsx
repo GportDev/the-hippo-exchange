@@ -80,7 +80,7 @@ function SignInComponent() {
         <img src="/HippoTransparent.png" alt="Hippo Exchange Logo" className="w-70 h-70 mb-4"/>
         <div className="text-center">
           <h1 className="text-7xl font-bold text-primary-yellow mb-2">Hippo Exchange</h1>
-          <p className="text-3xl text-white">don't buy. borrow.</p>
+          <p className="text-3xl text-white">Don't Buy. Borrow.</p>
         </div>
       </div>
       <div className="flex flex-col items-center justify-center md:w-1/2">
@@ -100,9 +100,9 @@ function SignInComponent() {
                   {...register('username', { required: true })}
                 />
               </div>
-              <p className="text-red-500 text-sm min-h-[1.25rem] my-4">
-                {errors.username ? 'Username is required' : clerkErrors.identifier || '\u00A0'}
-              </p>
+              <div className="text-red-500 text-sm min-h-[1.25rem] my-4">
+                {errors.username ? <p>Username is required</p> : <p>{clerkErrors.identifier || '\u00A0'}</p>}
+              </div>
               <div className='space-y-2 text-primary-gray'>
                 <Label htmlFor="password">Password</Label>
                 <Input
@@ -113,9 +113,9 @@ function SignInComponent() {
                   {...register('password', { required: true })}
                 />
               </div>
-              <p className="text-red-500 text-sm min-h-[1.25rem] my-4">
-                {errors.password ? 'Password is required' : clerkErrors.password || '\u00A0'}
-              </p>
+              <div className="text-red-500 text-sm min-h-[1.25rem] my-4">
+                {errors.password ? <p>Password is required</p> : <p>{clerkErrors.password || '\u00A0'}</p>}
+              </div>
             </div>
 
             <div>
