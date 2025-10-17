@@ -120,9 +120,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             </ul>
 
             <ClerkHeader 
-              className={`mt-auto mx-2 mb-4 pl-3 pr-6 self-start ${
-                isExpanded ? 'py-1 pl-1 pr-10 hover:bg-gray-700 transition-colors duration-200 rounded-full' 
-                : 'w-10 h-10 justify-center'}`}
+              className={`mt-auto mb-4 ${isExpanded ? '' : ''}`}
               isNavExpanded={isExpanded}
             />
           </div>
