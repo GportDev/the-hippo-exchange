@@ -87,6 +87,20 @@ export function MaintenanceCard({
                 Complete
             </button>
           )}
+          {onUpdateStatus && task.isCompleted && (
+            <button
+              type="button"
+              className="px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+              onClick={() => {
+                if (task.id) {
+                  onUpdateStatus(task.id, false);
+                }
+              }}
+            >
+              <span className="text-lg">↺</span>
+              Undo Complete
+            </button>
+          )}
           
         </div>
       </div>
