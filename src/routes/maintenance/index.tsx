@@ -74,14 +74,10 @@ function RouteComponent() {
   const addMaintenanceMutation = useMutation({
     mutationFn: (newMaintenance: Omit<Maintenance, "id">) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(
-        user.id,
-        `/assets/${newMaintenance.assetId}/maintenance`,
-        {
-          method: "POST",
-          body: JSON.stringify(newMaintenance),
-        },
-      );
+      return apiFetch(user.id, `/assets/${newMaintenance.assetId}/maintenance`, {
+        method: "POST",
+        body: JSON.stringify(newMaintenance),
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
@@ -91,38 +87,21 @@ function RouteComponent() {
     },
   });
 
-  const editMutation = useMutation<
-    Maintenance,
-    Error,
-    Partial<Maintenance> & { id: string }
-  >({
+  const editMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
     mutationFn: async (updatedTask) => {
       if (!user) throw new Error("User not authenticated");
       const { id, ...payload } = updatedTask;
-      
-      // Clean the payload: convert null to undefined and handle empty strings
       const cleanPayload = Object.fromEntries(
         Object.entries(payload).map(([key, value]) => {
-          if (value === null) {
-            return [key, undefined];
-          }
-          if (value === "" && ['purchaseLocation'].includes(key)) {
-            return [key, undefined];
-          }
-          // Ensure assetCategory has a valid value if it's empty
-          if (key === 'assetCategory' && (value === "" || value === null || value === undefined)) {
+          if (value === null) return [key, undefined];
+          if (value === "" && ["purchaseLocation"].includes(key)) return [key, undefined];
+          if (key === "assetCategory" && (value === "" || value === null || value === undefined)) {
             return [key, "Electronics"];
           }
           return [key, value];
         })
       );
-      
-      console.log("Mutation payload:", cleanPayload);
-      console.log("JSON stringified payload:", JSON.stringify(cleanPayload));
-      return apiFetch(user.id, `/maintenance/${id}`, {
-        method: "PUT",
-        body: JSON.stringify(cleanPayload),
-      });
+      return apiFetch(user.id, `/maintenance/${id}`, { method: "PUT", body: JSON.stringify(cleanPayload) });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
@@ -142,18 +121,13 @@ function RouteComponent() {
   >({
     mutationFn: async ({ taskId, payload }) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
-        method: "PATCH",
-        body: JSON.stringify(payload),
-      });
+      return apiFetch(user.id, `/maintenance/${taskId}`, { method: "PATCH", body: JSON.stringify(payload) });
     },
     onSuccess: (_data, variables, context) => {
       const originalTask = context?.originalTask;
-
       if (variables.payload.isCompleted && originalTask?.preserveFromPrior) {
         const oldDueDate = new Date(originalTask.maintenanceDueDate);
         const interval = originalTask.recurrenceInterval || 0;
-
         switch (originalTask.recurrenceUnit) {
           case "Days":
             oldDueDate.setDate(oldDueDate.getDate() + interval);
@@ -169,45 +143,29 @@ function RouteComponent() {
             break;
         }
         const newDueDate = oldDueDate.toISOString();
-
         const nextTaskPayload: Omit<Maintenance, "id"> = {
           ...originalTask,
           maintenanceDueDate: newDueDate,
           isCompleted: false,
           maintenanceStatus: "Upcoming",
         };
-
         delete (nextTaskPayload as Partial<Maintenance>).id;
-
         addMaintenanceMutation.mutate(nextTaskPayload);
       } else {
         queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
       }
     },
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({
-        queryKey: ["maintenance", user?.id],
-      });
-      const previousMaintenance = queryClient.getQueryData<Maintenance[]>([
-        "maintenance",
-        user?.id,
-      ]);
-      const originalTask = previousMaintenance?.find(
-        (task) => task.id === variables.taskId,
-      );
+      await queryClient.cancelQueries({ queryKey: ["maintenance", user?.id] });
+      const previousMaintenance = queryClient.getQueryData<Maintenance[]>(["maintenance", user?.id]);
+      const originalTask = previousMaintenance?.find((task) => task.id === variables.taskId);
       return { originalTask };
     },
     onError: (err, _variables, context) => {
       console.error("Update failed:", err);
       if (context?.originalTask) {
-        queryClient.setQueryData(
-          ["maintenance", user?.id],
-          (old: Maintenance[] = []) =>
-            old.map((task) =>
-              task.id === context.originalTask?.id
-                ? context.originalTask
-                : task,
-            ),
+        queryClient.setQueryData(["maintenance", user?.id], (old: Maintenance[] = []) =>
+          old.map((task) => (task.id === context.originalTask?.id ? context.originalTask : task))
         );
       }
     },
@@ -216,9 +174,7 @@ function RouteComponent() {
   const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (taskId) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
-        method: "DELETE",
-      });
+      return apiFetch(user.id, `/maintenance/${taskId}`, { method: "DELETE" });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
@@ -233,63 +189,52 @@ function RouteComponent() {
   const handleUpdateStatus = (id: string, isCompleted: boolean) => {
     updateMaintenanceMutation.mutate({ taskId: id, payload: { isCompleted } });
   };
-
-  const handleDelete = (taskId: string) => {
-    deleteMutation.mutate(taskId);
-  };
-
+  const handleDelete = (taskId: string) => deleteMutation.mutate(taskId);
   const handleViewDetails = (task: Maintenance & { status: MaintenanceStatus }) => {
     setSelectedTask(task);
     setIsDetailsModalOpen(true);
   };
-
   const handleCloseDetails = () => {
     setIsDetailsModalOpen(false);
     setSelectedTask(null);
   };
-
   const handleEdit = (task: Maintenance & { status: MaintenanceStatus }) => {
     setSelectedTask(task);
     setIsDetailsModalOpen(false);
     setEditModalOpen(true);
   };
-
   const handleSaveEdit = (updatedTask: Maintenance) => {
-    if (updatedTask.id) {
-      editMutation.mutate({ ...updatedTask, id: updatedTask.id });
-    }
+    if (updatedTask.id) editMutation.mutate({ ...updatedTask, id: updatedTask.id });
   };
 
-  const sortedAndFilteredItems = useMemo(() => {
+  const itemsWithStatus = useMemo(() => {
     const now = new Date();
-    now.setHours(0, 0, 0, 0); 
-
-    const itemsWithStatus = maintenances.map((task) => {
-      let status: MaintenanceStatus;
-      if (task.isCompleted) {
-        status = "completed";
-      } else if (new Date(task.maintenanceDueDate) < now) {
-        status = "overdue";
-      } else {
-        status = "pending";
-      }
+    now.setHours(0, 0, 0, 0);
+    return maintenances.map((task) => {
+      const status: MaintenanceStatus = task.isCompleted
+        ? "completed"
+        : new Date(task.maintenanceDueDate) < now
+        ? "overdue"
+        : "pending";
       return { ...task, status };
     });
+  }, [maintenances]);
 
-    const filtered = itemsWithStatus.filter((item) => {
-      if (activeFilter === "all") return true;
-      return item.status === activeFilter;
-    });
+  const counts = useMemo(() => ({
+      pending: itemsWithStatus.filter((t) => t.status === "pending").length,
+      overdue: itemsWithStatus.filter((t) => t.status === "overdue").length - itemsWithStatus.filter((t) => t.status === "pending").length,
+      completed: itemsWithStatus.filter((t) => t.status === "completed").length,
+      all: itemsWithStatus.length - itemsWithStatus.filter((t) => t.status === "pending").length,
+  }), [itemsWithStatus]);
 
-    return filtered.sort((a, b) => {
+  const sortedAndFilteredItems = useMemo(() => {
+    const base = activeFilter === "all" ? itemsWithStatus : itemsWithStatus.filter((t) => t.status === activeFilter);
+    return [...base].sort((a, b) => {
       const dateA = new Date(a.maintenanceDueDate).getTime();
       const dateB = new Date(b.maintenanceDueDate).getTime();
-      if (activeFilter === "completed") {
-        return dateB - dateA; 
-      }
-      return dateA - dateB;
+      return activeFilter === "completed" ? dateB - dateA : dateA - dateB;
     });
-  }, [maintenances, activeFilter]);
+  }, [itemsWithStatus, activeFilter]);
 
   return (
     <div className="bg-gray-50 p-6 min-h-screen">
@@ -307,10 +252,7 @@ function RouteComponent() {
           </Button>
         </div>
 
-        <AddMaintenanceModal
-          isOpen={isAddModalOpen}
-          onClose={() => setAddModalOpen(false)}
-        />
+        <AddMaintenanceModal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} />
 
         {isDetailsModalOpen && selectedTask && (
           <MaintenanceDetailsModal
@@ -341,27 +283,35 @@ function RouteComponent() {
               key={key}
               type="button"
               onClick={() => handleFilterChange(key as MaintenanceFilter)}
-              className={`pb-2 px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
-                activeFilter === key
-                  ? "border-blue-500 text-blue-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
+              className={`relative pb-2 px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
+                activeFilter === key ? "border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               {label}
+              <span
+                className={`ml-2 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
+                  key === "overdue"
+                    ? "bg-red-100 text-red-800"
+                    : key === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : key === "completed"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+                aria-label={`Number of ${label.toLowerCase()} tasks`}
+              >
+                {counts[key as keyof typeof counts]}
+              </span>
             </button>
           ))}
         </div>
 
         <div className="space-y-4">
           {isLoading ? (
-            <div className="text-center text-primary-gray">
-              Loading maintenance tasks...
-            </div>
+            <div className="text-center text-primary-gray">Loading maintenance tasks...</div>
           ) : sortedAndFilteredItems.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
-              <p className="text-lg">
-                No maintenance items found for this filter.
-              </p>
+              <p className="text-lg">No maintenance items found for this filter.</p>
             </div>
           ) : (
             sortedAndFilteredItems.map((maintenance) => (
