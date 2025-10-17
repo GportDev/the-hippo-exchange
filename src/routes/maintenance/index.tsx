@@ -277,7 +277,7 @@ function RouteComponent() {
             { key: "all", label: "All" },
             { key: "overdue", label: "Overdue" },
             { key: "pending", label: "Upcoming" },
-            { key: "completed", label: "History" },
+            { key: "completed", label: "Completed" },
           ].map(({ key, label }) => (
             <button
               key={key}
