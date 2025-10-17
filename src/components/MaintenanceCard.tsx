@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Calendar, Package } from "lucide-react";
 import type { Maintenance } from "@/lib/Types";
 
 const formatDate = (dateString: string) => {
@@ -39,14 +40,15 @@ export function MaintenanceCard({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-md transition-shadow">
+    <div className="relative group overflow-hidden rounded-lg border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-primary-yellow/40">
+      <div className={`absolute left-0 top-0 h-full w-1 sm:w-1.5 bg-primary-gray`}></div>
       <div className="flex items-start gap-4">
         {imageUrl && (
-          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0">
+          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
             <img
               src={imageUrl}
               alt={task.productName}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
         )}
@@ -69,10 +71,15 @@ export function MaintenanceCard({
           <p className="text-gray-600 mb-2">
             {task.maintenanceDescription || "No description provided."}
           </p>
-          <div className="flex items-center gap-4 text-sm text-gray-500">
-            <span>Due: {formatDate(task.maintenanceDueDate)}</span>
-            <span> • </span>
-            <span>{task.productName}</span>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700`}>
+              <Calendar className="h-4 w-4" />
+              <span>{formatDate(task.maintenanceDueDate)}</span>
+            </span>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+              <Package className="h-3.5 w-3.5 text-gray-500" />
+              <span>{task.productName}</span>
+            </span>
           </div>
         </div>
         <div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0">
