@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
-import type { Maintenance } from "@/lib/Types";
+import type { Maintenance, Asset } from "@/lib/Types";
 
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
@@ -67,6 +67,16 @@ function RouteComponent() {
     queryFn: async () => {
       if (!user) return [];
       return apiFetch(user.id, "/maintenance");
+    },
+    enabled: !!user,
+  });
+
+  // Fetch user's assets to map images to maintenance cards
+  const { data: assets = [] } = useQuery<Asset[]>({
+    queryKey: ["assets", user?.id],
+    queryFn: async () => {
+      if (!user) return [] as Asset[];
+      return apiFetch(user.id, "/assets");
     },
     enabled: !!user,
   });
@@ -252,6 +262,14 @@ function RouteComponent() {
     });
   }, [itemsWithStatus, activeFilter]);
 
+  const assetImageMap = useMemo(() => {
+    const map = new Map<string, string | undefined>();
+    for (const a of assets) {
+      map.set(a.id, a.images?.[0] || "/public/placeholder.jpg");
+    }
+    return map;
+  }, [assets]);
+
   return (
     <div className="bg-gray-50 p-6 min-h-screen">
       <section className="mx-auto max-w-7xl">
@@ -336,6 +354,7 @@ function RouteComponent() {
               <MaintenanceCard
                 key={maintenance.id}
                 task={maintenance}
+                imageUrl={assetImageMap.get(maintenance.assetId)}
                 onUpdateStatus={handleUpdateStatus}
                 onViewDetails={handleViewDetails}
               />

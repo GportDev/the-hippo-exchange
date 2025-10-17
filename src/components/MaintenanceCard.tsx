@@ -14,12 +14,14 @@ type MaintenanceStatus = "overdue" | "pending" | "completed";
 
 interface MaintenanceCardProps {
   task: Maintenance & { status: MaintenanceStatus };
+  imageUrl?: string;
   onUpdateStatus?: (maintenanceId: string, isCompleted: boolean) => void;
   onViewDetails: (task: Maintenance & { status: MaintenanceStatus }) => void;
 }
 
 export function MaintenanceCard({
   task,
+  imageUrl,
   onUpdateStatus,
   onViewDetails,
 }: MaintenanceCardProps) {
@@ -37,8 +39,17 @@ export function MaintenanceCard({
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start">
+    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-start gap-4">
+        {imageUrl && (
+          <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0">
+            <img
+              src={imageUrl}
+              alt={task.productName}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        )}
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h3 className="text-xl font-semibold text-primary-gray">
@@ -64,7 +75,7 @@ export function MaintenanceCard({
             <span>{task.productName}</span>
           </div>
         </div>
-        <div className="ml-4 grid space-y-4 flex-shrink-0">
+        <div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0">
             <button
             type="button"
             onClick={() => onViewDetails(task)}
