@@ -142,20 +142,13 @@ function SignUpComponent() {
   }
 
   return (
-<<<<<<< HEAD
     <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center md:w-1/2 p-12 text-white bg-primary-gray md:rounded-r-[6rem] rounded-b-[4rem] md:rounded-bl-none">
-        <h1 className="text-6xl font-bold text-primary-yellow">Hippo Exchange</h1>
-        <p className="text-2xl text-white">don't buy. borrow.</p>
-=======
-        <div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
-      <div className="flex flex-col justify-center items-center md:w-1/2 p-12 text-white bg-primary-gray rounded-b-[4rem] md:rounded-r-[6rem] md:rounded-bl-none flex-grow">
+          <div className="flex flex-col justify-center items-center md:w-1/2 p-12 text-white bg-primary-gray rounded-b-[4rem] md:rounded-r-[6rem] md:rounded-bl-none flex-grow">
         <img src="/HippoTransparent.png" alt="Hippo Exchange Logo" className="w-70 h-70 mb-4"/>
         <div className="text-center">
           <h1 className="text-7xl font-bold text-primary-yellow mb-2">Hippo Exchange</h1>
           <p className="text-3xl text-white">don't buy. borrow.</p>
         </div>
->>>>>>> main
       </div>
       <div className="flex flex-col items-center justify-center md:w-1/2 ">
         <div className="w-full max-w-md p-8 space-y-8">
