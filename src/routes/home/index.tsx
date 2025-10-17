@@ -197,6 +197,15 @@ function RouteComponent() {
                     {pendingItems.length}
                 </div>
                 </div>
+                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <AlertTriangle className="h-5 w-5 text-red-600" />
+                    <span>Overdue Tasks</span>
+                </div>
+                <div className="mt-1 text-2xl font-bold text-primary-gray">
+                    {overdueItems.length-pendingItems.length}
+                </div>
+                </div>
             </div>
             </div>
             <div className="space-y-6 sm:space-y-8">
