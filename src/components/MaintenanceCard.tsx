@@ -72,14 +72,15 @@ export function MaintenanceCard({
             {task.maintenanceDescription || "No description provided."}
           </p>
           <div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+              <Package className="h-3.5 w-3.5 text-gray-500" />
+              <span>{task.brandName} {task.productName}</span>
+            </span>
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700`}>
               <Calendar className="h-4 w-4" />
               <span>{formatDate(task.maintenanceDueDate)}</span>
             </span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
-              <Package className="h-3.5 w-3.5 text-gray-500" />
-              <span>{task.productName}</span>
-            </span>
+            
           </div>
         </div>
         <div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0">
