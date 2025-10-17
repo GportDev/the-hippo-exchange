@@ -17,12 +17,18 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
     <button
       type="button"
       onClick={handleUserButtonClick}
-      className={twMerge('flex items-center w-full py-2 cursor-pointer', className)}
+      className={twMerge(
+        'flex items-center w-full py-4 cursor-pointer transition-colors duration-200 border-t border-primary-yellow/10',
+        isNavExpanded 
+          ? 'hover:bg-gray-700 rounded-lg mx-0' 
+          : 'hover:bg-gray-700/50 rounded-lg',
+        className
+      )}
       aria-label="Account menu"
     >
       {/* Fixed icon column to avoid drift */}
       <div className="w-16 flex-shrink-0 flex items-center justify-center">
-        <div ref={userButtonRef} className="pointer-events-none">
+        <div ref={userButtonRef} className="pointer-events-none scale-140 flex items-center justify-center">
           <UserButton />
         </div>
       </div>
@@ -40,7 +46,7 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
           <p className='text-primary-yellow font-medium leading-snug'>
             {user?.firstName} {user?.lastName}
           </p>
-          <p className='text-primary-yellow text-sm leading-snug'>
+          <p className='text-gray-400 text-sm leading-snug'>
             {user?.username}
           </p>
         </div>

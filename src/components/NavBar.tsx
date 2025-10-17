@@ -37,17 +37,19 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
         >
           <div className="flex flex-col h-full">
             {/* Header with toggle button */}
-            <div className="flex items-center justify-end-safe p-4 border-b border-primary-yellow/20">
-              <button 
-                type="button"
-                onClick={onToggle}
-                className="p-2 rounded-md hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200"
-                aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-                aria-controls="app-sidebar"
-                aria-expanded={isExpanded}
-              >
-                {isExpanded ? <Lucide.ChevronLeft size="1.2em" /> : <Lucide.ChevronRight size="1.2em" />}
-              </button>
+            <div className="border-t border-primary-yellow/10">
+                <div className="flex items-center justify-end-safe p-4 border-b border-primary-yellow/10 rounded-lg">
+                    <button 
+                        type="button"
+                        onClick={onToggle}
+                        className="p-2 rounded-md hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200"
+                        aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+                        aria-controls="app-sidebar"
+                        aria-expanded={isExpanded}
+                    >
+                        {isExpanded ? <Lucide.ChevronLeft size="1.2em" /> : <Lucide.ChevronRight size="1.2em" />}
+                    </button>
+                </div>
             </div>
             
             {/* Navigation links */}
@@ -120,7 +122,7 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
             </ul>
 
             <ClerkHeader 
-              className={`mt-auto mb-4 ${isExpanded ? '' : ''}`}
+              className={`mt-auto mb-0 ${isExpanded ? '' : ''}`}
               isNavExpanded={isExpanded}
             />
           </div>
