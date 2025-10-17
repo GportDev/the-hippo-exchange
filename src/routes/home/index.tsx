@@ -10,6 +10,7 @@ import {
   AlertTriangle,
   Calendar,
   ChevronRight,
+  DollarSign,
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import type { Asset, Maintenance } from "@/lib/Types";
@@ -80,6 +81,10 @@ function RouteComponent() {
     (item) => item.status === "overdue"
   );
   const favoriteAssets = assets.filter((asset) => asset.favorite);
+  const totalAssetValue = assets.reduce(
+    (sum, asset) => sum + (asset.purchaseCost || 0),
+    0
+  );
 
   // Overdue Items Toast Notification
   useEffect(() => {
@@ -147,13 +152,44 @@ function RouteComponent() {
   return (
     <div className="h-full bg-gray-50/50 p-6">
       <main className="mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            {greeting}, {user?.firstName}
-          </h1>
-          <p className="text-gray-500">
-            Here's what's happening with your assets today.
-          </p>
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">
+              {greeting}, {user?.firstName}
+            </h1>
+            <p className="text-gray-500">
+              Here's what's happening with your assets today.
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <div className="rounded-lg border bg-white p-4 shadow-sm w-48">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <Package className="h-5 w-5 text-blue-600" />
+                <span>Total Assets</span>
+              </div>
+              <div className="mt-1 text-2xl font-bold text-primary-gray">
+                {assets.length}
+              </div>
+            </div>
+            <div className="rounded-lg border bg-white p-4 shadow-sm w-48">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <DollarSign className="h-5 w-5 text-green-600" />
+                <span>Total Value</span>
+              </div>
+              <div className="mt-1 text-2xl font-bold text-primary-gray">
+                ${totalAssetValue.toLocaleString()}
+              </div>
+            </div>
+            <div className="rounded-lg border bg-white p-4 shadow-sm w-48">
+              <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <Calendar className="h-5 w-5 text-yellow-600" />
+                <span>Upcoming Tasks</span>
+              </div>
+              <div className="mt-1 text-2xl font-bold text-primary-gray">
+                {upcomingItems.length}
+              </div>
+            </div>
+          </div>
         </div>
         <div className="space-y-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
