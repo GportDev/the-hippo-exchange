@@ -301,10 +301,10 @@ function RouteComponent() {
           <div className="flex-grow" />
           <Button
             onClick={() => setAddModalOpen(true)}
-            className="p-5 mb-4 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer"
+            className="p-5 mb-4 mr-4 px-6 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer"
           >
             <span className="text-2xl mb-1">+</span>
-            <span className="text-base hidden sm:inline">Add Maintenance</span>
+            <span className="text-base hidden sm:inline">Add Task</span>
           </Button>
         </div>
 
