@@ -244,13 +244,6 @@ function RouteComponent() {
             <h1 className="text-3xl font-bold text-primary-gray">My Maintenance</h1>
             <p className="text-gray-500">Keep track of all your maintenance tasks.</p>
           </div>
-          <Button
-            onClick={() => setAddModalOpen(true)}
-            className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors px-4 py-2 h-auto text-base"
-          >
-            <span className="mb-1 text-2xl">+</span>
-            Add Maintenance
-          </Button>
         </div>
 
         <AddMaintenanceModal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)} />
@@ -284,7 +277,7 @@ function RouteComponent() {
               key={key}
               type="button"
               onClick={() => handleFilterChange(key as MaintenanceFilter)}
-              className={`relative pb-2 px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
+              className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
                 activeFilter === key ? "border-primary-gray text-primary-gray" : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
@@ -305,6 +298,14 @@ function RouteComponent() {
               </span>
             </button>
           ))}
+          <div className="flex-grow" />
+          <Button
+            onClick={() => setAddModalOpen(true)}
+            className="p-5 mb-4 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer"
+          >
+            <span className="text-2xl mb-1">+</span>
+            <span className="text-base hidden sm:inline">Add Maintenance</span>
+          </Button>
         </div>
 
         <div className="space-y-4">
