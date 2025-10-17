@@ -284,7 +284,7 @@ function RouteComponent() {
               type="button"
               onClick={() => handleFilterChange(key as MaintenanceFilter)}
               className={`relative pb-2 px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
-                activeFilter === key ? "border-blue-500 text-blue-600" : "border-transparent text-gray-500 hover:text-gray-700"
+                activeFilter === key ? "border-primary-gray text-primary-gray" : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               {label}
