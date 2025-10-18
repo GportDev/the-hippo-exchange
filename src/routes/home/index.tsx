@@ -95,7 +95,7 @@ function RouteComponent() {
   // Overdue Items Toast Notification
   useEffect(() => {
     const toastId = "overdue-toast";
-    const overdueItemsLength = overdueItems.length-pendingItems.length;
+    const overdueItemsLength = overdueItems.length;
     if (!isLoading && overdueItemsLength > 0) {
       toast(
         (t) => (
@@ -203,7 +203,7 @@ function RouteComponent() {
                     <span>Overdue Tasks</span>
                 </div>
                 <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {overdueItems.length-pendingItems.length}
+                    {overdueItems.length}
                 </div>
                 </div>
             </div>
