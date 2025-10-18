@@ -371,6 +371,7 @@ function RouteComponent() {
                 <MaintenanceCard
                   key={maintenance.id}
                   task={maintenance}
+                  imageUrl={asset.images?.[0] || '/public/placeholder.jpg'}
                   onUpdateStatus={handleUpdateStatus}
                   onViewDetails={handleViewDetails}
                 />
