@@ -1,8 +1,10 @@
 import type { BorrowRequest } from "@/lib/Types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
+import { Calendar, User, MessageSquare, Package } from "lucide-react";
 
 interface Props {
   request: BorrowRequest;
@@ -35,25 +37,67 @@ export function RequestCard({ request, mode }: Props) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["requests"] }),
   });
 
-  const statusColor = {
-    pending: "bg-yellow-100 text-yellow-800",
-    approved: "bg-green-100 text-green-800",
-    denied: "bg-red-100 text-red-800",
-    cancelled: "bg-gray-100 text-gray-800",
-  }[request.status];
+  const statusBadge = (
+    <Badge
+      className={{
+        pending: "bg-yellow-100 text-yellow-800 border-transparent",
+        approved: "bg-green-100 text-green-800 border-transparent",
+        denied: "bg-red-100 text-red-800 border-transparent",
+        cancelled: "bg-gray-100 text-gray-800 border-transparent",
+      }[request.status]}
+      variant="outline"
+    >
+      {request.status}
+    </Badge>
+  );
+
+  const counterpartLabel = mode === "sent" ? `To: ${shortId(request.ownerId)}` : `From: ${shortId(request.requesterId)}`;
+  const image = request.asset?.images?.[0];
 
   return (
-    <div className="rounded-xl border bg-white shadow-sm p-4 flex flex-col gap-3">
-      <div className="flex items-center justify-between">
-        <div className="font-semibold text-primary-gray">{request.asset?.itemName ?? request.assetId}</div>
-        <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColor}`}>{request.status}</span>
+    <div className="rounded-xl border bg-white shadow-sm hover:shadow-md transition-shadow p-4 flex gap-4">
+      {/* Thumbnail */}
+      <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0 border">
+        {image ? (
+          <img src={image} alt={request.asset?.itemName ?? "Asset"} className="w-full h-full object-cover" />
+        ) : (
+          <Package className="w-6 h-6 text-gray-400" />
+        )}
       </div>
-      <div className="text-sm text-gray-600">
-        {new Date(request.proposedStartDate).toLocaleDateString()} - {new Date(request.proposedEndDate).toLocaleDateString()}
-      </div>
-      {request.message && <div className="text-sm text-gray-700">“{request.message}”</div>}
 
-      <div className="flex gap-2 ml-auto pt-2">
+      {/* Content */}
+      <div className="flex-1 min-w-0 flex flex-col gap-2">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-sm text-gray-500">{request.asset?.category ?? "Item"}</div>
+            <div className="font-semibold text-primary-gray truncate">{request.asset?.itemName ?? request.assetId}</div>
+          </div>
+          <div className="flex-shrink-0">{statusBadge}</div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <User className="w-4 h-4" />
+            <span>{counterpartLabel}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            <span>
+              {new Date(request.proposedStartDate).toLocaleDateString()} - {new Date(request.proposedEndDate).toLocaleDateString()}
+            </span>
+          </div>
+        </div>
+
+        {request.message && (
+          <div className="flex items-start gap-2 text-sm text-gray-700">
+            <MessageSquare className="w-4 h-4 mt-0.5 text-gray-400" />
+            <p className="line-clamp-2">“{request.message}”</p>
+          </div>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-col gap-2 items-end justify-center">
         {mode === "received" && request.status === "pending" && (
           <>
             <Button onClick={() => approve.mutate()} disabled={approve.isPending} className="bg-green-600 hover:bg-green-700 text-white">
@@ -72,4 +116,10 @@ export function RequestCard({ request, mode }: Props) {
       </div>
     </div>
   );
+}
+
+function shortId(id: string) {
+  if (!id) return "user";
+  if (id.length <= 6) return id;
+  return `${id.slice(0, 3)}…${id.slice(-2)}`;
 }

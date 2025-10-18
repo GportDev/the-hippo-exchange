@@ -78,32 +78,41 @@ function RequestsPage() {
   ];
 
   const list = tab === "sent" ? sampleSent : sampleReceived;
+  const counts = { sent: sampleSent.length, received: sampleReceived.length };
 
   return (
-    <div className="bg-gray-50 p-6 min-h-screen">
+    <div className="bg-gray-50/50 p-6 min-h-screen">
       <section className="mx-auto max-w-7xl">
-        <div className="flex items-center gap-4 mb-6">
-          <h1 className="text-3xl font-bold text-primary-gray">Requests</h1>
-          <div className="flex gap-2 ml-auto">
-            <button
-              type="button"
-              onClick={() => setTab("sent")}
-              className={`px-4 py-2 rounded-md border cursor-pointer ${
-                tab === "sent" ? "bg-primary-gray text-primary-yellow" : "bg-white text-primary-gray"
-              }`}
-            >
-              Sent Requests
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab("received")}
-              className={`px-4 py-2 rounded-md border cursor-pointer ${
-                tab === "received" ? "bg-primary-gray text-primary-yellow" : "bg-white text-primary-gray"
-              }`}
-            >
-              Received Requests
-            </button>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-primary-gray">Requests</h1>
+            <p className="text-gray-500">Borrowing requests you've sent and received.</p>
           </div>
+        </div>
+
+        <div className="flex gap-6 border-b border-gray-200 mb-4">
+          {[
+            { key: "sent", label: "Sent" },
+            { key: "received", label: "Received" },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setTab(key as "sent" | "received")}
+              className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
+                tab === key ? "border-primary-gray text-primary-gray" : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {label}
+              <span
+                className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle bg-gray-200 text-gray-700`}
+                aria-label={`Number of ${label.toLowerCase()} requests`}
+              >
+                {counts[key as "sent" | "received"]}
+              </span>
+            </button>
+          ))}
+          <div className="flex-grow" />
         </div>
 
         {list.length === 0 ? (
