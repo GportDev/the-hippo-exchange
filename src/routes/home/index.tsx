@@ -12,7 +12,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
-import type { Asset, Maintenance } from "@/lib/Types";
+import type { Asset, Maintenance, BorrowRequest, Loan } from "@/lib/Types";
 
 export const Route = createFileRoute("/home/")({
   component: RouteComponent,
@@ -69,6 +69,33 @@ function RouteComponent() {
     (item) => item.status === "overdue"
   );
   const favoriteAssets = assets.filter((asset) => asset.favorite);
+
+  // New: Requests & Loans
+  const { data: receivedRequests = [] } = useQuery<BorrowRequest[]>({
+    queryKey: ["requests", "received", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      return apiFetch(user.id, "/requests/received");
+    },
+    enabled: !!user,
+  });
+
+  const { data: loansIncoming = [] } = useQuery<Loan[]>({
+    queryKey: ["loans", "incoming", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      return apiFetch(user.id, "/loans/incoming");
+    },
+    enabled: !!user,
+  });
+  const { data: loansOutgoing = [] } = useQuery<Loan[]>({
+    queryKey: ["loans", "outgoing", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      return apiFetch(user.id, "/loans/outgoing");
+    },
+    enabled: !!user,
+  });
 
   // Overdue Items Toast Notification
   useEffect(() => {
@@ -234,6 +261,25 @@ function RouteComponent() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* New: Lending Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Link to={"/requests" as any} className="rounded-lg border bg-white p-5 shadow-sm hover:bg-gray-50 transition-colors">
+            <div className="text-sm text-gray-600">Pending Requests</div>
+            <div className="text-3xl font-bold text-primary-gray mt-1">{receivedRequests.filter(r => r.status === 'pending').length}</div>
+            <div className="text-xs text-gray-500 mt-1">Tap to review</div>
+          </Link>
+          <Link to={"/loans" as any} className="rounded-lg border bg-white p-5 shadow-sm hover:bg-gray-50 transition-colors">
+            <div className="text-sm text-gray-600">I'm Borrowing</div>
+            <div className="text-3xl font-bold text-primary-gray mt-1">{loansIncoming.filter(l => l.status === 'active').length}</div>
+            <div className="text-xs text-gray-500 mt-1">Active loans</div>
+          </Link>
+          <Link to={"/loans" as any} className="rounded-lg border bg-white p-5 shadow-sm hover:bg-gray-50 transition-colors">
+            <div className="text-sm text-gray-600">I've Lent</div>
+            <div className="text-3xl font-bold text-primary-gray mt-1">{loansOutgoing.filter(l => l.status === 'active').length}</div>
+            <div className="text-xs text-gray-500 mt-1">Active loans</div>
+          </Link>
         </div>
       </main>
     </div>

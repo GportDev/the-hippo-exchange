@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
 import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
+import { Route as RequestsIndexRouteImport } from './routes/requests/index'
+import { Route as MarketplaceIndexRouteImport } from './routes/marketplace/index'
 import { Route as MaintenanceIndexRouteImport } from './routes/maintenance/index'
+import { Route as LoansIndexRouteImport } from './routes/loans/index'
 import { Route as HomeIndexRouteImport } from './routes/home/index'
 import { Route as AssetsMyAssetsIndexRouteImport } from './routes/assets/my-assets/index'
 import { Route as AssetsMyAssetsIdRouteImport } from './routes/assets/my-assets/$id'
@@ -32,9 +35,24 @@ const SignInIndexRoute = SignInIndexRouteImport.update({
   path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RequestsIndexRoute = RequestsIndexRouteImport.update({
+  id: '/requests/',
+  path: '/requests/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceIndexRoute = MarketplaceIndexRouteImport.update({
+  id: '/marketplace/',
+  path: '/marketplace/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MaintenanceIndexRoute = MaintenanceIndexRouteImport.update({
   id: '/maintenance/',
   path: '/maintenance/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoansIndexRoute = LoansIndexRouteImport.update({
+  id: '/loans/',
+  path: '/loans/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HomeIndexRoute = HomeIndexRouteImport.update({
@@ -56,7 +74,10 @@ const AssetsMyAssetsIdRoute = AssetsMyAssetsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/home': typeof HomeIndexRoute
+  '/loans': typeof LoansIndexRoute
   '/maintenance': typeof MaintenanceIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
+  '/requests': typeof RequestsIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
@@ -65,7 +86,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/home': typeof HomeIndexRoute
+  '/loans': typeof LoansIndexRoute
   '/maintenance': typeof MaintenanceIndexRoute
+  '/marketplace': typeof MarketplaceIndexRoute
+  '/requests': typeof RequestsIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
@@ -75,7 +99,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/home/': typeof HomeIndexRoute
+  '/loans/': typeof LoansIndexRoute
   '/maintenance/': typeof MaintenanceIndexRoute
+  '/marketplace/': typeof MarketplaceIndexRoute
+  '/requests/': typeof RequestsIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
   '/assets/my-assets/$id': typeof AssetsMyAssetsIdRoute
@@ -86,7 +113,10 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/home'
+    | '/loans'
     | '/maintenance'
+    | '/marketplace'
+    | '/requests'
     | '/sign-in'
     | '/sign-up'
     | '/assets/my-assets/$id'
@@ -95,7 +125,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/home'
+    | '/loans'
     | '/maintenance'
+    | '/marketplace'
+    | '/requests'
     | '/sign-in'
     | '/sign-up'
     | '/assets/my-assets/$id'
@@ -104,7 +137,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/home/'
+    | '/loans/'
     | '/maintenance/'
+    | '/marketplace/'
+    | '/requests/'
     | '/sign-in/'
     | '/sign-up/'
     | '/assets/my-assets/$id'
@@ -114,7 +150,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HomeIndexRoute: typeof HomeIndexRoute
+  LoansIndexRoute: typeof LoansIndexRoute
   MaintenanceIndexRoute: typeof MaintenanceIndexRoute
+  MarketplaceIndexRoute: typeof MarketplaceIndexRoute
+  RequestsIndexRoute: typeof RequestsIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
   SignUpIndexRoute: typeof SignUpIndexRoute
   AssetsMyAssetsIdRoute: typeof AssetsMyAssetsIdRoute
@@ -144,11 +183,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/requests/': {
+      id: '/requests/'
+      path: '/requests'
+      fullPath: '/requests'
+      preLoaderRoute: typeof RequestsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace/': {
+      id: '/marketplace/'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/maintenance/': {
       id: '/maintenance/'
       path: '/maintenance'
       fullPath: '/maintenance'
       preLoaderRoute: typeof MaintenanceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/loans/': {
+      id: '/loans/'
+      path: '/loans'
+      fullPath: '/loans'
+      preLoaderRoute: typeof LoansIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/home/': {
@@ -178,7 +238,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeIndexRoute: HomeIndexRoute,
+  LoansIndexRoute: LoansIndexRoute,
   MaintenanceIndexRoute: MaintenanceIndexRoute,
+  MarketplaceIndexRoute: MarketplaceIndexRoute,
+  RequestsIndexRoute: RequestsIndexRoute,
   SignInIndexRoute: SignInIndexRoute,
   SignUpIndexRoute: SignUpIndexRoute,
   AssetsMyAssetsIdRoute: AssetsMyAssetsIdRoute,

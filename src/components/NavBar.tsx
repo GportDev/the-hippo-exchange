@@ -77,6 +77,27 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
               </li>
               <li className="mb-2 w-full">
                 <Link 
+                  to={"/marketplace" as any}
+                  className={`w-full flex items-center py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200`}
+                  title={!isExpanded ? "Marketplace" : undefined}
+                >
+                  <span className="w-16 flex-shrink-0 flex items-center justify-center">
+                    <Lucide.Store size="1.2em" />
+                  </span>
+                  <span
+                    className={`overflow-hidden whitespace-nowrap select-none ${
+                      isExpanded
+                        ? 'opacity-100 translate-x-0 max-w-[160px] ml-2'
+                        : 'opacity-0 -translate-x-2 max-w-0 ml-0'
+                    } transition-all duration-300 ease-in-out`}
+                    aria-hidden={!isExpanded}
+                  >
+                    Marketplace
+                  </span>
+                </Link>
+              </li>
+              <li className="mb-2 w-full">
+                <Link 
                   to="/assets/my-assets"
                   className={`w-full flex items-center py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200`}
                   title={!isExpanded ? "My Assets" : undefined}
@@ -115,6 +136,50 @@ function Navbar({ isExpanded, onToggle }: NavbarProps) {
                     aria-hidden={!isExpanded}
                   >
                     Maintenance
+                  </span>
+                </Link>
+              </li>
+
+              <li className="mb-2 w-full">
+                <Link 
+                  to={"/requests" as any}
+                  className={`w-full flex items-center py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200`}
+                  title={!isExpanded ? "Requests" : undefined}
+                >
+                  <span className="w-16 flex-shrink-0 flex items-center justify-center">
+                    <Lucide.Mail size="1.2em" />
+                  </span>
+                  <span
+                    className={`overflow-hidden whitespace-nowrap select-none ${
+                      isExpanded
+                        ? 'opacity-100 translate-x-0 max-w-[160px] ml-2'
+                        : 'opacity-0 -translate-x-2 max-w-0 ml-0'
+                    } transition-all duration-300 ease-in-out`}
+                    aria-hidden={!isExpanded}
+                  >
+                    Requests
+                  </span>
+                </Link>
+              </li>
+
+              <li className="mb-2 w-full">
+                <Link 
+                  to={"/loans" as any}
+                  className={`w-full flex items-center py-3 text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors duration-200`}
+                  title={!isExpanded ? "Loans" : undefined}
+                >
+                  <span className="w-16 flex-shrink-0 flex items-center justify-center">
+                    <Lucide.Handshake size="1.2em" />
+                  </span>
+                  <span
+                    className={`overflow-hidden whitespace-nowrap select-none ${
+                      isExpanded
+                        ? 'opacity-100 translate-x-0 max-w-[160px] ml-2'
+                        : 'opacity-0 -translate-x-2 max-w-0 ml-0'
+                    } transition-all duration-300 ease-in-out`}
+                    aria-hidden={!isExpanded}
+                  >
+                    Loans
                   </span>
                 </Link>
               </li>

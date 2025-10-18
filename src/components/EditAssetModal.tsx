@@ -38,6 +38,10 @@ interface Asset {
   ownerUserId: string;
   status: string;
   favorite: boolean;
+  // New optional lending fields for MVP
+  isAvailableToLend?: boolean;
+  availabilityNotes?: string;
+  maxLoanDays?: number;
 }
 
 interface EditAssetModalProps {
@@ -321,6 +325,47 @@ export function EditAssetModal({
                 checked={formData.favorite}
                 onCheckedChange={(checked) => handleCheckboxChange("favorite", Boolean(checked))}
               />
+            </div>
+
+            {/* Lending Options */}
+            <div className="pt-4 space-y-4">
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="isAvailableToLend" className="cursor-pointer">
+                  Available to Lend
+                </Label>
+                <Checkbox
+                  id="isAvailableToLend"
+                  checked={Boolean(formData.isAvailableToLend)}
+                  onCheckedChange={(checked) =>
+                    setFormData((prev) => ({ ...prev, isAvailableToLend: Boolean(checked) }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="maxLoanDays">Max loan days</Label>
+                <Input
+                  id="maxLoanDays"
+                  type="number"
+                  min={1}
+                  value={formData.maxLoanDays ?? 7}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, maxLoanDays: Number(e.target.value) }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="availabilityNotes">Availability notes</Label>
+                <Input
+                  id="availabilityNotes"
+                  value={formData.availabilityNotes ?? ''}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, availabilityNotes: e.target.value }))
+                  }
+                  placeholder="e.g., Weekends only"
+                />
+              </div>
             </div>
           </form>
         </div>

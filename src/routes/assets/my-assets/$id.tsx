@@ -25,6 +25,9 @@ interface Asset {
   ownerUserId: string;
   status: string;
   favorite: boolean;
+  isAvailableToLend?: boolean;
+  availabilityNotes?: string;
+  maxLoanDays?: number;
 }
 
 type MaintenanceStatus = "overdue" | "pending" | "completed";
@@ -339,6 +342,29 @@ function RouteComponent() {
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Condition Description</h3>
               <p className="text-gray-700 leading-relaxed">{asset.conditionDescription}</p>
+            </div>
+
+            {/* Lending Settings */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Lending</h3>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-sm text-gray-600">Available to lend:</span>
+                <span className={`text-sm font-medium px-2 py-1 rounded-full ${asset.isAvailableToLend ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                  {asset.isAvailableToLend ? 'Yes' : 'No'}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <div className="text-sm text-gray-600">Max loan days</div>
+                  <div className="text-lg font-semibold text-gray-900">{asset.maxLoanDays ?? 7}</div>
+                </div>
+                {asset.availabilityNotes && (
+                  <div>
+                    <div className="text-sm text-gray-600">Availability notes</div>
+                    <div className="text-gray-900">{asset.availabilityNotes}</div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
