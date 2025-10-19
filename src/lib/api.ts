@@ -5,6 +5,7 @@ export const API_BASE_URL =
 
 export const CLERK_JWT_TEMPLATE = import.meta.env.VITE_CLERK_JWT_TEMPLATE;
 
+/** Normalises relative API paths to the configured service base URL. */
 export function buildApiUrl(path: string): string {
   if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;

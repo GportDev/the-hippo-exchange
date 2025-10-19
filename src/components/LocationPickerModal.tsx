@@ -25,6 +25,10 @@ function MapController({ center }: { center: LatLngExpression }) {
   return null;
 }
 
+/**
+ * Modal that lets a user pick a location by dragging a marker on an interactive map
+ * and converts the coordinates into a human readable city/state pair.
+ */
 export default function LocationPickerModal({
   isOpen,
   onClose,

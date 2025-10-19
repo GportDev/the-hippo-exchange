@@ -7,6 +7,11 @@ type RequestOptions = RequestInit & {
   skipJsonParsing?: boolean;
 };
 
+/**
+ * Returns a memoised fetch helper that automatically injects a Clerk session token
+ * and normalises JSON handling. Consumers should use this for any authenticated
+ * request to the Hippo Exchange API.
+ */
 export function useApiClient() {
   const { getToken } = useAuth();
 
