@@ -156,19 +156,19 @@ function MyAssetsComponent() {
   );
 
   return (
-    <div className="bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        <header className="mb-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-primary-gray">My Assets</h1>
-              <p className="text-muted-foreground">
+    <div className="bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <header className="space-y-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-primary-gray sm:text-3xl">My Assets</h1>
+              <p className="text-sm text-muted-foreground sm:text-base">
                 Manage and track your valuable assets.
               </p>
             </div>
             <AddAssetModal />
           </div>
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="rounded-lg border bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Package className="h-5 w-5 text-blue-600" />
@@ -197,9 +197,9 @@ function MyAssetsComponent() {
           </div>
         </header>
 
-        <div className="mb-6 rounded-lg border bg-white p-4 shadow-sm">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="relative flex-1 min-w-[300px]">
+        <div className="rounded-lg border bg-white p-4 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="relative w-full flex-1 min-w-[240px] sm:min-w-[280px]">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search assets by name, brand, or category..."
@@ -209,7 +209,7 @@ function MyAssetsComponent() {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
+              <SelectTrigger className="w-full cursor-pointer sm:w-[180px]">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -222,7 +222,7 @@ function MyAssetsComponent() {
             <Button
               variant={showFavoritesOnly ? "secondary" : "outline"}
               onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              className="flex items-center gap-2 text-primary-gray cursor-pointer"
+              className="flex w-full items-center justify-center gap-2 text-primary-gray sm:w-auto"
             >
               <Heart
                 className={`h-4 w-4 ${
@@ -235,9 +235,9 @@ function MyAssetsComponent() {
         </div>
 
         {filteredAssets.length === 0 ? (
-          <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
+          <div className="rounded-lg border bg-white px-6 py-12 text-center shadow-sm">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900 text-primary-gray">
+            <h3 className="mt-4 text-lg font-medium text-primary-gray">
               No assets found
             </h3>
             <p className="mt-2 text-sm text-gray-600">
@@ -247,7 +247,7 @@ function MyAssetsComponent() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredAssets.map((asset) => (
               <AssetCard
                 key={asset.id}

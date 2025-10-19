@@ -287,12 +287,12 @@ function RouteComponent() {
   };
 
   return (
-    <div className="bg-gray-50 p-6 min-h-screen">
-      <section className="mx-auto max-w-7xl">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-primary-gray">My Maintenance</h1>
-            <p className="text-gray-500">Keep track of all your maintenance tasks.</p>
+    <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl space-y-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="space-y-1">
+            <h1 className="text-2xl font-bold text-primary-gray sm:text-3xl">My Maintenance</h1>
+            <p className="text-sm text-gray-500 sm:text-base">Keep track of all your maintenance tasks.</p>
           </div>
         </div>
 
@@ -316,7 +316,7 @@ function RouteComponent() {
           onSave={handleSaveEdit}
         />
 
-        <div className="flex gap-6 border-b border-gray-200 mb-4">
+        <div className="flex flex-wrap items-center gap-3 border-b border-gray-200 pb-2">
           {[
             { key: "all", label: "All" },
             { key: "overdue", label: "Overdue" },
@@ -327,13 +327,13 @@ function RouteComponent() {
               key={key}
               type="button"
               onClick={() => handleFilterChange(key as MaintenanceFilter)}
-              className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
+              className={`relative px-1 text-sm font-semibold transition-colors sm:text-base ${
                 activeFilter === key ? "border-primary-gray text-primary-gray" : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               {label}
               <span
-                className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
+                className={`ml-2 inline-block min-w-[1.5em] rounded-full px-2 py-1 text-xs font-bold align-middle ${
                   key === "overdue"
                     ? "bg-red-100 text-red-800"
                     : key === "pending"
@@ -351,16 +351,16 @@ function RouteComponent() {
           <div className="flex-grow" />
           <Button
             onClick={() => setAddModalOpen(true)}
-            className="p-6 px-8 mb-2 mr-5 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-primary-gray px-4 py-3 text-primary-yellow transition-colors hover:bg-primary-gray/90 hover:text-primary-yellow/90 sm:w-auto"
           >
-            <span className="text-2xl mb-1">+</span>
-            <span className="text-base hidden sm:inline">Add Task</span>
+            <span className="text-xl sm:text-2xl">+</span>
+            <span className="text-sm sm:text-base">Add Task</span>
           </Button>
         </div>
 
         <div className="space-y-4">
           {sortedAndFilteredItems.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="rounded-lg border bg-white py-12 text-center text-gray-500">
               <p className="text-lg">No maintenance items found for this filter.</p>
             </div>
           ) : (

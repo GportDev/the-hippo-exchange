@@ -65,6 +65,14 @@ pnpx shadcn@latest add button
 Follow the same concise JSDoc style for new hooks and utilities—explain why the helper exists, when to use it, and any noteworthy side effects.
 
 
+## Responsive Design
+
+- Key dashboards (`/home`, `/assets`, `/maintenance`) now use responsive Tailwind utilities (`px-4`, single-column fallbacks, and flex wrapping) so content adapts cleanly down to ~360 px wide devices.
+- Modal dialogs and forms rely on `w-[95vw]` and scrollable bodies to stay usable in portrait orientation.
+- Navigation collapses naturally on smaller screens, keeping actions accessible without horizontal scrolling.
+- When adding new pages, stick to the same pattern: single-column by default, progressively enhance with `sm:`/`md:` breakpoints, and keep filter/toolbars stackable.
+
+
 ## Routing
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 

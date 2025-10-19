@@ -253,7 +253,7 @@ export default function AddAssetModal() {
         Add New Asset
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
+      <DialogContent className="flex max-h-[90vh] w-[95vw] flex-col overflow-hidden rounded-xl sm:w-full sm:max-w-[500px] lg:max-w-[600px]">
         {/* Close Button */}
         <DialogClose asChild>
           <button
@@ -263,14 +263,14 @@ export default function AddAssetModal() {
             <X className="h-5 w-5" />
           </button>
         </DialogClose>
-        <DialogHeader className="-m-[1px] bg-primary-gray text-white px-6 py-4 rounded-t-lg z-60">
+        <DialogHeader className="-m-[1px] z-60 rounded-t-lg bg-primary-gray px-4 py-4 text-white sm:px-6">
           <DialogTitle className="text-center text-primary-yellow">Add New Asset</DialogTitle>
           <DialogDescription className="text-white/80 text-center">
             Fill in the details for your new asset. Click save when you're done.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto px-6">
+        <div className="flex-grow overflow-y-auto px-4 sm:px-6">
           <form onSubmit={handleSubmit} id="add-asset-form" className="space-y-6 py-6">
 
             {/* Image Upload */}
@@ -300,7 +300,7 @@ export default function AddAssetModal() {
                     <img
                       src={previewUrl}
                       alt="Selected preview"
-                      className="h-auto w-full rounded-md object-cover"
+                      className="h-48 w-full rounded-md object-cover sm:h-64"
                     />
                     <Button
                       type="button"
@@ -399,7 +399,7 @@ export default function AddAssetModal() {
             {/* Current Location */}
             <div className="space-y-2">
               <Label htmlFor="currentLocation">Location</Label>
-              <div className="col-span-3 flex flex-col sm:flex-row items-center gap-2">
+              <div className="col-span-3 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
                 <Input
                   id="currentLocation"
                   value={currentLocation}
@@ -466,9 +466,12 @@ export default function AddAssetModal() {
           </form>
         </div>
 
-        <DialogFooter className="flex-shrink-0 border-t px-6 py-4">
-          <Button type="submit" form="add-asset-form" disabled={isSaving}
-          className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+        <DialogFooter className="flex-shrink-0 gap-3 border-t px-4 py-4 sm:flex-row sm:px-6">
+          <Button
+            type="submit"
+            form="add-asset-form"
+            disabled={isSaving}
+            className="w-full bg-primary-gray text-primary-yellow transition-colors hover:bg-primary-yellow hover:text-primary-gray sm:w-auto"
           >
             {isSaving ? "Saving..." : "Save Asset"}
           </Button>

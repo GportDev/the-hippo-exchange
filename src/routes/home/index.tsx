@@ -168,158 +168,145 @@ function RouteComponent() {
   }
 
   return (
-    <div className="h-full bg-gray-50/50">
-      <main className="p-6 space-y-8">
-        <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-6 mb-4">
-            <div>
-                <h1 className="text-3xl font-bold text-gray-800">
+    <div className="min-h-full bg-gray-50/50">
+      <main className="px-4 py-6 space-y-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl space-y-6">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl">
                 {greeting}, {user?.firstName}
-                </h1>
-                <p className="text-gray-500">
+              </h1>
+              <p className="text-sm text-gray-500 sm:text-base">
                 Here's what's happening with your assets today.
-                </p>
+              </p>
             </div>
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:flex gap-3 sm:gap-6 w-full sm:w-auto">
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
+            <div className="grid w-full grid-cols-1 gap-3 xs:grid-cols-2 sm:w-auto sm:auto-cols-fr sm:grid-flow-col sm:grid-cols-none">
+              <div className="rounded-lg border bg-white p-4 shadow-sm sm:w-48">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Package className="h-5 w-5 text-blue-600" />
-                    <span>Total Assets</span>
+                  <Package className="h-5 w-5 text-blue-600" />
+                  <span>Total Assets</span>
+                </div>
+                <div className="mt-1 text-2xl font-bold text-primary-gray">{assets.length}</div>
+              </div>
+              <div className="rounded-lg border bg-white p-4 shadow-sm sm:w-48">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <DollarSign className="h-5 w-5 text-green-600" />
+                  <span>Total Value</span>
                 </div>
                 <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {assets.length}
+                  ${totalAssetValue.toLocaleString()}
                 </div>
-                </div>
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
+              </div>
+              <div className="rounded-lg border bg-white p-4 shadow-sm sm:w-48">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    <span>Total Value</span>
+                  <Calendar className="h-5 w-5 text-yellow-600" />
+                  <span>Upcoming Tasks</span>
                 </div>
                 <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    ${totalAssetValue.toLocaleString()}
+                  {pendingItems.length}
                 </div>
-                </div>
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
+              </div>
+              <div className="rounded-lg border bg-white p-4 shadow-sm sm:w-48">
                 <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Calendar className="h-5 w-5 text-yellow-600" />
-                    <span>Upcoming Tasks</span>
+                  <AlertTriangle className="h-5 w-5 text-red-600" />
+                  <span>Overdue Tasks</span>
                 </div>
                 <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {pendingItems.length}
+                  {overdueItems.length}
                 </div>
-                </div>
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                    <span>Overdue Tasks</span>
-                </div>
-                <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {overdueItems.length}
-                </div>
-                </div>
+              </div>
             </div>
-            </div>
-            <div className="space-y-6 sm:space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+          </div>
+          <div className="space-y-6 sm:space-y-8">
+            <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-3">
                 {/* Upcoming Maintenance Section */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                <div className="rounded-xl bg-white p-4 shadow-md sm:p-6 lg:col-span-2">
+                  <h2 className="mb-4 text-xl font-bold text-gray-800 sm:text-2xl">
                     Upcoming Maintenance
-                </h2>
-                <div className="space-y-4">
+                  </h2>
+                  <div className="space-y-3 sm:space-y-4">
                     {isLoading ? (
-                    <p className="text-gray-500">Loading maintenance items...</p>
+                      <p className="text-gray-500">Loading maintenance items...</p>
                     ) : upcomingItems.length > 0 ? (
-                    upcomingItems.map((item) => (
+                      upcomingItems.map((item) => (
                         <Link
-                        to="/assets/my-assets/$id"
-                        params={{ id: item.assetId }}
-                        key={item.id}
-                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                          to="/assets/my-assets/$id"
+                          params={{ id: item.assetId }}
+                          key={item.id}
+                          className="flex flex-col gap-3 rounded-lg bg-gray-50/40 p-3 transition-colors hover:bg-gray-100 sm:flex-row sm:items-center sm:justify-between sm:p-4"
                         >
-                        <div className="flex items-center gap-4">
-                            <div
-                            className={`p-2 rounded-full ${getStatusClasses(
-                                item.status
-                            )}`}
-                            >
-                            <Calendar className="h-5 w-5" />
+                          <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+                            <div className={`rounded-full p-2 ${getStatusClasses(item.status)}`}>
+                              <Calendar className="h-5 w-5" />
                             </div>
-                            <div>
-                            <p className="font-semibold text-gray-900">
+                            <div className="space-y-1">
+                              <p className="font-semibold text-gray-900">
                                 {item.maintenanceTitle}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                {item.maintenanceTitle}
-                            </p>
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {item.productName ?? ""}
+                              </p>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-4">
+                          </div>
+                          <div className="flex items-center justify-between gap-3 sm:gap-4">
                             <p
-                            className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
-                                item.status
-                            )}`}
+                              className={`rounded-full px-2 py-1 text-sm font-medium ${getStatusClasses(item.status)}`}
                             >
-                            {new Date(item.maintenanceDueDate).toLocaleDateString()}
+                              {new Date(item.maintenanceDueDate).toLocaleDateString()}
                             </p>
                             <ChevronRight className="h-5 w-5 text-gray-400" />
-                        </div>
+                          </div>
                         </Link>
-                    ))
+                      ))
                     ) : (
-                    <p className="text-gray-500">No upcoming maintenance items.</p>
+                      <p className="text-gray-500">No upcoming maintenance items.</p>
                     )}
-                </div>
+                  </div>
                 </div>
 
                 {/* Favorite Assets Section */}
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                <div className="rounded-xl bg-white p-4 shadow-md sm:p-6">
+                  <h2 className="mb-4 text-xl font-bold text-gray-800 sm:text-2xl">
                     Favorite Assets
-                </h2>
-                <div className="space-y-3">
+                  </h2>
+                  <div className="space-y-3">
                     {isLoading ? (
-                    <p className="text-gray-500">Loading assets...</p>
+                      <p className="text-gray-500">Loading assets...</p>
                     ) : favoriteAssets.length > 0 ? (
-                    favoriteAssets.map((asset) => (
+                      favoriteAssets.map((asset) => (
                         <Link
-                        to="/assets/my-assets/$id"
-                        params={{ id: asset.id }}
-                        key={asset.id}
-                        className="flex items-center gap-4 p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                          to="/assets/my-assets/$id"
+                          params={{ id: asset.id }}
+                          key={asset.id}
+                          className="flex flex-col gap-3 rounded-lg p-3 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:gap-4 sm:p-4"
                         >
-                        {asset.images && asset.images.length > 0 ? (
+                          {asset.images && asset.images.length > 0 ? (
                             <img
-                            src={asset.images[0]}
-                            alt={asset.itemName}
-                            className="w-12 h-12 rounded-md object-cover"
+                              src={asset.images[0]}
+                              alt={asset.itemName}
+                              className="h-16 w-full rounded-md object-cover sm:h-12 sm:w-12"
                             />
-                        ) : (
-                            <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
-                            <Package className="h-6 w-6 text-gray-400" />
+                          ) : (
+                            <div className="flex h-16 w-full items-center justify-center rounded-md bg-gray-100 sm:h-12 sm:w-12">
+                              <Package className="h-6 w-6 text-gray-400" />
                             </div>
-                        )}
-                        <div>
-                            <p className="font-semibold text-gray-900">
-                            {asset.itemName}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                            {asset.brandName}
-                            </p>
-                        </div>
-                        <Heart className="h-5 w-5 text-red-500 fill-red-500 ml-auto" />
+                          )}
+                          <div className="flex flex-1 flex-col gap-1">
+                            <p className="font-semibold text-gray-900">{asset.itemName}</p>
+                            <p className="text-sm text-gray-500">{asset.brandName}</p>
+                          </div>
+                          <Heart className="h-5 w-5 text-red-500 sm:ml-auto" />
                         </Link>
-                    ))
+                      ))
                     ) : (
-                    <p className="text-gray-500">
-                        No favorite assets yet. Click the heart on an asset to add it
-                        here.
-                    </p>
+                      <p className="text-gray-500">
+                        No favorite assets yet. Click the heart on an asset to add it here.
+                      </p>
                     )}
-                </div>
+                  </div>
                 </div>
             </div>
-            </div>
+          </div>
         </div>
       </main>
     </div>

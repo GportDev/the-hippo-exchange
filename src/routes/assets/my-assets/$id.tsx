@@ -204,12 +204,12 @@ function RouteComponent() {
   }
 
   return (
-    <div className="bg-gray-50 p-6">
+    <div className="bg-gray-50 px-4 py-6 sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
+      <div className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-2 sm:px-4">
+          <div className="flex flex-col gap-3 py-4 sm:h-16 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3 text-sm text-gray-600">
               <Link 
                 to="/assets/my-assets" 
                 className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
@@ -218,7 +218,7 @@ function RouteComponent() {
                 Back to Assets
               </Link>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2 sm:justify-end">
               {(() => {
                 const getStatusColor = (status: string) => {
                   switch (status) {
@@ -252,33 +252,33 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="mx-auto max-w-7xl space-y-8 py-8">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="aspect-square rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-200">
+            <div className="h-64 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm sm:h-80">
               {asset.images && asset.images.length > 0 ? (
                 <img 
                   src={asset.images[0]} 
                   alt={asset.itemName}
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <Camera className="w-16 h-16" />
+                <div className="flex h-full w-full items-center justify-center text-gray-400">
+                  <Camera className="h-16 w-16" />
                 </div>
               )}
             </div>
             
             {/* Additional Images */}
             {asset.images && asset.images.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                 {asset.images.slice(1, 5).map((image, index) => (
-                  <div key={index} className="aspect-square rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200">
+                  <div key={index} className="aspect-square overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
                     <img 
                       src={image} 
                       alt={`${asset.itemName} ${index + 1}`}
-                      className="w-full h-full object-cover"
+                      className="h-full w-full object-cover"
                     />
                   </div>
                 ))}
@@ -301,17 +301,17 @@ function RouteComponent() {
             </div>
 
             {/* Key Information */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                <div className="flex items-center gap-2 text-gray-600 mb-1">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="mb-1 flex items-center gap-2 text-gray-600">
                   <DollarSign className="w-4 h-4" />
                   <span className="text-sm font-medium">Purchase Cost</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">{formatCurrency(asset.purchaseCost)}</p>
               </div>
               
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-                <div className="flex items-center gap-2 text-gray-600 mb-1">
+              <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                <div className="mb-1 flex items-center gap-2 text-gray-600">
                   <Calendar className="w-4 h-4" />
                   <span className="text-sm font-medium">Purchase Date</span>
                 </div>
@@ -320,8 +320,8 @@ function RouteComponent() {
             </div>
 
             {/* Location */}
-            <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-              <div className="flex items-center gap-2 text-gray-600 mb-1">
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="mb-1 flex items-center gap-2 text-gray-600">
                 <MapPin className="w-4 h-4" />
                 <span className="text-sm font-medium">Current Location</span>
               </div>
@@ -329,24 +329,24 @@ function RouteComponent() {
             </div>
 
             {/* Condition Description */}
-            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Condition Description</h3>
-              <p className="text-gray-700 leading-relaxed">{asset.conditionDescription}</p>
+            <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+              <h3 className="mb-3 text-lg font-semibold text-gray-900">Condition Description</h3>
+              <p className="leading-relaxed text-gray-700">{asset.conditionDescription}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Maintenance Section */}
-      <div className="bg-gray-100 py-12">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-primary-gray">
+      <div className="bg-gray-100 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl space-y-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-xl font-bold text-primary-gray sm:text-2xl">
               Maintenance History
             </h2>
             <Button
               onClick={() => setAddModalOpen(true)}
-              className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+              className="w-full bg-primary-gray text-primary-yellow transition-colors hover:bg-primary-yellow hover:text-primary-gray sm:w-auto"
             >
               Add Maintenance
             </Button>
@@ -356,7 +356,7 @@ function RouteComponent() {
             {isLoadingMaintenance ? (
               <div className="text-center text-primary-gray">Loading maintenance tasks...</div>
             ) : maintenanceItemsWithStatus.length === 0 ? (
-              <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
+              <div className="rounded-lg border bg-white py-12 text-center text-gray-500">
                 <p className="text-lg">No maintenance history for this asset.</p>
               </div>
             ) : (
