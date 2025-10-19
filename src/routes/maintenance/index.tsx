@@ -10,6 +10,7 @@ import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
 import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
 import { Button } from "@/components/ui/button";
+import { MaintenanceSkeleton } from "@/components/MaintenanceSkeleton";
 
 type MaintenanceStatus = "overdue" | "pending" | "completed";
 type MaintenanceFilter = "all" | MaintenanceStatus;
@@ -45,24 +46,7 @@ function RouteComponent() {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
 
-  useEffect(() => {
-    setActiveFilter(filter);
-  }, [filter]);
-
-  const handleFilterChange = (newFilter: MaintenanceFilter) => {
-    setActiveFilter(newFilter);
-    navigate({
-      search: { filter: newFilter },
-      replace: true,
-    });
-  };
-
-  // Redirect to home if not signed in
-  if (isLoaded && !isSignedIn) {
-    return <Navigate to="/" replace />;
-  }
-
-  const { data: maintenances = [], isLoading } = useQuery<Maintenance[]>({
+  const { data: maintenances = [], isLoading: isLoadingMaintenance } = useQuery<Maintenance[]>({
     queryKey: ["maintenance", user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -72,7 +56,7 @@ function RouteComponent() {
   });
 
   // Fetch user's assets to map images to maintenance cards
-  const { data: assets = [] } = useQuery<Asset[]>({
+  const { data: assets = [], isLoading: isLoadingAssets } = useQuery<Asset[]>({
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [] as Asset[];
@@ -195,25 +179,16 @@ function RouteComponent() {
     },
   });
 
-  const handleUpdateStatus = (id: string, isCompleted: boolean) => {
-    updateMaintenanceMutation.mutate({ taskId: id, payload: { isCompleted } });
-  };
-  const handleDelete = (taskId: string) => deleteMutation.mutate(taskId);
-  const handleViewDetails = (task: Maintenance & { status: MaintenanceStatus }) => {
-    setSelectedTask(task);
-    setIsDetailsModalOpen(true);
-  };
-  const handleCloseDetails = () => {
-    setIsDetailsModalOpen(false);
-    setSelectedTask(null);
-  };
-  const handleEdit = (task: Maintenance & { status: MaintenanceStatus }) => {
-    setSelectedTask(task);
-    setIsDetailsModalOpen(false);
-    setEditModalOpen(true);
-  };
-  const handleSaveEdit = (updatedTask: Maintenance) => {
-    if (updatedTask.id) editMutation.mutate({ ...updatedTask, id: updatedTask.id });
+  useEffect(() => {
+    setActiveFilter(filter);
+  }, [filter]);
+
+  const handleFilterChange = (newFilter: MaintenanceFilter) => {
+    setActiveFilter(newFilter);
+    navigate({
+      search: { filter: newFilter },
+      replace: true,
+    });
   };
 
   const itemsWithStatus = useMemo(() => {
@@ -268,6 +243,36 @@ function RouteComponent() {
     }
     return map;
   }, [assets]);
+
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!isLoaded || isLoadingMaintenance || isLoadingAssets) {
+    return <MaintenanceSkeleton />;
+  }
+
+  const handleUpdateStatus = (id: string, isCompleted: boolean) => {
+    updateMaintenanceMutation.mutate({ taskId: id, payload: { isCompleted } });
+  };
+  const handleDelete = (taskId: string) => deleteMutation.mutate(taskId);
+  const handleViewDetails = (task: Maintenance & { status: MaintenanceStatus }) => {
+    setSelectedTask(task);
+    setIsDetailsModalOpen(true);
+  };
+  const handleCloseDetails = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedTask(null);
+  };
+  const handleEdit = (task: Maintenance & { status: MaintenanceStatus }) => {
+    setSelectedTask(task);
+    setIsDetailsModalOpen(false);
+    setEditModalOpen(true);
+  };
+  const handleSaveEdit = (updatedTask: Maintenance) => {
+    if (updatedTask.id) editMutation.mutate({ ...updatedTask, id: updatedTask.id });
+  };
 
   return (
     <div className="bg-gray-50 p-6 min-h-screen">
@@ -342,9 +347,7 @@ function RouteComponent() {
         </div>
 
         <div className="space-y-4">
-          {isLoading ? (
-            <div className="text-center text-primary-gray">Loading maintenance tasks...</div>
-          ) : sortedAndFilteredItems.length === 0 ? (
+          {sortedAndFilteredItems.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               <p className="text-lg">No maintenance items found for this filter.</p>
             </div>

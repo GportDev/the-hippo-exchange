@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Package, Heart, DollarSign } from "lucide-react";
+import { MyAssetsSkeleton } from "@/components/MyAssetsSkeleton";
 
 interface Asset {
   id: string;
@@ -41,17 +42,7 @@ function MyAssetsComponent() {
   const { user, isSignedIn, isLoaded } = useUser();
   const queryClient = useQueryClient();
 
-  // Redirect to home if not signed in
-  if (isLoaded && !isSignedIn) {
-    return <Navigate to="/" replace />
-  }
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
-
-  const { data: assets = [], isLoading } = useQuery<Asset[]>({
+  const { data: assets = [], isLoading: isLoadingAssets } = useQuery<Asset[]>({
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
@@ -72,6 +63,11 @@ function MyAssetsComponent() {
     },
     enabled: !!user,
   });
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
 
   const updateMutation = useMutation({
     mutationFn: async (updatedAsset: Asset) => {
@@ -133,6 +129,15 @@ function MyAssetsComponent() {
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
     },
   });
+
+  // Redirect to home if not signed in
+  if (isLoaded && !isSignedIn) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!isLoaded || isLoadingAssets) {
+    return <MyAssetsSkeleton />;
+  }
 
   const handleEditAsset = (asset: Asset) => {
     setEditingAsset(asset);
@@ -248,9 +253,7 @@ function MyAssetsComponent() {
           </div>
         </div>
 
-        {isLoading ? (
-          <div className="text-center text-primary-gray">Loading assets...</div>
-        ) : filteredAssets.length === 0 ? (
+        {filteredAssets.length === 0 ? (
           <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-4 text-lg font-medium text-gray-900 text-primary-gray">

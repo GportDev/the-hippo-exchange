@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import type { Asset, Maintenance } from "@/lib/Types";
+import { HomeSkeleton } from "@/components/HomeSkeleton";
 
 export const Route = createFileRoute("/home/")({
   component: RouteComponent,
@@ -154,6 +155,10 @@ function RouteComponent() {
 
   if (isLoaded && !isSignedIn) {
     return <Navigate to="/" replace />;
+  }
+
+  if (!isLoaded || isLoading) {
+    return <HomeSkeleton />;
   }
 
   return (
