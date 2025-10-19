@@ -76,21 +76,22 @@ export function MaintenanceCard({
               <Package className="h-3.5 w-3.5 text-gray-500" />
               <span>{task.brandName} {task.productName}</span>
             </span>
-            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700`}>
+            {/* Date: absolute on mobile (top-left), static on sm+ */}
+            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 absolute left-3 top-3 z-10 sm:static sm:left-auto sm:top-auto`}>
               <Calendar className="h-4 w-4" />
               <span>{formatDate(task.maintenanceDueDate)}</span>
             </span>
-            
           </div>
         </div>
-        <div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0">
+        {/* Actions: float to bottom-right on mobile, keep static on sm+ */}
+        <div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0 absolute right-3 bottom-3 z-10 sm:static sm:right-auto sm:bottom-auto">
             <button
             type="button"
             onClick={() => onViewDetails(task)}
-            className="px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+            className="px-3 py-2 sm:px-4 sm:py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
           >
             <span className="text-lg">⏵</span>
-            View Details
+            <span className="hidden sm:inline">View Details</span>
           </button>
           {onUpdateStatus && !task.isCompleted && (
             <button

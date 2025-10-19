@@ -229,7 +229,7 @@ function RouteComponent() {
                         to="/assets/my-assets/$id"
                         params={{ id: item.assetId }}
                         key={item.id}
-                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="relative flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                         <div className="flex items-center gap-4">
                             <div
@@ -248,16 +248,16 @@ function RouteComponent() {
                             </p>
                             </div>
                         </div>
-                        <div className="flex items-center gap-4">
-                            <p
-                            className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
-                                item.status
-                            )}`}
-                            >
-                            {new Date(item.maintenanceDueDate).toLocaleDateString()}
-                            </p>
-                            <ChevronRight className="h-5 w-5 text-gray-400" />
-                        </div>
+            <div className="flex items-center gap-4">
+              <p
+              className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
+                item.status
+              )} absolute right-10 top-5 z-10 sm:static sm:left-auto sm:top-auto`}
+              >
+              {new Date(item.maintenanceDueDate).toLocaleDateString()}
+              </p>
+              <ChevronRight className="h-5 w-5 text-gray-400 absolute right-0 bottom-5 z-10 sm:static sm:right-auto sm:bottom-auto" />
+            </div>
                         </Link>
                     ))
                     ) : (
