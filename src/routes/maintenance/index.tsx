@@ -2,7 +2,7 @@ import { createFileRoute, Navigate, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect, useMemo } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiFetch } from "@/lib/api";
+import { useApiClient } from "@/hooks/useApiClient";
 import type { Maintenance, Asset } from "@/lib/Types";
 
 import { MaintenanceCard } from "@/components/MaintenanceCard";
@@ -40,6 +40,7 @@ function RouteComponent() {
   const { filter } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<MaintenanceFilter>(filter);
   const [selectedTask, setSelectedTask] = useState<(Maintenance & { status: MaintenanceStatus }) | null>(null);
@@ -50,7 +51,7 @@ function RouteComponent() {
     queryKey: ["maintenance", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, "/maintenance");
+      return apiClient<Maintenance[]>("/maintenance");
     },
     enabled: !!user,
   });
@@ -60,7 +61,7 @@ function RouteComponent() {
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [] as Asset[];
-      return apiFetch(user.id, "/assets");
+      return apiClient<Asset[]>("/assets");
     },
     enabled: !!user,
   });
@@ -68,7 +69,7 @@ function RouteComponent() {
   const addMaintenanceMutation = useMutation({
     mutationFn: (newMaintenance: Omit<Maintenance, "id">) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/assets/${newMaintenance.assetId}/maintenance`, {
+      return apiClient(`/assets/${newMaintenance.assetId}/maintenance`, {
         method: "POST",
         body: JSON.stringify(newMaintenance),
       });
@@ -81,7 +82,7 @@ function RouteComponent() {
     },
   });
 
-  const editMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
+  const editMutation = useMutation<void, Error, Partial<Maintenance> & { id: string }>({
     mutationFn: async (updatedTask) => {
       if (!user) throw new Error("User not authenticated");
       const { id, ...payload } = updatedTask;
@@ -95,7 +96,11 @@ function RouteComponent() {
           return [key, value];
         })
       );
-      return apiFetch(user.id, `/maintenance/${id}`, { method: "PUT", body: JSON.stringify(cleanPayload) });
+      await apiClient(`/maintenance/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(cleanPayload),
+        skipJsonParsing: true,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
@@ -108,14 +113,18 @@ function RouteComponent() {
   });
 
   const updateMaintenanceMutation = useMutation<
-    Maintenance,
+    void,
     Error,
     { taskId: string; payload: Partial<Maintenance> },
     { originalTask?: Maintenance }
   >({
     mutationFn: async ({ taskId, payload }) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, { method: "PATCH", body: JSON.stringify(payload) });
+      await apiClient(`/maintenance/${taskId}`, {
+        method: "PATCH",
+        body: JSON.stringify(payload),
+        skipJsonParsing: true,
+      });
     },
     onSuccess: (_data, variables, context) => {
       const originalTask = context?.originalTask;
@@ -167,7 +176,10 @@ function RouteComponent() {
   const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (taskId) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, { method: "DELETE" });
+      await apiClient(`/maintenance/${taskId}`, {
+        method: "DELETE",
+        skipJsonParsing: true,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });

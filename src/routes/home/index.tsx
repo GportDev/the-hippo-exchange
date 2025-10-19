@@ -12,7 +12,7 @@ import {
   ChevronRight,
   DollarSign,
 } from "lucide-react";
-import { apiFetch } from "@/lib/api";
+import { useApiClient } from "@/hooks/useApiClient";
 import type { Asset, Maintenance } from "@/lib/Types";
 import { HomeSkeleton } from "@/components/HomeSkeleton";
 
@@ -20,8 +20,12 @@ export const Route = createFileRoute("/home/")({
   component: RouteComponent,
 });
 
+type MaintenanceStatus = "overdue" | "pending" | "completed";
+type MaintenanceWithStatus = Maintenance & { status: MaintenanceStatus };
+
 function RouteComponent() {
   const { user, isLoaded, isSignedIn } = useUser();
+  const apiClient = useApiClient();
 
   const greeting = useMemo(() => {
     const greetings = [
@@ -39,53 +43,55 @@ function RouteComponent() {
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, "/assets");
+      return apiClient<Asset[]>("/assets");
     },
     enabled: !!user,
   });
 
-  const { data: maintenanceTasks = [], isLoading: maintenanceLoading } =
-    useQuery< (Maintenance & { status: "overdue" | "pending" | "completed" })[] >({
-      queryKey: ["maintenance", user?.id],
-      queryFn: async () => {
-        if (!user) return [];
-        return apiFetch(user.id, "/maintenance");
-      },
-      enabled: !!user,
-      select: (data: Maintenance[]) => {
-        const now = new Date();
-        now.setHours(0, 0, 0, 0);
-        return data.map((task) => {
-          let status: "overdue" | "pending" | "completed";
-          if (task.isCompleted) {
-            status = "completed";
-          } else {
-            const dueDate = new Date(task.maintenanceDueDate);
-            dueDate.setHours(0, 0, 0, 0);
-            if (dueDate < now) {
-              status = "overdue";
-            } else {
-              status = "pending";
-            }
-          }
-          return { ...task, status };
-        });
-      },
-    });
+  const {
+    data: maintenanceTasks = [],
+    isLoading: maintenanceLoading,
+  } = useQuery<Maintenance[], Error, MaintenanceWithStatus[]>({
+    queryKey: ["maintenance", user?.id],
+    queryFn: async () => {
+      if (!user) return [];
+      return apiClient<Maintenance[]>("/maintenance");
+    },
+    enabled: !!user,
+    select: (data) => {
+      const now = new Date();
+      now.setHours(0, 0, 0, 0);
+      return data.map<MaintenanceWithStatus>((task) => {
+        let status: MaintenanceStatus;
+        if (task.isCompleted) {
+          status = "completed";
+        } else {
+          const dueDate = new Date(task.maintenanceDueDate);
+          dueDate.setHours(0, 0, 0, 0);
+          status = dueDate < now ? "overdue" : "pending";
+        }
+        return { ...task, status };
+      });
+    },
+  });
 
   // Derived State
   const isLoading = assetsLoading || maintenanceLoading;
   const pendingItems = maintenanceTasks.filter(
-      (item) => item.status === "pending"
-    );
-    const overdueItems = maintenanceTasks.filter(
-      (item) => item.status === "overdue"
-    );
+    (item) => item.status === "pending",
+  );
+  const overdueItems = maintenanceTasks.filter(
+    (item) => item.status === "overdue",
+  );
   const upcomingItems = maintenanceTasks
     .filter(
-      (item) => item.status === "pending" || item.status === "overdue"
+      (item) => item.status === "pending" || item.status === "overdue",
     )
-    .sort((a, b) => new Date(a.maintenanceDueDate).getTime() - new Date(b.maintenanceDueDate).getTime())
+    .sort(
+      (a, b) =>
+        new Date(a.maintenanceDueDate).getTime() -
+        new Date(b.maintenanceDueDate).getTime(),
+    )
     .slice(0, 5); // Cap the list to the top 5
   const favoriteAssets = assets.filter((asset) => asset.favorite);
   const totalAssetValue = assets.reduce(
@@ -319,4 +325,3 @@ function RouteComponent() {
     </div>
   );
 }
-

@@ -11,10 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { API_BASE_URL } from "@/lib/api";
+import { useApiClient } from "@/hooks/useApiClient";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef } from "react";
+import { type ChangeEvent, type FormEvent, useRef, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UploadCloud, X } from "lucide-react";
 import {
@@ -44,6 +44,7 @@ export default function AddAssetModal() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // State for all form fields
@@ -68,19 +69,10 @@ export default function AddAssetModal() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_BASE_URL}/assets/upload-image`, {
+      return apiClient<{ url: string }>("/assets/upload-image", {
         method: "POST",
-        headers: {
-          "X-User-Id": user.id,
-        },
         body: formData,
       });
-
-      if (!res.ok) {
-        throw new Error("Image upload failed.");
-      }
-      // Assuming the API returns { "url": "..." }
-      return (await res.json()) as { url: string };
     },
   });
 
@@ -90,23 +82,10 @@ export default function AddAssetModal() {
         throw new Error("User not authenticated");
       }
 
-      const res = await fetch(`${API_BASE_URL}/assets`, {
+      return apiClient("/assets", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-Id": user.id,
-        },
         body: JSON.stringify(newAsset),
       });
-
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(
-          `Failed to create asset: ${res.status} ${res.statusText} - ${errorText}`,
-        );
-      }
-
-      return res.json();
     },
     onSuccess: () => {
       // Invalidate and refetch the assets query to show the new asset
@@ -142,7 +121,7 @@ export default function AddAssetModal() {
     setIsFetchingLocation(true);
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      async (position: GeolocationPosition) => {
         const { latitude, longitude } = position.coords;
         try {
           // Using OpenStreetMap's free reverse geocoding API
@@ -169,7 +148,7 @@ export default function AddAssetModal() {
           setIsFetchingLocation(false);
         }
       },
-      (error) => {
+      (error: GeolocationPositionError) => {
         console.error("Error getting location:", error);
         alert(`Error getting location: ${error.message}`);
         setIsFetchingLocation(false);
@@ -233,8 +212,8 @@ export default function AddAssetModal() {
   };
 
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!user) {
       alert("You must be logged in to add an asset.");
       return;
@@ -349,7 +328,7 @@ export default function AddAssetModal() {
               <Input
                 id="itemName"
                 value={itemName}
-                onChange={(e) => setItemName(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => setItemName(event.target.value)}
                 className="col-span-3"
                 required
               />
@@ -362,7 +341,7 @@ export default function AddAssetModal() {
               <Input
                 id="brandName"
                 value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => setBrandName(event.target.value)}
                 className="col-span-3"
                 required
               />
@@ -375,7 +354,7 @@ export default function AddAssetModal() {
               <Input
                 id="category"
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => setCategory(event.target.value)}
                 className="col-span-3"
                 required
               />
@@ -389,7 +368,7 @@ export default function AddAssetModal() {
                 id="purchaseDate"
                 type="date"
                 value={purchaseDate}
-                onChange={(e) => setPurchaseDate(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => setPurchaseDate(event.target.value)}
                 className="col-span-3 cursor-text"
                 required
                 max={new Date().toISOString().split("T")[0]}
@@ -405,8 +384,12 @@ export default function AddAssetModal() {
                 <Input
                   id="purchaseCost"
                   type="number"
-                  value={purchaseCost ?? ''} // Show empty string if state is null
-                  onChange={(e) => setPurchaseCost(e.target.value === '' ? null : Number(e.target.value))}
+                  value={purchaseCost ?? ""} // Show empty string if state is null
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setPurchaseCost(
+                      event.target.value === "" ? null : Number(event.target.value),
+                    )
+                  }
                   className="pl-8"
                   placeholder="0.00"
                 />
@@ -420,7 +403,7 @@ export default function AddAssetModal() {
                 <Input
                   id="currentLocation"
                   value={currentLocation}
-                  onChange={(e) => setCurrentLocation(e.target.value)}
+                  onChange={(event: ChangeEvent<HTMLInputElement>) => setCurrentLocation(event.target.value)}
                   className="flex-grow w-full"
                   placeholder="e.g., Detroit, MI"
                   required
@@ -444,7 +427,9 @@ export default function AddAssetModal() {
               <Input
                 id="conditionDescription"
                 value={conditionDescription}
-                onChange={(e) => setConditionDescription(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setConditionDescription(event.target.value)
+                }
                 className="col-span-3"
               />
             </div>

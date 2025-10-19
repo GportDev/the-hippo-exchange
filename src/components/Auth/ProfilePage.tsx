@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '@/lib/api';
+import { useApiClient } from '@/hooks/useApiClient'
 import { useUser } from '@clerk/clerk-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -27,16 +27,15 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>
 export const ProfilePage = () => {
   const { user } = useUser()
   const [isEditing, setIsEditing] = useState(false)
+  const apiClient = useApiClient()
 
   const { data, error: getProfileError, isLoading } = useQuery({
     queryKey: ['profileData'],
     queryFn: async (): Promise<UserProfile> => {
-      return fetch(`${API_BASE_URL}/users/${user?.id}`, {
-        headers: {
-          'X-User-Id': `${user?.id}`
-        }
-      }).then((res) => res.json())
+      if (!user) throw new Error('User not authenticated')
+      return apiClient<UserProfile>(`/users/${user.id}`)
     },
+    enabled: !!user,
   })
 
   if (getProfileError) {
@@ -46,18 +45,11 @@ export const ProfilePage = () => {
 
   const { mutateAsync, isPending } = useMutation({
       mutationFn: async (updatedData: ProfileFormValues) => {
-        const response = await fetch(`${API_BASE_URL}/users/${user?.id}`, {
+        if (!user) throw new Error('User not authenticated')
+        return apiClient(`/users/${user.id}`, {
           method: 'PATCH',
-          headers: {
-            'X-User-Id': `${user?.id}`
-          },
           body: JSON.stringify(updatedData),
         })
-        if (!response.ok) {
-          console.log(response)
-          throw new Error('Failed to update profile')
-        }
-        return response.json()
       }
     })
 

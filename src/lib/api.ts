@@ -1,45 +1,14 @@
-export const API_BASE_URL = "https://api.thehippoexchange.com";
+const DEFAULT_API_BASE_URL = "http://localhost:8080";
 
-/**
- * Fetches data from the API using a user ID for authentication.
- * @param userId The user's ID.
- * @param url The URL to fetch.
- * @param options The request options.
- * @returns The JSON response.
- */
-export async function apiFetch(userId: string, url: string, options: RequestInit = {}) {
-    // Debug: Log the request details
-    console.log("API Request:", {
-        url: `${API_BASE_URL}${url}`,
-        method: options.method || 'GET',
-        headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-        },
-        body: options.body
-    });
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, "") ?? DEFAULT_API_BASE_URL;
 
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-        ...options,
-        headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-        },
-    });
+export const CLERK_JWT_TEMPLATE = import.meta.env.VITE_CLERK_JWT_TEMPLATE;
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API Fetch Error:", errorText);
-        throw new Error(`Request failed with status ${response.status}`);
-    }
-
-    const text = await response.text();
-    if (!text) {
-        return null;
-    }
-
-    return JSON.parse(text);
+export function buildApiUrl(path: string): string {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    return path;
+  }
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  return `${API_BASE_URL}${normalizedPath}`;
 }
-

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
-import { API_BASE_URL } from "@/lib/api";
+import { useApiClient } from "@/hooks/useApiClient";
 
 import AddAssetModal from "@/components/AddAssetModal";
 import { EditAssetModal } from "@/components/EditAssetModal";
@@ -41,16 +41,13 @@ export const Route = createFileRoute("/assets/my-assets/")({
 function MyAssetsComponent() {
   const { user, isSignedIn, isLoaded } = useUser();
   const queryClient = useQueryClient();
+  const apiClient = useApiClient();
 
   const { data: assets = [], isLoading: isLoadingAssets } = useQuery<Asset[]>({
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      const res = await fetch(`${API_BASE_URL}/assets`, {
-        headers: { "X-User-Id": user.id },
-      });
-      if (!res.ok) throw new Error("Failed to fetch assets");
-      const data = await res.json();
+      const data = await apiClient<Asset[]>("/assets");
       // Normalize status values coming from the API so UI mapping is consistent.
       // Convert values like "In Repair" or "in-repair" to "in_repair".
       if (Array.isArray(data)) {
@@ -73,17 +70,11 @@ function MyAssetsComponent() {
     mutationFn: async (updatedAsset: Asset) => {
       if (!user) throw new Error("User not authenticated");
       const { id, ...assetData } = updatedAsset;
-      const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
+      await apiClient(`/assets/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-Id": user.id,
-        },
         body: JSON.stringify(assetData),
+        skipJsonParsing: true,
       });
-      if (!res.ok) {
-        throw new Error("Failed to update asset");
-      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
@@ -94,11 +85,10 @@ function MyAssetsComponent() {
   const deleteMutation = useMutation({
     mutationFn: async (assetId: string) => {
       if (!user) throw new Error("User not authenticated");
-      const res = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
+      await apiClient(`/assets/${assetId}`, {
         method: "DELETE",
-        headers: { "X-User-Id": user.id },
+        skipJsonParsing: true,
       });
-      if (!res.ok) throw new Error("Failed to delete asset");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });
@@ -110,20 +100,11 @@ function MyAssetsComponent() {
       if (!user) throw new Error("User not authenticated");
       // The API expects the full asset object on PUT, but without the ID in the body.
       const { id, ...assetData } = updatedAsset;
-      const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
+      await apiClient(`/assets/${id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-Id": user.id,
-        },
         body: JSON.stringify(assetData),
+        skipJsonParsing: true,
       });
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(
-          `Failed to update asset: ${res.status} ${res.statusText} - ${errorText}`
-        );
-      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["assets", user?.id] });

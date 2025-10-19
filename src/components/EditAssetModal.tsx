@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { API_BASE_URL } from "@/lib/api";
+import { useApiClient } from "@/hooks/useApiClient";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation } from "@tanstack/react-query";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -58,6 +58,7 @@ export function EditAssetModal({
   // State for all form fields, initialized from the asset prop
   const [formData, setFormData] = useState<Asset>(asset);
   const { user } = useUser();
+  const apiClient = useApiClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -68,19 +69,10 @@ export function EditAssetModal({
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch(`${API_BASE_URL}/assets/upload-image`, {
+      return apiClient<{ url: string }>("/assets/upload-image", {
         method: "POST",
-        headers: {
-          "X-User-Id": user.id,
-        },
         body: formData,
       });
-
-      if (!res.ok) {
-        throw new Error("Image upload failed.");
-      }
-      // Assuming the API returns { "url": "..." }
-      return (await res.json()) as { url: string };
     },
   });
 

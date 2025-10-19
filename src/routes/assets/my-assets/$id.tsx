@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Navigate } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUser } from '@clerk/clerk-react'
-import { apiFetch, API_BASE_URL } from '@/lib/api'
+import { useApiClient } from '@/hooks/useApiClient'
 import { ArrowLeft, MapPin, Calendar, DollarSign, Tag, Camera, CheckCircle } from 'lucide-react'
 import type { Maintenance } from '@/lib/Types'
 import { MaintenanceCard } from '@/components/MaintenanceCard'
@@ -37,6 +37,7 @@ function RouteComponent() {
   const { id } = Route.useParams()
   const { user, isSignedIn, isLoaded } = useUser()
   const queryClient = useQueryClient()
+  const apiClient = useApiClient()
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<(Maintenance & { status: MaintenanceStatus }) | null>(null);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -51,15 +52,7 @@ function RouteComponent() {
     queryFn: async () => {
       if (!user) throw new Error("User not authenticated");
 
-      const res = await fetch(`${API_BASE_URL}/assets/${id}`, {
-        headers: {
-          'X-User-Id': user.id,
-        },
-      });
-      if (!res.ok) {
-        throw new Error('Failed to fetch asset');
-      }
-      return res.json();
+      return apiClient<Asset>(`/assets/${id}`);
     },
     enabled: !!user && !!id, // Only run the query when user and id are available
   });
@@ -68,12 +61,12 @@ function RouteComponent() {
     queryKey: ["maintenance", "asset", id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, `/assets/${id}/maintenance`);
+      return apiClient<Maintenance[]>(`/assets/${id}/maintenance`);
     },
     enabled: !!user && !!id,
   });
 
-  const editMutation = useMutation<Maintenance, Error, Partial<Maintenance> & { id: string }>({
+  const editMutation = useMutation<void, Error, Partial<Maintenance> & { id: string }>({
     mutationFn: async (updatedTask) => {
       if (!user) throw new Error("User not authenticated");
       const { id: taskId, ...payload } = updatedTask;
@@ -95,11 +88,10 @@ function RouteComponent() {
         })
       );
       
-      console.log("Asset page mutation payload:", cleanPayload);
-      console.log("Asset page JSON stringified payload:", JSON.stringify(cleanPayload));
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
+      await apiClient(`/maintenance/${taskId}`, {
         method: "PUT",
         body: JSON.stringify(cleanPayload),
+        skipJsonParsing: true,
       });
     },
     onSuccess: () => {
@@ -115,8 +107,9 @@ function RouteComponent() {
   const deleteMutation = useMutation<void, Error, string>({
     mutationFn: async (taskId: string) => {
       if (!user) throw new Error("User not authenticated");
-      return apiFetch(user.id, `/maintenance/${taskId}`, {
+      await apiClient(`/maintenance/${taskId}`, {
         method: "DELETE",
+        skipJsonParsing: true,
       });
     },
     onSuccess: () => {

@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
-import { apiFetch } from "@/lib/api";
+import { useApiClient } from "@/hooks/useApiClient";
 import type { Asset } from "@/lib/Types";
 import { X } from "lucide-react";
 
@@ -36,6 +36,7 @@ interface AddMaintenanceModalProps {
 export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenanceModalProps) {
   const queryClient = useQueryClient();
   const { user } = useUser();
+  const apiClient = useApiClient();
   const today = new Date().toISOString().split("T")[0];
 
   const [selectedAssetId, setSelectedAssetId] = useState(assetId || "");
@@ -85,17 +86,19 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
     queryKey: ["assets", user?.id],
     queryFn: async () => {
       if (!user) return [];
-      return apiFetch(user.id, "/assets");
+      return apiClient<Asset[]>("/assets");
     },
     enabled: !!user && isOpen && !assetId, // Only fetch if no specific asset is provided
   });
 
   // Fetch details for the currently selected asset
-  const { data: selectedAsset } = useQuery<Asset>({
+  const { data: selectedAsset } = useQuery<Asset | null>({
     queryKey: ["asset", selectedAssetId],
     queryFn: async () => {
-      if (!user || !selectedAssetId) return null;
-      return apiFetch(user.id, `/assets/${selectedAssetId}`);
+      if (!user || !selectedAssetId) {
+        return null;
+      }
+      return apiClient<Asset>(`/assets/${selectedAssetId}`);
     },
     enabled: !!user && !!selectedAssetId,
   });
@@ -103,15 +106,16 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
   const addMaintenanceMutation = useMutation({
     mutationFn: async () => {
       if (!user || !selectedAssetId || !selectedAsset) throw new Error("Missing required information.");
+      const assetDetails = selectedAsset;
 
       const newMaintenancePayload = {
         assetId: selectedAssetId,
         // Fields from selected asset
-        brandName: selectedAsset.brandName,
-        productName: selectedAsset.itemName,
-        assetCategory: selectedAsset.category || "Electronics",
-        costPaid: selectedAsset.purchaseCost,
-        purchaseLocation: selectedAsset.purchaseLocation || undefined,
+        brandName: assetDetails.brandName,
+        productName: assetDetails.itemName,
+        assetCategory: assetDetails.category || "Electronics",
+        costPaid: assetDetails.purchaseCost,
+        purchaseLocation: assetDetails.purchaseLocation || undefined,
         
         // Fields from form state
         maintenanceTitle: title,
@@ -137,10 +141,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
         Object.entries(newMaintenancePayload).filter(([_, v]) => v !== "" && v != null)
       );
 
-      console.log("AddMaintenance payload:", cleanedPayload);
-      console.log("AddMaintenance JSON:", JSON.stringify(cleanedPayload));
-
-      return apiFetch(user.id, `/assets/${selectedAssetId}/maintenance`, {
+      await apiClient(`/assets/${selectedAssetId}/maintenance`, {
         method: "POST",
         body: JSON.stringify(cleanedPayload),
       });
@@ -170,8 +171,8 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const validationErrors: Record<string, string> = {};
 
     if (title.length < 2) {
@@ -263,7 +264,9 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setTitle(event.target.value)
+                }
                 placeholder="e.g., Oil Change, Filter Replacement"
                 required
               />
@@ -275,7 +278,9 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
                 id="dueDate"
                 type="date"
                 value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setDueDate(event.target.value)
+                }
                 min={today}
                 required
               />
@@ -286,7 +291,9 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
               <Textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                  setDescription(event.target.value)
+                }
                 placeholder="Add any relevant notes or instructions..."
               />
             </div>
@@ -296,7 +303,9 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
               <Input
                 id="toolLocation"
                 value={toolLocation}
-                onChange={(e) => setToolLocation(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setToolLocation(event.target.value)
+                }
                 placeholder="e.g., Garage, Shed, Toolbox"
               />
               {errors.toolLocation && <p className="text-sm text-red-500 mt-1">{errors.toolLocation}</p>}
@@ -307,7 +316,9 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
               <Input
                 id="requiredTools"
                 value={requiredTools}
-                onChange={(e) => setRequiredTools(e.target.value)}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setRequiredTools(event.target.value)
+                }
                 placeholder="e.g., Wrench, Screwdriver"
               />
               {errors.requiredTools && <p className="text-sm text-red-500 mt-1">{errors.requiredTools}</p>}
@@ -338,7 +349,9 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
                       id="recurrenceInterval"
                       type="number"
                       value={recurrenceInterval}
-                      onChange={(e) => setRecurrenceInterval(Number(e.target.value))}
+                      onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        setRecurrenceInterval(Number(event.target.value))
+                      }
                       min="1"
                     />
                   </div>
