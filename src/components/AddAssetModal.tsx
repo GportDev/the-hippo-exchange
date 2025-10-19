@@ -159,7 +159,6 @@ export default function AddAssetModal() {
           if (city && state) {
             setCurrentLocation(`${city}, ${state}`);
           } else {
-            console.log("Could not determine location from data:", data);
             alert("Could not determine a valid location.");
           }
         } catch (error) {

@@ -40,7 +40,6 @@ export function EditMaintenanceModal({
 
   useEffect(() => {
     if (task) {
-      console.log("Task data received:", task);
       setFormData({
         ...task,
         maintenanceDueDate: task.maintenanceDueDate
@@ -150,14 +149,9 @@ export function EditMaintenanceModal({
     // Remove any extra fields that shouldn't be in the API payload
     delete (updatedTask as any).status;
 
-    // Debug: Log the payload being sent
-    console.log("Sending maintenance update:", updatedTask);
-    
-    // Test JSON stringification
+    // Validate JSON stringification
     try {
-      const jsonString = JSON.stringify(updatedTask);
-      console.log("JSON stringified successfully:", jsonString);
-      console.log("JSON length:", jsonString.length);
+      JSON.stringify(updatedTask);
     } catch (error) {
       console.error("JSON stringification failed:", error);
       console.error("Problematic data:", updatedTask);
