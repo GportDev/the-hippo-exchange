@@ -95,8 +95,6 @@ function RouteComponent() {
         })
       );
       
-      console.log("Asset page mutation payload:", cleanPayload);
-      console.log("Asset page JSON stringified payload:", JSON.stringify(cleanPayload));
       return apiFetch(user.id, `/maintenance/${taskId}`, {
         method: "PUT",
         body: JSON.stringify(cleanPayload),

@@ -137,9 +137,6 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
         Object.entries(newMaintenancePayload).filter(([_, v]) => v !== "" && v != null)
       );
 
-      console.log("AddMaintenance payload:", cleanedPayload);
-      console.log("AddMaintenance JSON:", JSON.stringify(cleanedPayload));
-
       return apiFetch(user.id, `/assets/${selectedAssetId}/maintenance`, {
         method: "POST",
         body: JSON.stringify(cleanedPayload),

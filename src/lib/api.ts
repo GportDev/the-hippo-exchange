@@ -8,18 +8,6 @@ export const API_BASE_URL = "https://api.thehippoexchange.com";
  * @returns The JSON response.
  */
 export async function apiFetch(userId: string, url: string, options: RequestInit = {}) {
-    // Debug: Log the request details
-    console.log("API Request:", {
-        url: `${API_BASE_URL}${url}`,
-        method: options.method || 'GET',
-        headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-        },
-        body: options.body
-    });
-
     const response = await fetch(`${API_BASE_URL}${url}`, {
         ...options,
         headers: {
