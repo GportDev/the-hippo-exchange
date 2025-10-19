@@ -90,7 +90,7 @@ function RequestsPage() {
           </div>
         </div>
 
-        <div className="flex gap-6 border-b border-gray-200 mb-4">
+    <div className="flex gap-6 border-b border-gray-200 mb-4">
           {[
             { key: "sent", label: "Sent" },
             { key: "received", label: "Received" },
@@ -105,7 +105,7 @@ function RequestsPage() {
             >
               {label}
               <span
-                className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle bg-gray-200 text-gray-700`}
+                className={`ml-2 mb-3 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold bg-gray-200 text-gray-700`}
                 aria-label={`Number of ${label.toLowerCase()} requests`}
               >
                 {counts[key as "sent" | "received"]}
@@ -120,7 +120,7 @@ function RequestsPage() {
             <p className="text-gray-600">No {tab} requests yet.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {list.map((req) => (
               <RequestCard key={req.id} request={req} mode={tab} />
             ))}
