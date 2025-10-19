@@ -10,6 +10,7 @@ import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from 'react';
+import { optimizeImageUrl } from '@/lib/images';
 
 // Structure of the asset object.
 interface Asset {
@@ -259,9 +260,10 @@ function RouteComponent() {
             <div className="h-64 w-full overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm sm:h-80">
               {asset.images && asset.images.length > 0 ? (
                 <img 
-                  src={asset.images[0]} 
+                  src={optimizeImageUrl(asset.images[0], 900)} 
                   alt={asset.itemName}
                   className="h-full w-full object-cover"
+                  loading="lazy"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-gray-400">
@@ -276,9 +278,10 @@ function RouteComponent() {
                 {asset.images.slice(1, 5).map((image, index) => (
                   <div key={index} className="aspect-square overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
                     <img 
-                      src={image} 
+                      src={optimizeImageUrl(image, 400)} 
                       alt={`${asset.itemName} ${index + 1}`}
                       className="h-full w-full object-cover"
+                      loading="lazy"
                     />
                   </div>
                 ))}

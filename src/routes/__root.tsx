@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { Outlet, createRootRouteWithContext, useLocation } from '@tanstack/react-router'
 import Header from '@/components/Header'
 import ClerkProvider from '@/integrations/clerk/provider'
@@ -47,7 +47,9 @@ function RootComponent() {
           <div className="flex flex-1 overflow-hidden">
             <Navbar isExpanded={sidebarExpanded} onToggle={toggleSidebar} />
             <div className="flex-1 overflow-y-scroll overflow-x-hidden bg-gray-50">
-              <Outlet />
+              <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
+                <Outlet />
+              </Suspense>
             </div>
           </div>
         </main>
@@ -56,7 +58,9 @@ function RootComponent() {
         <div className="flex flex-col min-h-screen">
           {!shouldHideHeader && <Header />}
           <div className="flex-1">
-            <Outlet />
+            <Suspense fallback={<div className="p-6 text-sm text-muted-foreground">Loading…</div>}>
+              <Outlet />
+            </Suspense>
           </div>
         </div>
       </SignedOut>

@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { optimizeImageUrl } from '@/lib/images';
 
 interface ShortAsset {
   id: string;
@@ -42,16 +43,17 @@ export function AssetCard({ asset, onToggleFavorite, onDelete, onEdit }: AssetCa
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-shadow hover:shadow-md ${
+      className={`group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-transform transition-shadow duration-300 hover:-translate-y-1 hover:shadow-lg ${
         asset.status === 'unlisted' ? 'opacity-50' : ''
       }`}
     >
       <Link to="/assets/my-assets/$id" params={{ id: asset.id }} className="block">
         <div className="aspect-square overflow-hidden">
           <img
-            src={asset.images?.[0] || '/public/placeholder.jpg'}
+            src={optimizeImageUrl(asset.images?.[0]) || '/public/placeholder.jpg'}
             alt={asset.itemName}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
           />
         </div>
       </Link>

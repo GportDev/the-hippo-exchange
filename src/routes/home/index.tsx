@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@clerk/clerk-react";
 import { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
@@ -15,6 +15,7 @@ import {
 import { useApiClient } from "@/hooks/useApiClient";
 import type { Asset, Maintenance } from "@/lib/Types";
 import { HomeSkeleton } from "@/components/HomeSkeleton";
+import { optimizeImageUrl } from "@/lib/images";
 
 export const Route = createFileRoute("/home/")({
   component: RouteComponent,
@@ -39,6 +40,8 @@ function RouteComponent() {
   }, []);
 
   // Data Fetching
+  const queryClient = useQueryClient();
+
   const { data: assets = [], isLoading: assetsLoading } = useQuery<Asset[]>({
     queryKey: ["assets", user?.id],
     queryFn: async () => {
@@ -47,6 +50,28 @@ function RouteComponent() {
     },
     enabled: !!user,
   });
+  
+  useEffect(() => {
+    if (!user || assets.length === 0) return;
+
+    const prefetch = async () => {
+      const subset = assets.slice(0, 3);
+      await Promise.all(
+        subset.flatMap((asset) => [
+          queryClient.prefetchQuery({
+            queryKey: ["assets", asset.id],
+            queryFn: () => apiClient<Asset>(`/assets/${asset.id}`),
+          }),
+          queryClient.prefetchQuery({
+            queryKey: ["maintenance", "asset", asset.id],
+            queryFn: () => apiClient<Maintenance[]>(`/assets/${asset.id}/maintenance`),
+          }),
+        ])
+      );
+    };
+
+    void prefetch();
+  }, [assets, apiClient, queryClient, user]);
 
   const {
     data: maintenanceTasks = [],
@@ -282,9 +307,10 @@ function RouteComponent() {
                         >
                           {asset.images && asset.images.length > 0 ? (
                             <img
-                              src={asset.images[0]}
+                              src={optimizeImageUrl(asset.images[0], 400)}
                               alt={asset.itemName}
                               className="h-16 w-full rounded-md object-cover sm:h-12 sm:w-12"
+                              loading="lazy"
                             />
                           ) : (
                             <div className="flex h-16 w-full items-center justify-center rounded-md bg-gray-100 sm:h-12 sm:w-12">

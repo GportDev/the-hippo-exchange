@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Package } from "lucide-react";
 import type { Maintenance } from "@/lib/Types";
+import { optimizeImageUrl } from "@/lib/images";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -46,27 +47,23 @@ export function MaintenanceCard({
         {imageUrl && (
           <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
             <img
-              src={imageUrl}
+              src={optimizeImageUrl(imageUrl, 400)}
               alt={task.productName}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
             />
           </div>
         )}
         <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-xl font-semibold text-primary-gray">
               {task.maintenanceTitle}
             </h3>
-            <span
-              className={`px-2 py-1 rounded-full text-sm font-medium ${getStatusColor()}`}
-            >
-              <Badge className={getStatusColor()}>
-                {task.status === "pending"
-                  ? "Upcoming"
-                  : task.status.charAt(0).toUpperCase() +
-                    task.status.slice(1)}
-              </Badge>
-            </span>
+            <Badge className={getStatusColor()}>
+              {task.status === "pending"
+                ? "Upcoming"
+                : task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+            </Badge>
           </div>
           <p className="text-gray-600 mb-2">
             {task.maintenanceDescription || "No description provided."}
