@@ -56,6 +56,14 @@ pnpx shadcn@latest add button
 ```
 
 
+## Documentation
+
+- `src/hooks/useApiClient.ts` documents the shared fetch helper so contributors understand how Clerk tokens are injected and when to skip JSON parsing.
+- `src/components/LocationPickerModal.tsx` describes the interactive map workflow and reverse geocoding step.
+- `src/lib/api.ts` documents the `buildApiUrl` helper for normalising relative paths.
+
+Follow the same concise JSDoc style for new hooks and utilities—explain why the helper exists, when to use it, and any noteworthy side effects.
+
 
 ## Routing
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
