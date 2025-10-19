@@ -85,7 +85,7 @@ The compose file automatically exposes:
 
 - Vite dev server → <http://localhost:5173>
 - ASP.NET Core API → <http://localhost:8080>
-- Mongo Express → <http://localhost:8081>
+- Mongo Express → <http://localhost:8082>
 
 Set any required env vars before running (e.g. `VITE_CLERK_PUBLISHABLE_KEY`, `CLOUDINARY_URL`) to mirror production behaviour.
 
