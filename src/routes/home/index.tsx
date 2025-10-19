@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import type { Asset, Maintenance } from "@/lib/Types";
+import { HomeSkeleton } from "@/components/HomeSkeleton";
 
 export const Route = createFileRoute("/home/")({
   component: RouteComponent,
@@ -133,6 +134,10 @@ function RouteComponent() {
     return <Navigate to="/" replace />;
   }
 
+  if (!isLoaded || isLoading) {
+    return <HomeSkeleton />;
+  }
+
   return (
     <div className="h-full bg-gray-50/50">
       <main className="p-6 space-y-8">
@@ -143,9 +148,7 @@ function RouteComponent() {
               Upcoming Maintenance
             </h2>
             <div className="space-y-4">
-              {isLoading ? (
-                <p className="text-gray-500">Loading maintenance items...</p>
-              ) : upcomingItems.length > 0 ? (
+              {upcomingItems.length > 0 ? (
                 upcomingItems.map((item) => (
                   <Link
                     to="/assets/my-assets/$id"
@@ -194,9 +197,7 @@ function RouteComponent() {
               Favorite Assets
             </h2>
             <div className="space-y-3">
-              {isLoading ? (
-                 <p className="text-gray-500">Loading assets...</p>
-              ) : favoriteAssets.length > 0 ? (
+              {favoriteAssets.length > 0 ? (
                 favoriteAssets.map((asset) => (
                   <Link
                     to="/assets/my-assets/$id"
