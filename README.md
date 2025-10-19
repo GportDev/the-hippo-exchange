@@ -73,6 +73,23 @@ Follow the same concise JSDoc style for new hooks and utilities—explain why th
 - When adding new pages, stick to the same pattern: single-column by default, progressively enhance with `sm:`/`md:` breakpoints, and keep filter/toolbars stackable.
 
 
+## Local API + Client (Docker)
+
+From the repository root you can launch the API, MongoDB, and this Vite app together:
+
+```bash
+docker compose -f theHippoExchange/docker-compose.local.yml up --build
+```
+
+The compose file automatically exposes:
+
+- Vite dev server → <http://localhost:5173>
+- ASP.NET Core API → <http://localhost:8080>
+- Mongo Express → <http://localhost:8081>
+
+Set any required env vars before running (e.g. `VITE_CLERK_PUBLISHABLE_KEY`, `CLOUDINARY_URL`) to mirror production behaviour.
+
+
 ## Routing
 This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
 
