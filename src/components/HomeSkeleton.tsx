@@ -1,6 +1,9 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Star } from "lucide-react";
 
+const MAINTENANCE_SKELETON_KEYS = Array.from({ length: 5 }, (_, index) => `maintenance-skeleton-${index}`);
+const FAVORITE_SKELETON_KEYS = Array.from({ length: 3 }, (_, index) => `favorite-skeleton-${index}`);
+
 export function HomeSkeleton() {
   return (
     <div className="h-full bg-gray-50/50">
@@ -10,8 +13,8 @@ export function HomeSkeleton() {
           <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
             <Skeleton className="h-8 w-64 mb-4" />
             <div className="space-y-4">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="flex items-center justify-between p-4 rounded-lg">
+              {MAINTENANCE_SKELETON_KEYS.map((key) => (
+                <div key={key} className="flex items-center justify-between p-4 rounded-lg">
                   <div className="flex items-center gap-4">
                     <Skeleton className="h-10 w-10 rounded-full" />
                     <div>
@@ -32,8 +35,8 @@ export function HomeSkeleton() {
           <div className="bg-white p-6 rounded-xl shadow-md">
             <Skeleton className="h-8 w-48 mb-4" />
             <div className="space-y-3">
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="flex items-center gap-4 p-3 rounded-lg">
+              {FAVORITE_SKELETON_KEYS.map((key) => (
+                <div key={key} className="flex items-center gap-4 p-3 rounded-lg">
                   <Skeleton className="w-12 h-12 rounded-md" />
                   <div>
                     <Skeleton className="h-5 w-32" />

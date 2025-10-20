@@ -18,10 +18,10 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
       type="button"
       onClick={handleUserButtonClick}
       className={twMerge(
-        'flex items-center w-full py-4 cursor-pointer transition-colors duration-200 border-t border-primary-yellow/10',
+        'flex w-full items-center border-t border-white/10 py-4 cursor-pointer transition-colors duration-200',
         isNavExpanded 
-          ? 'hover:bg-gray-700 rounded-lg mx-0' 
-          : 'hover:bg-gray-700/50 rounded-lg',
+          ? 'rounded-lg hover:bg-white/10 mx-0' 
+          : 'rounded-lg hover:bg-white/5',
         className
       )}
       aria-label="Account menu"
@@ -43,10 +43,10 @@ export default function HeaderUser({ className, isNavExpanded }: { className?: s
         aria-hidden={!isNavExpanded}
       >
         <div className="whitespace-nowrap overflow-hidden text-ellipsis">
-          <p className='text-primary-yellow font-medium leading-snug'>
+          <p className='font-medium leading-snug text-white'>
             {user?.firstName} {user?.lastName}
           </p>
-          <p className='text-gray-400 text-sm leading-snug'>
+          <p className='text-white/60 text-sm leading-snug'>
             {user?.username}
           </p>
         </div>

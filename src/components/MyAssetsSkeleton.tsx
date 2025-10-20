@@ -1,6 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Package, Heart, DollarSign, Search } from "lucide-react";
 
+const ASSET_CARD_SKELETON_KEYS = Array.from({ length: 8 }, (_, index) => `asset-card-skeleton-${index}`);
+
 export function MyAssetsSkeleton() {
   return (
     <div className="bg-gray-50 p-6">
@@ -50,8 +52,8 @@ export function MyAssetsSkeleton() {
         </div>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, index) => (
-            <div key={index} className="rounded-lg border bg-white p-4 shadow-sm">
+          {ASSET_CARD_SKELETON_KEYS.map((key) => (
+            <div key={key} className="rounded-lg border bg-white p-4 shadow-sm">
               <Skeleton className="h-40 w-full" />
               <div className="mt-4">
                 <Skeleton className="h-6 w-3/4" />

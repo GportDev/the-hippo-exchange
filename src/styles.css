@@ -136,6 +136,9 @@ code {
 
 @theme {
   --animate-float: float 6s ease-in-out infinite;
+  --animate-fade-in: fade-in 0.6s ease-out both;
+  --animate-fade-up: fade-up 0.7s ease-out both;
+  --animate-scale-in: scale-in 0.65s ease-out both;
 
   @keyframes float {
     0% {
@@ -146,6 +149,37 @@ code {
     }
     100% {
       transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    0% {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 }
@@ -159,6 +193,47 @@ code {
   }
 }
 
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out both;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.7s ease-out both;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.65s ease-out both;
+  }
+
+  .backdrop-glow {
+    box-shadow: 0 25px 60px -30px rgba(16, 24, 40, 0.4);
+  }
+
+  .gradient-border {
+    position: relative;
+    border-radius: var(--radius-xl);
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(120deg, rgba(249, 224, 108, 0.8), rgba(92, 230, 230, 0.35));
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  .gradient-border > * {
+    position: relative;
+    border-radius: inherit;
+  }
+}
 /* Sidebar positioning adjustments */
 .sidebar-collapsed {
   width: 4rem;

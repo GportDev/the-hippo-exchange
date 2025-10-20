@@ -15,124 +15,114 @@ function App() {
   }
 
   return (
-    <div className="bg-primary-yellow font-sans text-black">
-      <section className="relative overflow-hidden py-20 md:py-28 lg:py-32">
-        <div className="absolute -top-1/2 right-[-20%] size-[800px] rounded-full bg-[radial-gradient(circle,rgba(254,239,76,0.2)_0%,transparent_70%)]" />
-        <div className="absolute left-[-5%] top-[20%] size-[200px] bg-[radial-gradient(circle,#000_2px,transparent_2px)] bg-[length:20px_20px] opacity-10" />
-
-        <div className="container mx-auto px-5">
-          <div className="grid min-h-[60vh] items-center gap-16 md:grid-cols-2">
-            <div className="relative z-10 text-center md:text-left">
-              <h1 className="mb-6 text-primary-gray bg-clip-text text-5xl font-bold leading-tight md:text-6xl lg:text-7xl">
-                Don't buy. Borrow.
-              </h1>
-              <p className="mx-auto mb-10 max-w-md text-lg text-primary-gray md:mx-0">
-                Access thousands of tools and equipment from your neighbors.
-                From lawn mowers to power tools, get what you need when you need
-                it.
-              </p>
-              <SignUpButton>
-                <button
-                  type='button'
-                  className="group cursor-pointer inline-flex items-center gap-3 rounded-full bg-white/75 px-8 py-4 text-lg font-semibold text-primary-gray shadow-md transition-all hover:-translate-y-1 hover:shadow-lg"
-                >
-                  Start Borrowing
-                  <span className="transition-transform group-hover:translate-x-1">
-                    →
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950/95 to-slate-900 text-white">
+      <main className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[520px] max-w-5xl rounded-b-[50%] bg-primary-yellow/20 blur-[140px]" />
+        <div className="pointer-events-none absolute -left-40 top-24 h-72 w-72 rounded-full bg-primary-yellow/15 blur-[120px]" />
+        <div className="pointer-events-none absolute right-[-160px] top-1/3 h-96 w-96 rounded-full bg-primary-yellow/10 blur-[120px]" />
+        <div className="relative px-4 pb-24 pt-16 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-6xl flex-col gap-16">
+            <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900/90 to-slate-900/70 shadow-[0_35px_90px_-45px_rgba(15,23,42,0.9)]">
+              <div className="absolute inset-0 opacity-40">
+                <div className="absolute -left-16 top-10 h-60 w-60 rounded-full bg-primary-yellow/25 blur-[120px]" />
+                <div className="absolute bottom-[-20px] right-[-20px] h-72 w-72 rounded-full bg-primary-yellow/15 blur-[120px]" />
+              </div>
+              <div className="relative grid gap-10 px-6 py-12 md:grid-cols-[1.05fr,0.95fr] lg:px-14">
+                <div className="space-y-8">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.4em] text-white/70">
+                    Don't buy. Borrow.
                   </span>
-                </button>
-              </SignUpButton>
-            </div>
-
-            <div className="relative flex items-center justify-center">
-              <div className="relative size-80 md:size-96 lg:size-[400px]">
-                <div className="animate-float absolute left-0 top-0 w-52 rounded-2xl border border-primary-gray/20 bg-white/75 p-6 backdrop-blur-md md:w-52">
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary-gray text-2xl">
-                    🔨
+                  <div className="space-y-4">
+                    <h1 className="text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+                      Borrow anything. Return better.
+                    </h1>
+                    <p className="max-w-xl text-base text-white/70 sm:text-lg">
+                      Hippo Exchange connects you with neighbors who lend tools, gear, and equipment. Share responsibly, automate check-ins, and keep projects moving without the price tags.
+                    </p>
                   </div>
-                  <h3 className="text-md font-semibold">Power Tools</h3>
-                  <p className="text-xs">
-                    Drills, saws, sanders & more
-                  </p>
+                  <SignUpButton>
+                    <button
+                      type="button"
+                      className="group inline-flex cursor-pointer items-center gap-3 rounded-full border border-white/20 bg-primary-yellow px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-primary-yellow/80"
+                    >
+                      Start borrowing today
+                      <span className="transition-transform group-hover:translate-x-1">
+                        →
+                      </span>
+                    </button>
+                  </SignUpButton>
                 </div>
-                <div
-                  className="animate-float absolute right-0 top-28 w-52 rounded-2xl border border-primary-gray/20 bg-white/75 p-6 backdrop-blur-md"
-                  style={{ animationDelay: '2s' }}
-                >
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary-gray text-2xl">
-                    🌿
+                <div className="flex items-center justify-center">
+                  <div className="relative h-full w-full max-w-md">
+                    <div className="absolute -left-6 top-0 hidden h-32 w-32 rounded-full bg-primary-yellow/20 blur-[90px] sm:block" />
+                    <div className="space-y-6">
+                      <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition hover:border-primary-yellow/40 hover:bg-white/10">
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-yellow/15 text-primary-yellow">
+                          🔨
+                        </div>
+                        <h3 className="text-lg font-semibold">Power up your projects</h3>
+                        <p className="text-sm text-white/60">Reserve drills, sanders, and saws without the hardware store bill.</p>
+                      </div>
+                      <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition hover:border-primary-yellow/40 hover:bg-white/10">
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-yellow/15 text-primary-yellow">
+                          🌿
+                        </div>
+                        <h3 className="text-lg font-semibold">Refresh the yard</h3>
+                        <p className="text-sm text-white/60">Borrow mowers, trimmers, and blowers the weekend you need them.</p>
+                      </div>
+                      <div className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition hover:border-primary-yellow/40 hover:bg-white/10">
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-yellow/15 text-primary-yellow">
+                          🛠️
+                        </div>
+                        <h3 className="text-lg font-semibold">Keep essentials handy</h3>
+                        <p className="text-sm text-white/60">From socket sets to ladders, access communal gear in minutes.</p>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-md font-semibold">Garden Tools</h3>
-                  <p className="text-xs">
-                    Mowers, trimmers, blowers
-                  </p>
-                </div>
-                <div
-                  className="animate-float absolute -bottom-3 left-12 w-52 rounded-2xl border border-primary-gray/20 bg-white/75 p-6 backdrop-blur-md"
-                  style={{ animationDelay: '4s' }}
-                >
-                  <div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-primary-gray text-2xl">
-                    🛠️
-                  </div>
-                  <h3 className="text-md font-semibold">Hand Tools</h3>
-                  <p className="text-xs">
-                    Hammers, wrenches, screwdrivers
-                  </p>
                 </div>
               </div>
-            </div>
+            </section>
+            <section className="space-y-6">
+              <div className="flex flex-col gap-4 text-center">
+                <h2 className="text-3xl font-semibold sm:text-4xl">Why neighbors trust Hippo Exchange</h2>
+                <p className="mx-auto max-w-2xl text-white/70">
+                  A sharing platform built for accountability, transparency, and joyful collaboration across your community.
+                </p>
+              </div>
+              <div className="grid gap-8 md:grid-cols-3">
+                {[
+                  {
+                    title: 'Save thousands together',
+                    description: "Split the cost of specialized tools and equipment while keeping usage high and waste low.",
+                    icon: '💰',
+                  },
+                  {
+                    title: 'Build real connections',
+                    description: 'Coordinate lending schedules, automate check-ins, and trade tips with verified neighbors.',
+                    icon: '🤝',
+                  },
+                  {
+                    title: 'Support sustainability',
+                    description: 'Reuse existing equipment instead of buying new, lowering your carbon footprint with every borrow.',
+                    icon: '🌍',
+                  },
+                ].map(({ title, description, icon }) => (
+                  <div
+                    key={title}
+                    className="rounded-3xl border border-white/10 bg-white/5 p-8 text-left shadow-[0_25px_70px_-50px_rgba(15,23,42,0.9)] backdrop-blur transition hover:border-primary-yellow/40 hover:bg-white/10"
+                  >
+                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-yellow/20 text-xl text-primary-yellow">
+                      {icon}
+                    </div>
+                    <h3 className="mb-3 text-xl font-semibold text-white">{title}</h3>
+                    <p className="text-sm text-white/70">{description}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-black/5 py-20 md:py-24">
-        <div className="container mx-auto px-5">
-          <h2 className="mb-5 text-center text-4xl text-primary-gray font-bold md:text-5xl">
-            Why Choose Hippo Exchange?
-          </h2>
-          <p className="mx-auto max-w-2xl text-primary-gray text-center text-lg">
-            Join thousands of neighbors sharing tools and equipment in a
-            sustainable, cost-effective way.
-          </p>
-
-          <div className="mt-16 grid gap-10 md:grid-cols-3">
-            <div className="rounded-2xl border border-primary-gray/10 bg-gradient-to-br from-white/60 to-white/80 p-8 text-center transition-all hover:-translate-y-1 hover:border-[rgba(254,239,76,0.3)]">
-              <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary-gray text-2xl text-primary-gray">
-                💰
-              </div>
-              <h3 className="mb-2 text-xl font-bold">Save Money</h3>
-              <p className="">
-                Why buy expensive tools you'll rarely use? Borrow from neighbors
-                and save hundreds of dollars.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-primary-gray/10 bg-gradient-to-br from-white/60 to-white/80 p-8 text-center transition-all hover:-translate-y-1 hover:border-[rgba(254,239,76,0.3)]">
-              <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary-gray text-2xl text-primary-gray">
-                🤝
-              </div>
-              <h3 className="mb-2 text-xl font-bold">Build Community</h3>
-              <p className="">
-                Connect with your neighbors, share resources, and strengthen
-                your local community bonds.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-primary-gray/10 bg-gradient-to-br from-white/60 to-white/80 p-8 text-center transition-all hover:-translate-y-1 hover:border-[rgba(254,239,76,0.3)]">
-              <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary-gray text-2xl text-primary-gray">
-                🌍
-              </div>
-              <h3 className="mb-2 text-xl font-bold">Go Green</h3>
-              <p className="">
-                Reduce waste and environmental impact by sharing resources
-                instead of buying new items.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      </main>
     </div>
   )
 }
-

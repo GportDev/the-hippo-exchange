@@ -10,6 +10,7 @@ import { routeTree } from './routeTree.gen'
 
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
+import { getClerkPublishableKey } from './integrations/clerk/get-publishable-key'
 
 // Create a new router instance
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
@@ -32,11 +33,7 @@ declare module '@tanstack/react-router' {
 }
 
 // Import your Publishable Key
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-
-if (!PUBLISHABLE_KEY) {
-  throw new Error('Missing Publishable Key')
-}
+getClerkPublishableKey()
 
 // Render the app
 const rootElement = document.getElementById('app')

@@ -1,4 +1,4 @@
-import { useAuth } from "@clerk/clerk-react";
+import { useAuth, useClerk } from "@clerk/clerk-react";
 import { useCallback } from "react";
 
 import { buildApiUrl, CLERK_JWT_TEMPLATE } from "@/lib/api";
@@ -14,6 +14,7 @@ type RequestOptions = RequestInit & {
  */
 export function useApiClient() {
   const { getToken } = useAuth();
+  const { signOut } = useClerk();
 
   return useCallback(
     async <T = unknown>(path: string, options: RequestOptions = {}): Promise<T> => {
@@ -38,9 +39,13 @@ export function useApiClient() {
       const response = await fetch(buildApiUrl(path), {
         ...requestInit,
         headers,
+        credentials: requestInit.credentials ?? "include",
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          await signOut();
+        }
         const errorText = await response.text();
         throw new Error(errorText || `Request failed with status ${response.status}`);
       }
@@ -56,6 +61,6 @@ export function useApiClient() {
 
       return (await response.text()) as T;
     },
-    [getToken],
+    [getToken, signOut],
   );
 }

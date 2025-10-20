@@ -56,6 +56,7 @@ export function MaintenanceDetailsModal({
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-lg max-h-[90vh] flex flex-col p-0">
         <DialogClose asChild>
           <button
+            type="button"
             aria-label="Close"
             className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-10"
             onClick={onClose}
@@ -124,8 +125,8 @@ export function MaintenanceDetailsModal({
                 Required Tools:
               </strong>
               <ul className="list-disc list-inside bg-gray-50 p-3 rounded-md border text-gray-800">
-                {task.requiredTools.map((tool: string, index: number) => (
-                  <li key={index}>{tool}</li>
+                {task.requiredTools.map((tool) => (
+                  <li key={`${task.id ?? "maintenance"}-${tool}`}>{tool}</li>
                 ))}
               </ul>
             </div>

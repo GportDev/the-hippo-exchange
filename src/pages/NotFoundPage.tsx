@@ -2,128 +2,69 @@ import { Link } from "@tanstack/react-router";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-// Design system colors
-const COLORS = {
-  desktopBackground: "#fff47b", // Primary yellow background
-  desktopDecoration: "#2a323f", // Dark gray for decorative elements
-  mobileBackground: "#2a323f", // Dark gray for background
-  mobileDecoration: "#fff47b", // Primary yellow for decorative elements
-  text: "#fafafa",       // Light text color
-};
-
-export const Desktop = () => {
+export default function NotFoundPage() {
   return (
-    <main className="hidden md:grid min-h-full w-full place-items-start justify-left overflow-hidden" style={{ backgroundColor: COLORS.desktopBackground }}>
-      <section className="flex h-full w-full items-start" style={{ backgroundColor: COLORS.desktopBackground }}>
-        {/* Left side content */}
-        <div className="relative h-full w-[744px] flex-shrink-0 p-16">
-          {/* Decorative corner elements that remain absolutely positioned */}
-          <div className="absolute left-0 bottom-[428px] flex items-start bg-[#2a323f]">
-            <div className="h-[128px] w-[144px] rounded-bl-[60px]" style={{ backgroundColor: COLORS.desktopBackground }} />
-          </div>
-          <div className="absolute left-0 bottom-0 h-[429px] w-[600px] rounded-tr-[100px] bg-[#2a323f]" />
-          <div className="absolute right-0 bottom-0 flex items-end justify-end bg-[#2a323f]">
-            <div className="m-0 h-[128px] w-[144px] rounded-bl-[60px]" style={{ backgroundColor: COLORS.desktopBackground }} />
-          </div>
-
-          {/* Flexbox-based content layout */}
-          <div className="relative flex h-full flex-col">
-            {/* Top group: 404 and error - centered in upper portion */}
-            <div className="flex flex-1 flex-col items-start justify-center" style={{ paddingBottom: '429px' }}>
-              <h1 className="font-bold text-[160px] leading-none tracking-tight text-[#2a323f] text-shadow-lg">404</h1>
-              <h2 className="font-bold text-[60px] leading-none text-[#2a323f] text-shadow-lg">error</h2>
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950/95 to-slate-900 text-white">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-16 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[420px] max-w-4xl rounded-b-[45%] bg-primary-yellow/20 blur-[140px]" />
+        <div className="pointer-events-none absolute -left-40 bottom-10 h-64 w-64 rounded-full bg-primary-yellow/15 blur-[120px]" />
+        <div className="pointer-events-none absolute right-[-120px] top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-primary-yellow/10 blur-[120px]" />
+        <div className="relative w-full max-w-3xl space-y-8">
+          <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-10 text-center shadow-[0_40px_120px_-60px_rgba(15,23,42,0.9)] backdrop-blur-xl">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-yellow/20 text-3xl text-primary-yellow">
+              🦛
             </div>
-
-            {/* Bottom group: Message and button - positioned at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-8 pb-0">
-              <p className="m-0 w-120 font-bold text-4xl leading-normal tracking-tight text-[#fafafa] text-shadow-lg">
-                Oops! Looks like this page went on a little adventure. While we
-                try to wrangle it back, want to go home?
-              </p>
-              <Link 
-                to="/" 
-                aria-label="Home navigation"
+            <h1 className="mt-6 text-6xl font-bold tracking-tight sm:text-7xl">404</h1>
+            <p className="mt-4 text-lg text-white/70">
+              We can't find that page. Maybe the gear wandered off or the link is out on loan.
+            </p>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              <Link
+                to="/"
                 className={cn(
-                  buttonVariants({ size: "lg", variant: null }),
-                  "w-full max-w-md h-15 bg-[#fff47b] text-[#2a323f] hover:bg-[#fff47b] hover:scale-105 transition-all font-bold text-3xl rounded-[60px]"
+                  buttonVariants({ size: "lg", variant: "secondary" }),
+                  "rounded-full border border-primary-yellow/60 bg-primary-yellow text-slate-900 hover:bg-primary-yellow/80"
                 )}
               >
-                Home
+                Bring me home
+              </Link>
+              <Link
+                to="/sign-in"
+                className={cn(
+                  buttonVariants({ size: "lg", variant: "ghost" }),
+                  "rounded-full border border-white/20 bg-white/10 text-white hover:border-primary-yellow/50 hover:bg-primary-yellow/10 hover:text-primary-yellow"
+                )}
+              >
+                View my dashboard
               </Link>
             </div>
           </div>
+          <div className="grid gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_25px_70px_-50px_rgba(15,23,42,0.9)] backdrop-blur">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-yellow/20 text-primary-yellow">
+                🔍
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-white">Check the URL</p>
+                <p className="text-xs text-white/60">
+                  Paths are case-sensitive. Confirm you're visiting a live asset or maintenance link.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-yellow/20 text-primary-yellow">
+                🧭
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-semibold text-white">Need a suggestion?</p>
+                <p className="text-xs text-white/60">
+                  Head back home to browse community assets or jump into maintenance planning.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Right side content (Hippo) */}
-        <div className="relative h-full flex-1">
-          <img src="/full-shocked-hippo-2-3.png" alt="Shocked hippo" className="absolute inset-0 h-full w-full object-contain scale-x-[-1]" />
-        </div>
-      </section>
-    </main>
-  );
-};
-
-export const Mobile = () => {
-  return (
-    <main className="flex md:hidden h-full w-full flex-col overflow-hidden" style={{ backgroundColor: COLORS.mobileDecoration }}>
-      {/* Dark gray box at top with rounded bottom edges */}
-      <section 
-        className="relative flex flex-col items-center rounded-b-[40px] px-6 py-12" 
-        style={{ backgroundColor: COLORS.mobileBackground }}
-      >
-        {/* Circular Hippo Image at top */}
-        <div className="mb-8">
-          <img 
-            src="/half_shocked_hippo.png" 
-            alt="Shocked hippo" 
-            className="h-32 w-32 rounded-full object-cover scale-x-[-1]"
-          />
-        </div>
-        
-        {/* 404 heading */}
-        <h1 className="font-bold text-[100px] leading-none tracking-tight text-[#fff47b] text-shadow-lg">
-          404
-        </h1>
-        
-        {/* error subheading */}
-        <h2 className="mb-8 font-bold text-[40px] leading-none text-[#fff47b] text-shadow-lg">
-          error
-        </h2>
-      </section>
-
-      {/* Yellow background section */}
-      <section 
-        className="flex flex-1 flex-col justify-end px-12 pb-36 pt-8" 
-        style={{ backgroundColor: COLORS.mobileDecoration }}
-      >
-        {/* Oops! text - left justified but moved right a bit */}
-        <p className="mb-8 ml-4 font-bold text-2xl leading-normal tracking-tight text-[#2a323f] text-shadow-lg">
-          Oops! Looks like this page went on a little adventure. While we
-          try to wrangle it back, want to go home?
-        </p>
-        
-        {/* Home button extending out of the right side */}
-        <Link 
-          to="/" 
-          aria-label="Home navigation"
-          className={cn(
-            buttonVariants({ size: "lg", variant: null }),
-            "mr-[-20px] h-14 bg-[#2a323f] text-[#fff47b] hover:bg-[#2a323f] hover:scale-105 transition-all font-bold text-2xl rounded-l-[60px] rounded-r-[60px]"
-          )}
-        >
-          Home
-        </Link>
-      </section>
-    </main>
-  );
-};
-
-// Default export with responsive behavior
-export default function NotFoundPage() {
-  return (
-    <>
-      <Desktop />
-      <Mobile />
-    </>
+      </div>
+    </div>
   );
 }

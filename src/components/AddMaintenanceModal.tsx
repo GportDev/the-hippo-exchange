@@ -120,7 +120,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
         // Fields from form state
         maintenanceTitle: title,
         maintenanceDescription: description,
-        maintenanceDueDate: new Date(dueDate + 'T00:00:00').toISOString(),
+        maintenanceDueDate: new Date(`${dueDate}T00:00:00`).toISOString(),
         isCompleted,
         
         // Fields for recurrence
@@ -201,6 +201,7 @@ export function AddMaintenanceModal({ isOpen, onClose, assetId }: AddMaintenance
       <DialogContent className="w-[90vw] sm:w-full sm:max-w-lg max-h-[90vh] flex flex-col p-0">
         <DialogClose asChild>
           <button
+            type="button"
             aria-label="Close"
             className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-50"
             onClick={onClose}

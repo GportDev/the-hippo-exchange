@@ -133,6 +133,7 @@ export function EditAssetModal({
         {/* Close Button */}
         <DialogClose asChild>
           <button
+            type="button"
             aria-label="Close"
             className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-60"
           >

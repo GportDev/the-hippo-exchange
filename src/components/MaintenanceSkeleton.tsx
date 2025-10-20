@@ -1,5 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
+const FILTER_PLACEHOLDER_KEYS = Array.from({ length: 4 }, (_, index) => `filter-placeholder-${index}`);
+const CARD_PLACEHOLDER_KEYS = Array.from({ length: 5 }, (_, index) => `maintenance-card-placeholder-${index}`);
+
 export function MaintenanceSkeleton() {
   return (
     <div className="bg-gray-50 p-6 min-h-screen">
@@ -12,8 +15,8 @@ export function MaintenanceSkeleton() {
         </div>
 
         <div className="flex gap-6 border-b border-gray-200 mb-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className="relative px-1">
+          {FILTER_PLACEHOLDER_KEYS.map((key) => (
+            <div key={key} className="relative px-1">
               <Skeleton className="h-8 w-24" />
             </div>
           ))}
@@ -22,8 +25,8 @@ export function MaintenanceSkeleton() {
         </div>
 
         <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="flex items-center gap-4 rounded-lg border bg-white p-4 shadow-sm">
+          {CARD_PLACEHOLDER_KEYS.map((key) => (
+            <div key={key} className="flex items-center gap-4 rounded-lg border bg-white p-4 shadow-sm">
               <Skeleton className="h-16 w-16 rounded-md" />
               <div className="flex-grow">
                 <Skeleton className="h-5 w-3/4" />

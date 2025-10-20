@@ -1,0 +1,1562 @@
+export default `# Overview
+
+**TanStack Router is a router for building React and Solid applications**. Some of its features include:
+
+- 100% inferred TypeScript support
+- Typesafe navigation
+- Nested Routing and layout routes (with pathless layouts)
+- Built-in Route Loaders w/ SWR Caching
+- Designed for client-side data caches (TanStack Query, SWR, etc.)
+- Automatic route prefetching
+- Asynchronous route elements and error boundaries
+- File-based Route Generation
+- Typesafe JSON-first Search Params state management APIs
+- Path and Search Parameter Schema Validation
+- Search Param Navigation APIs
+- Custom Search Param parser/serializer support
+- Search param middleware
+- Route matching/loading middleware
+
+To get started quickly, head to the next page. For a more lengthy explanation, buckle up while I bring you up to speed!
+
+## "A Fork in the Route"
+
+Using a router to build applications is widely regarded as a must-have and is usually one of the first choices you’ll make in your tech stack.
+
+[//]: # 'WhyChooseTanStackRouter'
+
+**So, why should you choose TanStack Router over another router?**
+
+To answer this question, we need to look at the other options in the space. There are many if you look hard enough, but in my experience, only a couple are worth exploring seriously:
+
+- **Next.js** - Widely regarded as the de facto framework for starting a new React project, it’s laser focused on performance, workflow, and bleeding edge technology. Its APIs and abstractions are powerful, but can sometimes come across as non-standard. Its extremely fast growth and adoption in the industry has resulted in a featured packed experience, but at the expense of feeling overwhelming and sometimes bloated.
+- **Remix / React Router** - A full-stack framework based on the historically successful React Router offers a similarly powerful developer and user experience, with APIs and vision based firmly on web standards like Request/Response and a focus on running anywhere JS can run. Many of its APIs and abstractions are wonderfully designed and were inspiration for more than a few TanStack Router APIs. That said, its rigid design, bolted-on type safety and sometimes strict over-adherence to platform APIs can leave some developers wanting more.
+
+Both of these frameworks (and their routers) are great, and I can personally attest that both are very good solutions for building React applications. My experience has also taught me that these solutions could also be much better, especially around the actual routing APIs that are available to developers to make their apps faster, easier, and more enjoyable to work with.
+
+It's probably no surprise at this point that picking a router is so important that it is often tied 1-to-1 with your choice of framework, since most frameworks rely on a specific router.
+
+[//]: # 'WhyChooseTanStackRouter'
+
+**Does this mean that TanStack Router is a framework?**
+
+TanStack Router itself is not a "framework" in the traditional sense, since it doesn't address a few other common full-stack concerns. However TanStack Router has been designed to be upgradable to a full-stack framework when used in conjunction with other tools that address bundling, deployments, and server-side-specific functionality. This is why we are currently developing [TanStack Start](https://tanstack.com/start), a full-stack framework that is built on top of TanStack Router and Vite.
+
+For a deeper dive on the history of TanStack Router, feel free to read [TanStack Router's History](../decisions-on-dx.md#tanstack-routers-origin-story).
+
+## Why TanStack Router?
+
+TanStack Router delivers on the same fundamental expectations as other routers that you’ve come to expect:
+
+- Nested routes, layout routes, grouped routes
+- File-based Routing
+- Parallel data loading
+- Prefetching
+- URL Path Params
+- Error Boundaries and Handling
+- SSR
+- Route Masking
+
+And it also delivers some new features that raise the bar:
+
+- 100% inferred TypeScript support
+- Typesafe navigation
+- Built-in SWR Caching for loaders
+- Designed for client-side data caches (TanStack Query, SWR, etc.)
+- Typesafe JSON-first Search Params state management APIs
+- Path and Search Parameter Schema Validation
+- Search Parameter Navigation APIs
+- Custom Search Param parser/serializer support
+- Search param middleware
+- Inherited Route Context
+- Mixed file-based and code-based routing
+
+Let’s dive into some of the more important ones in more detail!
+
+## 100% Inferred TypeScript Support
+
+Everything these days is written “in Typescript” or at the very least offers type definitions that are veneered over runtime functionality, but too few packages in the ecosystem actually design their APIs with TypeScript in mind. So while I’m pleased that your router is auto-completing your option fields and catching a few property/method typos here and there, there is much more to be had.
+
+- TanStack Router is fully aware of all of your routes and their configuration at any given point in your code. This includes the path, path params, search params, context, and any other configuration you’ve provided. Ultimately this means that you can navigate to any route in your app with 100% type safety and confidence that your link or navigate call will succeed.
+- TanStack Router provides lossless type-inference. It uses countless generic type parameters to enforce and propagate any type information you give it throughout the rest of its API and ultimately your app. No other router offers this level of type safety and developer confidence.
+
+What does all of that mean for you?
+
+- Faster feature development with auto-completion and type hints
+- Safer and faster refactors
+- Confidence that your code will work as expected
+
+## 1st Class Search Parameters
+
+Search parameters are often an afterthought, treated like a black box of strings (or string) that you can parse and update, but not much else. Existing solutions are **not** type-safe either, adding to the caution that is required to deal with them. Even the most "modern" frameworks and routers leave it up to you to figure out how to manage this state. Sometimes they'll parse the search string into an object for you, or sometimes you're left to do it yourself with \`URLSearchParams\`.
+
+Let's step back and remember that **search params are the most powerful state manager in your entire application.** They are global, serializable, bookmarkable, and shareable making them the perfect place to store any kind of state that needs to survive a page refresh or a social share.
+
+To live up to that responsibility, search parameters are a first-class citizen in TanStack Router. While still based on standard URLSearchParams, TanStack Router uses a powerful parser/serializer to manage deeper and more complex data structures in your search params, all while keeping them type-safe and easy to work with.
+
+**It's like having \`useState\` right in the URL!**
+
+Search parameters are:
+
+- Automatically parsed and serialized as JSON
+- Validated and typed
+- Inherited from parent routes
+- Accessible in loaders, components, and hooks
+- Easily modified with the useSearch hook, Link, navigate, and router.navigate APIs
+- Customizable with a custom search filters and middleware
+- Subscribed via fine-grained search param selectors for efficient re-renders
+
+Once you start using TanStack Router's search parameters, you'll wonder how you ever lived without them.
+
+## Built-In Caching and Friendly Data Loading
+
+Data loading is a critical part of any application and while most existing routers offer some form of critical data loading APIs, they often fall short when it comes to caching and data lifecycle management. Existing solutions suffer from a few common problems:
+
+- No caching at all. Data is always fresh, but your users are left waiting for frequently accessed data to load over and over again.
+- Overly-aggressive caching. Data is cached for too long, leading to stale data and a poor user experience.
+- Blunt invalidation strategies and APIs. Data may be invalidated too often, leading to unnecessary network requests and wasted resources, or you may not have any fine-grained control over when data is invalidated at all.
+
+TanStack Router solves these problems with a two-prong approach to caching and data loading:
+
+### Built-in Cache
+
+TanStack Router provides a light-weight built-in caching layer that works seamlessly with the Router. This caching layer is loosely based on TanStack Query, but with fewer features and a much smaller API surface area. Like TanStack Query, sane but powerful defaults guarantee that your data is cached for reuse, invalidated when necessary, and garbage collected when not in use. It also provides a simple API for invalidating the cache manually when needed.
+
+### Flexible & Powerful Data Lifecycle APIs
+
+TanStack Router is designed with a flexible and powerful data loading API that more easily integrates with existing data fetching libraries like TanStack Query, SWR, Apollo, Relay, or even your own custom data fetching solution. Configurable APIs like \`context\`, \`beforeLoad\`, \`loaderDeps\` and \`loader\` work in unison to make it easy to define declarative data dependencies, prefetch data, and manage the lifecycle of an external data source with ease.
+
+## Inherited Route Context
+
+TanStack Router's router and route context is a powerful feature that allows you to define context that is specific to a route which is then inherited by all child routes. Even the router and root routes themselves can provide context. Context can be built up both synchronously and asynchronously, and can be used to share data, configuration, or even functions between routes and route configurations. This is especially useful for scenarios like:
+
+- Authentication and Authorization
+- Hybrid SSR/CSR data fetching and preloading
+- Theming
+- Singletons and global utilities
+- Curried or partial application across preloading, loading, and rendering stages
+
+Also, what would route context be if it weren't type-safe? TanStack Router's route context is fully type-safe and inferred at zero cost to you.
+
+## File-based and/or Code-Based Routing
+
+TanStack Router supports both file-based and code-based routing at the same time. This flexibility allows you to choose the approach that best fits your project's needs.
+
+TanStack Router's file-based routing approach is uniquely user-facing. Route configuration is generated for you either by the Vite plugin or TanStack Router CLI, leaving the usage of said generated code up to you! This means that you're always in total control of your routes and router, even if you use file-based routing.
+
+## Acknowledgements
+
+TanStack Router builds on concepts and patterns popularized by many other OSS projects, including:
+
+- [TRPC](https://trpc.io/)
+- [Remix](https://remix.run)
+- [Chicane](https://swan-io.github.io/chicane/)
+- [Next.js](https://nextjs.org)
+
+We acknowledge the investment, risk and research that went into their development, but are excited to push the bar they have set even higher.
+
+## Let's go!
+
+Enough overview, there's so much more to do with TanStack Router. Hit that next button and let's get started!
+
+# Quick Start
+
+TanStack Router can be quickly added to any existing React project or used to scaffold a new one.
+
+## TanStack Router Installation
+
+### Requirements
+
+Before installing TanStack router, please ensure your project meets the following requirements:
+
+[//]: # 'Requirements'
+
+- \`react\` v18 or later with \`createRoot\` support.
+- \`react-dom\` v18 or later.
+
+[//]: # 'Requirements'
+
+> [!NOTE] Using TypeScript (\`v5.3.x or higher\`) is recommended for the best development experience, though not strictly required. We aim to support the last 5 minor versions of TypeScript, but using the latest version will help avoid potential issues.
+
+TanStack Router is currently only compatible with React (with ReactDOM) and Solid. If you're interested in contributing to support other frameworks, such as React Native, Angular, or Vue, please reach out to us on [Discord](https://tlinz.com/discord).
+
+### Download and Install
+
+To install TanStack Router in your project, run the following command using your preferred package manager:
+
+[//]: # 'installCommand'
+
+\`\`\`sh
+npm install @tanstack/router
+# or
+pnpm add @tanstack/router
+#or
+yarn add @tanstack/router
+# or
+bun add @tanstack/router
+# or
+deno add npm:@tanstack/router
+\`\`\`
+
+[//]: # 'installCommand'
+
+Once installed, you can verify the installation by checking your \`package.json\` file for the \`@tanstack/router\` dependency.
+
+[//]: # 'packageJson'
+
+\`\`\`json
+{
+  "dependencies": {
+    "@tanstack/react-router": "^x.x.x"
+  }
+}
+\`\`\`
+
+[//]: # 'packageJson'
+
+## New Project Setup
+
+To quickly scaffold a new project with TanStack Router, you can use the \`create-tsrouter-app\` command-line tool. This tool sets up a new React application with TanStack Router pre-configured, allowing you to get started quickly.
+
+> [!TIP] For full details on available options and templates, visit the [\`create-tsrouter-app\` documentation](https://github.com/TanStack/create-tsrouter-app/tree/main/cli/create-tsrouter-app).
+
+To create a new project, run the following command in your terminal:
+
+[//]: # 'createAppCommand'
+
+\`\`\`sh
+npx create-tsrouter-app@latest
+\`\`\`
+
+[//]: # 'createAppCommand'
+
+The CLI will guide you through a short series of prompts to customize your setup, including options for:
+
+[//]: # 'CLIPrompts'
+
+- File-based or code-based route configuration
+- TypeScript support
+- Tailwind CSS integration
+- Toolchain setup
+- Git initialization
+
+[//]: # 'CLIPrompts'
+
+Once complete, a new React project will be generated with TanStack Router installed and ready to use. All dependencies are automatically installed, so you can jump straight into development:
+
+\`\`\`sh
+cd your-project-name
+npm run dev
+\`\`\`
+
+### Routing Options
+
+TanStack Router supports both file-based and code-based route configurations, allowing you to choose the approach that best fits your workflow.
+
+#### File-Based Route Generation
+
+The file-based approach is the recommended option for most projects. It automatically creates routes based on your file structure, giving you the best mix of performance, simplicity, and developer experience.
+
+To create a new project using file-based route generation, run the following command:
+
+[//]: # 'createAppCommandFileBased'
+
+\`\`\`sh
+npx create-tsrouter-app@latest my-app --template file-router
+\`\`\`
+
+[//]: # 'createAppCommandFileBased'
+
+This command sets up a new directory called \`my-app\` with everything configured. Once setup completes, you can then start your development server and begin building your application:
+
+\`\`\`sh
+cd my-app
+npm run dev
+\`\`\`
+
+#### Code-Based Route Configuration
+
+If you prefer to define routes programmatically, you can use the code-based route configuration. This approach gives you full control over routing logic while maintaining the same project scaffolding workflow.
+
+[//]: # 'createAppCommandCodeBased'
+
+\`\`\`sh
+npx create-tsrouter-app@latest my-app
+\`\`\`
+
+[//]: # 'createAppCommandCodeBased'
+
+Similar to the file-based setup, this command creates a new directory called \`my-app\` with TanStack Router configured for code-based routing. After setup, navigate to your project directory and start the development server:
+
+\`\`\`sh
+cd my-app
+npm run dev
+\`\`\`
+
+With either approach, you can now start building your React application with TanStack Router!
+
+# Devtools
+
+> Link, take this sword... I mean Devtools!... to help you on your way!
+
+Wave your hands in the air and shout hooray because TanStack Router comes with dedicated devtools! 🥳
+
+When you begin your TanStack Router journey, you'll want these devtools by your side. They help visualize all of the inner workings of TanStack Router and will likely save you hours of debugging if you find yourself in a pinch!
+
+## Installation
+
+The devtools are a separate package that you need to install:
+
+\`\`\`sh
+npm install @tanstack/react-router-devtools
+\`\`\`
+
+or
+
+\`\`\`sh
+pnpm add @tanstack/react-router-devtools
+\`\`\`
+
+or
+
+\`\`\`sh
+yarn add @tanstack/react-router-devtools
+\`\`\`
+
+or
+
+\`\`\`sh
+bun add @tanstack/react-router-devtools
+\`\`\`
+
+## Import the Devtools
+
+\`\`\`js
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+\`\`\`
+
+## Using Devtools in production
+
+The Devtools, if imported as \`TanStackRouterDevtools\` will not be shown in production. If you want to have devtools in an environment with \`process.env.NODE_ENV === 'production'\`, use instead \`TanStackRouterDevtoolsInProd\`, which has all the same options:
+
+\`\`\`tsx
+import { TanStackRouterDevtoolsInProd } from '@tanstack/react-router-devtools'
+\`\`\`
+
+## Using inside of the \`RouterProvider\`
+
+The easiest way for the devtools to work is to render them inside of your root route (or any other route). This will automatically connect the devtools to the router instance.
+
+\`\`\`tsx
+const rootRoute = createRootRoute({
+  component: () => (
+    <>
+      <Outlet />
+      <TanStackRouterDevtools />
+    </>
+  ),
+})
+
+const routeTree = rootRoute.addChildren([
+  // ... other routes
+])
+
+const router = createRouter({
+  routeTree,
+})
+
+function App() {
+  return <RouterProvider router={router} />
+}
+\`\`\`
+
+## Manually passing the Router Instance
+
+If rendering the devtools inside of the \`RouterProvider\` isn't your cup of tea, a \`router\` prop for the devtools accepts the same \`router\` instance you pass to the \`Router\` component. This makes it possible to place the devtools anywhere on the page, not just inside the provider:
+
+\`\`\`tsx
+function App() {
+  return (
+    <>
+      <RouterProvider router={router} />
+      <TanStackRouterDevtools router={router} />
+    </>
+  )
+}
+\`\`\`
+
+## Floating Mode
+
+Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
+
+Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
+
+\`\`\`js
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+
+function App() {
+  return (
+    <>
+      <Router />
+      <TanStackRouterDevtools initialIsOpen={false} />
+    </>
+  )
+}
+\`\`\`
+
+### Devtools Options
+
+- \`router: Router\`
+  - The router instance to connect to.
+- \`initialIsOpen: Boolean\`
+  - Set this \`true\` if you want the devtools to default to being open.
+- \`panelProps: PropsObject\`
+  - Use this to add props to the panel. For example, you can add \`className\`, \`style\` (merge and override default style), etc.
+- \`closeButtonProps: PropsObject\`
+  - Use this to add props to the close button. For example, you can add \`className\`, \`style\` (merge and override default style), \`onClick\` (extend default handler), etc.
+- \`toggleButtonProps: PropsObject\`
+  - Use this to add props to the toggle button. For example, you can add \`className\`, \`style\` (merge and override default style), \`onClick\` (extend default handler), etc.
+- \`position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"\`
+  - Defaults to \`bottom-left\`.
+  - The position of the TanStack Router logo to open and close the devtools panel.
+- \`shadowDOMTarget?: ShadowRoot\`
+  - Specifies a Shadow DOM target for the devtools.
+  - By default, devtool styles are applied to the \`<head>\` tag of the main document (light DOM). When a \`shadowDOMTarget\` is provided, styles will be applied within this Shadow DOM instead.
+- \`containerElement?: string | any\`
+  - Use this to render the devtools inside a different type of container element for ally purposes.
+  - Any string which corresponds to a valid intrinsic JSX element is allowed.
+  - Defaults to 'footer'.
+
+## Fixed Mode
+
+To control the position of the devtools, import the \`TanStackRouterDevtoolsPanel\`:
+
+\`\`\`js
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+\`\`\`
+
+It can then be attached to provided shadow DOM target:
+
+\`\`\`js
+<TanStackRouterDevtoolsPanel
+  shadowDOMTarget={shadowContainer}
+  router={router}
+/>
+\`\`\`
+
+Click [here](https://tanstack.com/router/latest/docs/framework/react/examples/basic-devtools-panel) to see a live example of this in StackBlitz.
+
+## Embedded Mode
+
+Embedded Mode will embed the devtools as a regular component in your application. You can style it however you'd like after that!
+
+\`\`\`js
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+
+function App() {
+  return (
+    <>
+      <Router router={router} />
+      <TanStackRouterDevtoolsPanel
+        router={router}
+        style={styles}
+        className={className}
+      />
+    </>
+  )
+}
+\`\`\`
+
+### DevtoolsPanel Options
+
+- \`router: Router\`
+  - The router instance to connect to.
+- \`style: StyleObject\`
+  - The standard React style object used to style a component with inline styles.
+- \`className: string\`
+  - The standard React className property used to style a component with classes.
+- \`isOpen?: boolean\`
+  - A boolean variable indicating whether the panel is open or closed.
+- \`setIsOpen?: (isOpen: boolean) => void\`
+  - A function that toggles the open and close state of the panel.
+- \`handleDragStart?: (e: any) => void\`
+  - Handles the opening and closing the devtools panel.
+- \`shadowDOMTarget?: ShadowRoot\`
+  - Specifies a Shadow DOM target for the devtools.
+  - By default, devtool styles are applied to the \`<head>\` tag of the main document (light DOM). When a \`shadowDOMTarget\` is provided, styles will be applied within this Shadow DOM instead.
+
+# How to Migrate from React Router v7
+
+This guide provides a step-by-step process to migrate your application from React Router v7 to TanStack Router. We'll cover the complete migration process from removing React Router dependencies to implementing TanStack Router's type-safe routing patterns.
+
+## Quick Start
+
+**Time Required:** 2-4 hours depending on app complexity  
+**Difficulty:** Intermediate  
+**Prerequisites:** Basic React knowledge, existing React Router v7 app
+
+### What You'll Accomplish
+
+- Remove React Router v7 dependencies and components
+- Install and configure TanStack Router
+- Convert route definitions to file-based routing
+- Update navigation components and hooks
+- Implement type-safe routing patterns
+- Handle search params and dynamic routes
+- Migrate from React Router v7's new features to TanStack Router equivalents
+
+---
+
+## Complete Migration Process
+
+### Step 1: Prepare for Migration
+
+Before making any changes, prepare your environment and codebase:
+
+**1.1 Create a backup branch**
+
+\`\`\`bash
+git checkout -b migrate-to-tanstack-router
+git push -u origin migrate-to-tanstack-router
+\`\`\`
+
+**1.2 Install TanStack Router (keep React Router temporarily)**
+
+\`\`\`bash
+# Install TanStack Router
+npm install @tanstack/react-router
+
+# Install development dependencies
+npm install -D @tanstack/router-plugin @tanstack/react-router-devtools
+\`\`\`
+
+**1.3 Set up the router plugin for your bundler**
+
+For **Vite** users, update your \`vite.config.ts\`:
+
+\`\`\`typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+
+export default defineConfig({
+  plugins: [
+    tanstackRouter(), // Add this before react plugin
+    react(),
+  ],
+})
+\`\`\`
+
+For **other bundlers**, see our [bundler configuration guides](../routing/).
+
+### Step 2: Create TanStack Router Configuration
+
+**2.1 Create router configuration file**
+
+Create \`tsr.config.json\` in your project root:
+
+\`\`\`json
+{
+  "routesDirectory": "./src/routes",
+  "generatedRouteTree": "./src/routeTree.gen.ts",
+  "quoteStyle": "single"
+}
+\`\`\`
+
+**2.2 Create routes directory**
+
+\`\`\`bash
+mkdir src/routes
+\`\`\`
+
+### Step 3: Convert Your React Router v7 Structure
+
+**3.1 Identify your current React Router v7 setup**
+
+React Router v7 introduced several new patterns. Look for:
+
+- \`createBrowserRouter\` with new data APIs
+- Framework mode configurations
+- Server-side rendering setup
+- New \`loader\` and \`action\` functions
+- \`defer\` usage (simplified in v7)
+- Type-safe routing features
+
+**3.2 Create root route**
+
+Create \`src/routes/__root.tsx\`:
+
+\`\`\`typescript
+import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+
+export const Route = createRootRoute({
+  component: () => (
+    <>
+      {/* Your existing layout/navbar content */}
+      <div className="p-2 flex gap-2">
+        <Link to="/" className="[&.active]:font-bold">
+          Home
+        </Link>
+        <Link to="/about" className="[&.active]:font-bold">
+          About
+        </Link>
+      </div>
+      <hr />
+      <Outlet />
+      <TanStackRouterDevtools />
+    </>
+  ),
+})
+\`\`\`
+
+**3.3 Create index route**
+
+Create \`src/routes/index.tsx\` for your home page:
+
+\`\`\`typescript
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/')({
+  component: Index,
+})
+
+function Index() {
+  return (
+    <div className="p-2">
+      <h3>Welcome Home!</h3>
+    </div>
+  )
+}
+\`\`\`
+
+**3.4 Convert React Router v7 loaders**
+
+React Router v7 simplified loader patterns. Here's how to migrate them:
+
+**React Router v7:**
+
+\`\`\`typescript
+// app/routes/posts.tsx
+export async function loader() {
+  const posts = await fetchPosts()
+  return { posts } // v7 removed need for json() wrapper
+}
+
+export default function Posts() {
+  const { posts } = useLoaderData()
+  return <div>{/* render posts */}</div>
+}
+\`\`\`
+
+**TanStack Router equivalent:**
+Create \`src/routes/posts.tsx\`:
+
+\`\`\`typescript
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/posts')({
+  loader: async () => {
+    const posts = await fetchPosts()
+    return { posts }
+  },
+  component: Posts,
+})
+
+function Posts() {
+  const { posts } = Route.useLoaderData()
+  return <div>{/* render posts */}</div>
+}
+\`\`\`
+
+**3.5 Convert dynamic routes**
+
+**React Router v7:**
+
+\`\`\`typescript
+// app/routes/posts.$postId.tsx
+export async function loader({ params }) {
+  const post = await fetchPost(params.postId)
+  return { post }
+}
+
+export default function Post() {
+  const { post } = useLoaderData()
+  return <div>{post.title}</div>
+}
+\`\`\`
+
+**TanStack Router equivalent:**
+Create \`src/routes/posts/$postId.tsx\`:
+
+\`\`\`typescript
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/posts/$postId')({
+  loader: async ({ params }) => {
+    const post = await fetchPost(params.postId)
+    return { post }
+  },
+  component: Post,
+})
+
+function Post() {
+  const { post } = Route.useLoaderData()
+  const { postId } = Route.useParams()
+  return <div>{post.title}</div>
+}
+\`\`\`
+
+**3.6 Convert React Router v7 actions**
+
+**React Router v7:**
+
+\`\`\`typescript
+export async function action({ request, params }) {
+  const formData = await request.formData()
+  const result = await updatePost(params.postId, formData)
+  return { success: true }
+}
+\`\`\`
+
+**TanStack Router equivalent:**
+
+\`\`\`typescript
+export const Route = createFileRoute('/posts/$postId/edit')({
+  component: EditPost,
+  // Actions are typically handled differently in TanStack Router
+  // Use mutations or form libraries like React Hook Form
+})
+
+function EditPost() {
+  const navigate = useNavigate()
+
+  const handleSubmit = async (formData) => {
+    const result = await updatePost(params.postId, formData)
+    navigate({ to: '/posts/$postId', params: { postId } })
+  }
+
+  return <form onSubmit={handleSubmit}>{/* form */}</form>
+}
+\`\`\`
+
+### Step 4: Handle React Router v7 Framework Features
+
+**4.1 Server-Side Rendering Migration**
+
+React Router v7 introduced framework mode with SSR. If you're using this:
+
+**React Router v7 Framework Mode:**
+
+\`\`\`typescript
+// react-router.config.ts
+export default {
+  ssr: true,
+  prerender: ['/'],
+}
+\`\`\`
+
+**TanStack Router approach:**
+
+TanStack Router has built-in SSR capabilities. Set up your router for SSR:
+
+\`\`\`typescript
+// src/router.tsx
+import { createRouter } from '@tanstack/react-router'
+import { routeTree } from './routeTree.gen'
+
+const router = createRouter({
+  routeTree,
+  context: {
+    // Add any SSR context here
+  },
+})
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+export { router }
+\`\`\`
+
+For server-side rendering, use TanStack Router's built-in SSR APIs:
+
+\`\`\`typescript
+// server.tsx
+import { createMemoryHistory } from '@tanstack/react-router'
+import { StartServer } from '@tanstack/start/server'
+
+export async function render(url: string) {
+  const router = createRouter({
+    routeTree,
+    history: createMemoryHistory({ initialEntries: [url] }),
+  })
+
+  await router.load()
+
+  return (
+    <StartServer router={router} />
+  )
+}
+\`\`\`
+
+**4.2 Code Splitting Migration**
+
+React Router v7 improved code splitting. TanStack Router handles this via lazy routes:
+
+**React Router v7:**
+
+\`\`\`typescript
+const LazyComponent = lazy(() => import('./LazyComponent'))
+\`\`\`
+
+**TanStack Router:**
+
+\`\`\`typescript
+import { createLazyFileRoute } from '@tanstack/react-router'
+
+export const Route = createLazyFileRoute('/lazy-route')({
+  component: LazyComponent,
+})
+
+function LazyComponent() {
+  return <div>Lazy loaded!</div>
+}
+\`\`\`
+
+### Step 5: Update Navigation Components
+
+**5.1 Update Link components**
+
+**React Router v7:**
+
+\`\`\`typescript
+import { Link } from 'react-router'
+
+<Link to="/posts/123">View Post</Link>
+<Link to="/posts" state={{ from: 'home' }}>Posts</Link>
+\`\`\`
+
+**TanStack Router:**
+
+\`\`\`typescript
+import { Link } from '@tanstack/react-router'
+
+<Link to="/posts/$postId" params={{ postId: '123' }}>View Post</Link>
+<Link to="/posts" state={{ from: 'home' }}>Posts</Link>
+\`\`\`
+
+**5.2 Update navigation hooks**
+
+**React Router v7:**
+
+\`\`\`typescript
+import { useNavigate } from 'react-router'
+
+function Component() {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate('/posts/123')
+  }
+}
+\`\`\`
+
+**TanStack Router:**
+
+\`\`\`typescript
+import { useNavigate } from '@tanstack/react-router'
+
+function Component() {
+  const navigate = useNavigate()
+
+  const handleClick = () => {
+    navigate({ to: '/posts/$postId', params: { postId: '123' } })
+  }
+}
+\`\`\`
+
+### Step 6: Handle React Router v7 Specific Features
+
+**6.1 Migrate simplified \`defer\` usage**
+
+React Router v7 simplified defer by removing the wrapper function:
+
+**React Router v7:**
+
+\`\`\`typescript
+export async function loader() {
+  return {
+    data: fetchData(), // Promise directly returned
+  }
+}
+\`\`\`
+
+**TanStack Router:**
+
+TanStack Router uses a different approach for deferred data. Use loading states:
+
+\`\`\`typescript
+export const Route = createFileRoute('/deferred')({
+  loader: async () => {
+    const data = await fetchData()
+    return { data }
+  },
+  pendingComponent: () => <div>Loading...</div>,
+  component: DeferredComponent,
+})
+\`\`\`
+
+**6.2 Handle React Router v7's enhanced type safety**
+
+React Router v7 improved type inference. TanStack Router provides even better type safety:
+
+\`\`\`typescript
+// TanStack Router automatically infers types
+export const Route = createFileRoute('/posts/$postId')({
+  loader: async ({ params }) => {
+    // params.postId is automatically typed as string
+    const post = await fetchPost(params.postId)
+    return { post }
+  },
+  component: Post,
+})
+
+function Post() {
+  // post is automatically typed based on loader return
+  const { post } = Route.useLoaderData()
+  // postId is automatically typed as string
+  const { postId } = Route.useParams()
+}
+\`\`\`
+
+### Step 7: Update Your Main Router Setup
+
+**7.1 Replace React Router v7 router creation**
+
+**Before (React Router v7):**
+
+\`\`\`typescript
+import { createBrowserRouter, RouterProvider } from 'react-router'
+
+const router = createBrowserRouter([
+  // Your route definitions
+])
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
+\`\`\`
+
+**After (TanStack Router):**
+
+\`\`\`typescript
+import { RouterProvider } from '@tanstack/react-router'
+import { router } from './router'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
+\`\`\`
+
+### Step 8: Handle Search Parameters
+
+**8.1 React Router v7 to TanStack Router search params**
+
+**React Router v7:**
+
+\`\`\`typescript
+import { useSearchParams } from 'react-router'
+
+function Component() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = searchParams.get('page') || '1'
+
+  const updatePage = (newPage) => {
+    setSearchParams({ page: newPage })
+  }
+}
+\`\`\`
+
+**TanStack Router:**
+
+\`\`\`typescript
+import { createFileRoute } from '@tanstack/react-router'
+import { z } from 'zod'
+
+const searchSchema = z.object({
+  page: z.number().catch(1),
+  filter: z.string().optional(),
+})
+
+export const Route = createFileRoute('/posts')({
+  validateSearch: searchSchema,
+  component: Posts,
+})
+
+function Posts() {
+  const navigate = useNavigate({ from: '/posts' })
+  const { page, filter } = Route.useSearch()
+
+  const updatePage = (newPage: number) => {
+    navigate({ search: (prev) => ({ ...prev, page: newPage }) })
+  }
+}
+\`\`\`
+
+### Step 9: Remove React Router Dependencies
+
+Only after everything is working with TanStack Router:
+
+**9.1 Remove React Router v7**
+
+\`\`\`bash
+npm uninstall react-router
+\`\`\`
+
+**9.2 Clean up unused imports**
+
+Search your codebase for any remaining React Router imports:
+
+\`\`\`bash
+# Find remaining React Router imports
+grep -r "react-router" src/
+\`\`\`
+
+Remove any remaining imports and replace with TanStack Router equivalents.
+
+### Step 10: Add Advanced Type Safety
+
+**10.1 Configure strict TypeScript**
+
+Update your \`tsconfig.json\`:
+
+\`\`\`json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true
+  }
+}
+\`\`\`
+
+**10.2 Add search parameter validation**
+
+For routes with search parameters, add validation schemas:
+
+\`\`\`typescript
+import { createFileRoute } from '@tanstack/react-router'
+import { z } from 'zod'
+
+const postsSearchSchema = z.object({
+  page: z.number().min(1).catch(1),
+  search: z.string().optional(),
+  category: z.enum(['tech', 'business', 'lifestyle']).optional(),
+})
+
+export const Route = createFileRoute('/posts')({
+  validateSearch: postsSearchSchema,
+  component: Posts,
+})
+\`\`\`
+
+---
+
+## Production Checklist
+
+Before deploying your migrated application:
+
+### Router Configuration
+
+- [ ] Router instance created and properly exported
+- [ ] Route tree generated successfully
+- [ ] TypeScript declarations registered
+- [ ] All route files follow naming conventions
+
+### Route Migration
+
+- [ ] All React Router v7 routes converted to file-based routing
+- [ ] Dynamic routes updated with proper parameter syntax
+- [ ] Nested routes maintain hierarchy
+- [ ] Index routes created where needed
+- [ ] Layout routes preserve component structure
+
+### Feature Migration
+
+- [ ] All React Router v7 loaders converted
+- [ ] Actions migrated to appropriate patterns
+- [ ] Server-side rendering configured (if applicable)
+- [ ] Code splitting implemented
+- [ ] Type safety enhanced
+
+### Navigation Updates
+
+- [ ] All Link components updated to TanStack Router
+- [ ] useNavigate hooks replaced and tested
+- [ ] Navigation parameters properly typed
+- [ ] Search parameter validation implemented
+
+### Code Cleanup
+
+- [ ] React Router v7 dependencies removed
+- [ ] Unused imports cleaned up
+- [ ] No React Router references remain
+- [ ] TypeScript compilation successful
+- [ ] All tests passing
+
+### Testing
+
+- [ ] All routes accessible and rendering correctly
+- [ ] Navigation between routes working
+- [ ] Back/forward browser buttons functional
+- [ ] Search parameters persisting correctly
+- [ ] Dynamic routes with parameters working
+- [ ] Nested route layouts displaying properly
+- [ ] Framework features (SSR, code splitting) working if applicable
+
+---
+
+## Common Problems
+
+### Error: "Cannot use useNavigate outside of context"
+
+**Problem:** You have remaining React Router imports that conflict with TanStack Router.
+
+**Solution:**
+
+1. Search for all React Router imports:
+   \`\`\`bash
+   grep -r "react-router" src/
+   \`\`\`
+2. Replace all imports with TanStack Router equivalents
+3. Ensure React Router is completely uninstalled
+
+### TypeScript Errors: Route Parameters
+
+**Problem:** TypeScript showing errors about route parameters not being typed correctly.
+
+**Solution:**
+
+1. Ensure your router is registered in the TypeScript module declaration:
+   \`\`\`typescript
+   declare module '@tanstack/react-router' {
+     interface Register {
+       router: typeof router
+     }
+   }
+   \`\`\`
+2. Check that your route files export the Route correctly
+3. Verify parameter names match between route definition and usage
+
+### React Router v7 Framework Features Not Working
+
+**Problem:** Missing SSR or code splitting functionality after migration.
+
+**Solution:**
+
+1. TanStack Router has built-in SSR capabilities - use TanStack Start for full-stack applications
+2. Use TanStack Router's lazy routes for code splitting
+3. Configure SSR using TanStack Router's native APIs
+4. Follow the [SSR setup guide](../setup-ssr.md) for detailed instructions
+
+### Routes Not Matching
+
+**Problem:** Routes not rendering or 404 errors for valid routes.
+
+**Solution:**
+
+1. Check file naming follows TanStack Router conventions:
+   - Dynamic routes: \`$paramName.tsx\`
+   - Index routes: \`index.tsx\`
+   - Nested routes: proper directory structure
+2. Verify route tree generation is working
+3. Check that the router plugin is properly configured
+
+### React Router v7 Simplified APIs Not Translating
+
+**Problem:** v7's simplified \`defer\` or other features don't have direct equivalents.
+
+**Solution:**
+
+1. Use TanStack Router's pending states for loading UX
+2. Implement data fetching patterns that fit TanStack Router's architecture
+3. Leverage TanStack Router's superior type safety for better DX
+
+---
+
+## React Router v7 vs TanStack Router Feature Comparison
+
+| Feature            | React Router v7     | TanStack Router              |
+| ------------------ | ------------------- | ---------------------------- |
+| Type Safety        | Good                | Excellent                    |
+| File-based Routing | Framework mode only | Built-in                     |
+| Search Params      | Basic               | Validated with schemas       |
+| Code Splitting     | Good                | Excellent with lazy routes   |
+| SSR                | Framework mode      | Built-in with TanStack Start |
+| Bundle Size        | Larger              | Smaller                      |
+| Learning Curve     | Moderate            | Moderate                     |
+| Community          | Large               | Growing                      |
+
+---
+
+## Common Next Steps
+
+After successfully migrating to TanStack Router, consider these enhancements:
+
+### Advanced Features to Explore
+
+- **Route-based code splitting** - Improve performance with lazy loading
+- **Search parameter validation** - Type-safe URL state management
+- **Route preloading** - Enhance perceived performance
+- **Route masking** - Advanced URL management
+- **Integration with TanStack Query** - Powerful data fetching
+
+---
+
+## Related Resources
+
+- [TanStack Router Documentation](https://tanstack.com/router) - Complete API reference
+- [File-Based Routing Guide](../../routing/file-based-routing.md) - Detailed routing concepts
+- [Navigation Guide](../../guide/navigation.md) - Complete navigation patterns
+- [Search Parameters Guide](../../guide/search-params.md) - Advanced search param usage
+- [Type Safety Guide](../../guide/type-safety.md) - TypeScript integration details
+- [React Router v7 Changelog](https://reactrouter.com/start/changelog) - What changed in v7
+
+# Migration from React Location
+
+Before you begin your journey in migrating from React Location, it's important that you have a good understanding of the [Routing Concepts](../routing/routing-concepts.md) and [Design Decisions](../decisions-on-dx.md) used by TanStack Router.
+
+## Differences between React Location and TanStack Router
+
+React Location and TanStack Router share much of same design decisions concepts, but there are some key differences that you should be aware of.
+
+- React Location uses _generics_ to infer types for routes, while TanStack Router uses _module declaration merging_ to infer types.
+- Route configuration in React Location is done using a single array of route definitions, while in TanStack Router, route configuration is done using a tree of route definitions starting with the [root route](../routing/routing-concepts.md#the-root-route).
+- [File-based routing](../routing/file-based-routing.md) is the recommended way to define routes in TanStack Router, while React Location only allows you to define routes in a single file using a code-based approach.
+  - TanStack Router does support a [code-based approach](../routing/code-based-routing.md) to defining routes, but it is not recommended for most use cases. You can read more about why, over here: [why is file-based routing the preferred way to define routes?](../decisions-on-dx.md#3-why-is-file-based-routing-the-preferred-way-to-define-routes)
+
+## Migration guide
+
+In this guide we'll go over the process of migrating the [React Location Basic example](https://github.com/TanStack/router/tree/react-location/examples/basic) over to TanStack Router using file-based routing, with the end goal of having the same functionality as the original example (styling and other non-routing related code will be omitted).
+
+> [!TIP]
+> To use a code-based approach for defining your routes, you can read the [code-based Routing](../routing/code-based-routing.md) guide.
+
+### Step 1: Swap over to TanStack Router's dependencies
+
+First, we need to install the dependencies for TanStack Router. For detailed installation instructions, see our [How to Install TanStack Router](../how-to/install.md) guide.
+
+\`\`\`sh
+npm install @tanstack/react-router @tanstack/router-devtools
+\`\`\`
+
+And remove the React Location dependencies.
+
+\`\`\`sh
+npm uninstall @tanstack/react-location @tanstack/react-location-devtools
+\`\`\`
+
+### Step 2: Use the file-based routing watcher
+
+If your project uses Vite (or one of the supported bundlers), you can use the TanStack Router plugin to watch for changes in your routes files and automatically update the routes configuration.
+
+Installation of the Vite plugin:
+
+\`\`\`sh
+npm install -D @tanstack/router-plugin
+\`\`\`
+
+And add it to your \`vite.config.js\`:
+
+\`\`\`js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
+
+export default defineConfig({
+  // ...
+  plugins: [tanstackRouter(), react()],
+})
+\`\`\`
+
+However, if your application does not use Vite, you use one of our other [supported bundlers](../routing/file-based-routing.md#getting-started-with-file-based-routing), or you can use the \`@tanstack/router-cli\` package to watch for changes in your routes files and automatically update the routes configuration.
+
+### Step 3: Add the file-based configuration file to your project
+
+Create a \`tsr.config.json\` file in the root of your project with the following content:
+
+\`\`\`json
+{
+  "routesDirectory": "./src/routes",
+  "generatedRouteTree": "./src/routeTree.gen.ts"
+}
+\`\`\`
+
+You can find the full list of options for the \`tsr.config.json\` file [here](../../../api/file-based-routing.md).
+
+### Step 4: Create the routes directory
+
+Create a \`routes\` directory in the \`src\` directory of your project.
+
+\`\`\`sh
+mkdir src/routes
+\`\`\`
+
+### Step 5: Create the root route file
+
+\`\`\`tsx
+// src/routes/__root.tsx
+import { createRootRoute, Outlet, Link } from '@tanstack/react-router'
+import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+
+export const Route = createRootRoute({
+  component: () => {
+    return (
+      <>
+        <div>
+          <Link to="/" activeOptions={{ exact: true }}>
+            Home
+          </Link>
+          <Link to="/posts">Posts</Link>
+        </div>
+        <hr />
+        <Outlet />
+        <TanStackRouterDevtools />
+      </>
+    )
+  },
+})
+\`\`\`
+
+### Step 6: Create the index route file
+
+\`\`\`tsx
+// src/routes/index.tsx
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/')({
+  component: Index,
+})
+\`\`\`
+
+> You will need to move any related components and logic needed for the index route from the \`src/index.tsx\` file to the \`src/routes/index.tsx\` file.
+
+### Step 7: Create the posts route file
+
+\`\`\`tsx
+// src/routes/posts.tsx
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/posts')({
+  component: Posts,
+  loader: async () => {
+    const posts = await fetchPosts()
+    return {
+      posts,
+    }
+  },
+})
+
+function Posts() {
+  const { posts } = Route.useLoaderData()
+  return (
+    <div>
+      <nav>
+        {posts.map((post) => (
+          <Link
+            key={post.id}
+            to={\`/posts/$postId\`}
+            params={{ postId: post.id }}
+          >
+            {post.title}
+          </Link>
+        ))}
+      </nav>
+      <Outlet />
+    </div>
+  )
+}
+\`\`\`
+
+> You will need to move any related components and logic needed for the posts route from the \`src/index.tsx\` file to the \`src/routes/posts.tsx\` file.
+
+### Step 8: Create the posts index route file
+
+\`\`\`tsx
+// src/routes/posts.index.tsx
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/posts/')({
+  component: PostsIndex,
+})
+\`\`\`
+
+> You will need to move any related components and logic needed for the posts index route from the \`src/index.tsx\` file to the \`src/routes/posts.index.tsx\` file.
+
+### Step 9: Create the posts id route file
+
+\`\`\`tsx
+// src/routes/posts.$postId.tsx
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/posts/$postId')({
+  component: PostsId,
+  loader: async ({ params: { postId } }) => {
+    const post = await fetchPost(postId)
+    return {
+      post,
+    }
+  },
+})
+
+function PostsId() {
+  const { post } = Route.useLoaderData()
+  // ...
+}
+\`\`\`
+
+> You will need to move any related components and logic needed for the posts id route from the \`src/index.tsx\` file to the \`src/routes/posts.$postId.tsx\` file.
+
+### Step 10: Generate the route tree
+
+If you are using one of the supported bundlers, the route tree will be generated automatically when you run the dev script.
+
+If you are not using one of the supported bundlers, you can generate the route tree by running the following command:
+
+\`\`\`sh
+npx tsr generate
+\`\`\`
+
+### Step 11: Update the main entry file to render the Router
+
+Once you've generated the route-tree, you can then update the \`src/index.tsx\` file to create the router instance and render it.
+
+\`\`\`tsx
+// src/index.tsx
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { createRouter, RouterProvider } from '@tanstack/react-router'
+
+// Import the generated route tree
+import { routeTree } from './routeTree.gen'
+
+// Create a new router instance
+const router = createRouter({ routeTree })
+
+// Register the router instance for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+const domElementId = 'root' // Assuming you have a root element with the id 'root'
+
+// Render the app
+const rootElement = document.getElementById(domElementId)
+if (!rootElement) {
+  throw new Error(\`Element with id \${domElementId} not found\`)
+}
+
+ReactDOM.createRoot(rootElement).render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>,
+)
+\`\`\`
+
+### Finished!
+
+You should now have successfully migrated your application from React Location to TanStack Router using file-based routing.
+
+React Location also has a few more features that you might be using in your application. Here are some guides to help you migrate those features:
+
+- [Search params](../guide/search-params.md)
+- [Data loading](../guide/data-loading.md)
+- [History types](../guide/history-types.md)
+- [Wildcard / Splat / Catch-all routes](../routing/routing-concepts.md#splat--catch-all-routes)
+- [Authenticated routes](../guide/authenticated-routes.md)
+
+TanStack Router also has a few more features that you might want to explore:
+
+- [Router Context](../guide/router-context.md)
+- [Preloading](../guide/preloading.md)
+- [Pathless Layout Routes](../routing/routing-concepts.md#pathless-layout-routes)
+- [Route masking](../guide/route-masking.md)
+- [SSR](../guide/ssr.md)
+- ... and more!
+
+If you are facing any issues or have any questions, feel free to ask for help in the TanStack Discord.
+
+# Frequently Asked Questions
+
+Welcome to the TanStack Router FAQ! Here you'll find answers to common questions about the TanStack Router. If you have a question that isn't answered here, please feel free to ask in the [TanStack Discord](https://tlinz.com/discord).
+
+## Why should you choose TanStack Router over another router?
+
+To answer this question, it's important to view the other options in the space. There are many alternatives to choose from, but only a couple that are widely adopted and actively maintained:
+
+- **Next.js** - Widely regarded as the leading framework for starting new React projects. Its design focuses on performance, development workflows, and cutting-edge technology. The framework's APIs and abstractions, while powerful, can sometimes present as non-standard. Rapid growth and industry adoption have resulted in a feature-rich experience, sometimes leading to a steeper learning curve and increased overhead.
+- **Remix / React Router** - Based on the historically successful React Router, Remix delivers a powerful developer and user experience. Its API and architectural vision are firmly rooted in web standards such as Request/Response, with an emphasis on adaptability across various JavaScript environments. Many of its APIs and abstractions are well-designed and have influenced more than a few of TanStack Router's APIs. However, its rigid design, the integration of type safety as an add-on, and sometimes strict adherence to platform APIs can present limitations for some developers.
+
+These frameworks and routers have their strengths, but they also come with trade-offs that may not align with every project's needs. TanStack Router aims to strike a balance by offering routing APIs designed to improve the developer experience without sacrificing flexibility or performance.
+
+## Is TanStack Router a framework?
+
+TanStack Router itself is not a "framework" in the traditional sense, since it doesn't address a few other common full-stack concerns. However, TanStack Router has been designed to be upgradable to a full-stack framework when used in conjunction with other tools that address bundling, deployments, and server-side-specific functionality. This is why we are currently developing [TanStack Start](https://tanstack.com/start), a full-stack framework that is built on top of TanStack Router and Vite.
+For a deeper dive on the history of TanStack Router, feel free to read [TanStack Router's History](../decisions-on-dx.md#tanstack-routers-origin-story).
+
+## Should I commit my \`routeTree.gen.ts\` file into git?
+
+Yes! Although the route tree file (i.e., \`routeTree.gen.ts\`) is generated by TanStack Router, it is essentially part of your application’s runtime, not a build artifact. The route tree file is a critical part of your application’s source code, and it is used by TanStack Router to build your application’s routes at runtime.
+
+You should commit this file into git so that other developers can use it to build your application.
+
+## Can I conditionally render the Root Route component?
+
+No, the root route is always rendered as it is the entry point of your application.
+
+If you need to conditionally render a route's component, this usually means that the page content needs to be different based on some condition (e.g. user authentication). For this use case, you should use a [Layout Route](../routing/routing-concepts.md#layout-routes) or a [Pathless Layout Route](../routing/routing-concepts.md#pathless-layout-routes) to conditionally render the content.
+
+You can restrict access to these routes using a conditional check in the \`beforeLoad\` function of the route.
+
+<details>
+<summary>What does this look like?</summary>
+
+\`\`\`tsx
+// src/routes/_pathless-layout.tsx
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { isAuthenticated } from '../utils/auth'
+
+export const Route = createFileRoute('/_pathless-layout', {
+  beforeLoad: async () => {
+    // Check if the user is authenticated
+    const authed = await isAuthenticated()
+    if (!authed) {
+      // Redirect the user to the login page
+      return '/login'
+    }
+  },
+  component: PathlessLayoutRouteComponent,
+  // ...
+})
+
+function PathlessLayoutRouteComponent() {
+  return (
+    <div>
+      <h1>You are authed</h1>
+      <Outlet />
+    </div>
+  )
+}
+\`\`\`
+
+</details>
+
+`;
