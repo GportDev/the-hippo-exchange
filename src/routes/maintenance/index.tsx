@@ -239,7 +239,7 @@ function RouteComponent() {
   const assetImageMap = useMemo(() => {
     const map = new Map<string, string | undefined>();
     for (const a of assets) {
-      map.set(a.id, a.images?.[0] || "/public/placeholder.jpg");
+      map.set(a.id, a.images?.[0] || "/HippoTransparent.png");
     }
     return map;
   }, [assets]);
@@ -315,13 +315,13 @@ function RouteComponent() {
               key={key}
               type="button"
               onClick={() => handleFilterChange(key as MaintenanceFilter)}
-              className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
+              className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer items-center justify-center  ${
                 activeFilter === key ? "border-primary-gray text-primary-gray" : "border-transparent text-gray-500 hover:text-gray-700"
               }`}
             >
               {label}
               <span
-                className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
+                className={`md:ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
                   key === "overdue"
                     ? "bg-red-100 text-red-800"
                     : key === "pending"

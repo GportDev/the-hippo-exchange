@@ -168,151 +168,151 @@ function RouteComponent() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 sm:gap-6 mb-4">
             <div>
                 <h1 className="text-3xl font-bold text-gray-800">
-                {greeting}, {user?.firstName}
+                {greeting}, <span className="text-primary-gray font-black">{user?.firstName}</span>
                 </h1>
                 <p className="text-gray-500">
                 Here's what's happening with your assets today.
                 </p>
             </div>
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:flex gap-3 sm:gap-6 w-full sm:w-auto">
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Package className="h-5 w-5 text-blue-600" />
-                    <span>Total Assets</span>
+                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48 flex items-center justify-between md:flex-col md:items-start">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Package className="h-5 w-5 text-blue-600" />
+                      <span>Total Assets</span>
+                  </div>
+                  <div className="mt-1 text-2xl font-bold text-primary-gray">
+                      {assets.length}
+                  </div>
                 </div>
-                <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {assets.length}
+                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48 flex items-center justify-between md:flex-col md:items-start">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <DollarSign className="h-5 w-5 text-green-600" />
+                      <span>Total Value</span>
+                  </div>
+                  <div className="mt-1 text-2xl font-bold text-primary-gray">
+                      ${totalAssetValue.toLocaleString()}
+                  </div>
                 </div>
+                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48 flex items-center justify-between md:flex-col md:items-start">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <Calendar className="h-5 w-5 text-yellow-600" />
+                      <span>Upcoming Tasks</span>
+                  </div>
+                  <div className="mt-1 text-2xl font-bold text-primary-gray">
+                      {pendingItems.length}
+                  </div>
                 </div>
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    <span>Total Value</span>
-                </div>
-                <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    ${totalAssetValue.toLocaleString()}
-                </div>
-                </div>
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <Calendar className="h-5 w-5 text-yellow-600" />
-                    <span>Upcoming Tasks</span>
-                </div>
-                <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {pendingItems.length}
-                </div>
-                </div>
-                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48">
-                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                    <AlertTriangle className="h-5 w-5 text-red-600" />
-                    <span>Overdue Tasks</span>
-                </div>
-                <div className="mt-1 text-2xl font-bold text-primary-gray">
-                    {overdueItems.length}
-                </div>
+                <div className="rounded-lg border bg-white p-3 sm:p-4 shadow-sm w-full sm:w-48 flex items-center justify-between md:flex-col md:items-start">
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                      <AlertTriangle className="h-5 w-5 text-red-600" />
+                      <span>Overdue Tasks</span>
+                  </div>
+                  <div className="mt-1 text-2xl font-bold text-primary-gray">
+                      {overdueItems.length}
+                  </div>
                 </div>
             </div>
             </div>
             <div className="space-y-6 sm:space-y-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-                {/* Upcoming Maintenance Section */}
-                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                    Upcoming Maintenance
-                </h2>
-                <div className="space-y-4">
-                    {isLoading ? (
-                    <p className="text-gray-500">Loading maintenance items...</p>
-                    ) : upcomingItems.length > 0 ? (
-                    upcomingItems.map((item) => (
-                        <Link
-                        to="/assets/my-assets/$id"
-                        params={{ id: item.assetId }}
-                        key={item.id}
-                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                        <div className="flex items-center gap-4">
-                            <div
-                            className={`p-2 rounded-full ${getStatusClasses(
-                                item.status
-                            )}`}
-                            >
-                            <Calendar className="h-5 w-5" />
-                            </div>
-                            <div>
-                            <p className="font-semibold text-gray-900">
-                                {item.maintenanceTitle}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                                {item.maintenanceTitle}
-                            </p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <p
-                            className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
-                                item.status
-                            )}`}
-                            >
-                            {new Date(item.maintenanceDueDate).toLocaleDateString()}
-                            </p>
-                            <ChevronRight className="h-5 w-5 text-gray-400" />
-                        </div>
-                        </Link>
-                    ))
-                    ) : (
-                    <p className="text-gray-500">No upcoming maintenance items.</p>
-                    )}
-                </div>
-                </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                  {/* Upcoming Maintenance Section */}
+                  <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                      Upcoming Maintenance
+                  </h2>
+                  <div className="space-y-4">
+                      {isLoading ? (
+                      <p className="text-gray-500">Loading maintenance items...</p>
+                      ) : upcomingItems.length > 0 ? (
+                      upcomingItems.map((item) => (
+                          <Link
+                          to="/assets/my-assets/$id"
+                          params={{ id: item.assetId }}
+                          key={item.id}
+                          className="flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                          <div className="flex items-center gap-4">
+                              <div
+                              className={`p-2 rounded-full ${getStatusClasses(
+                                  item.status
+                              )}`}
+                              >
+                              <Calendar className="h-5 w-5" />
+                              </div>
+                              <div>
+                              <p className="font-semibold text-gray-900">
+                                  {item.maintenanceTitle}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                  {item.maintenanceTitle}
+                              </p>
+                              </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                              <p
+                              className={`text-sm font-medium px-2 py-1 rounded-full ${getStatusClasses(
+                                  item.status
+                              )}`}
+                              >
+                              {new Date(item.maintenanceDueDate).toLocaleDateString()}
+                              </p>
+                              <ChevronRight className="h-5 w-5 text-gray-400" />
+                          </div>
+                          </Link>
+                      ))
+                      ) : (
+                      <p className="text-gray-500">No upcoming maintenance items.</p>
+                      )}
+                  </div>
+                  </div>
 
-                {/* Favorite Assets Section */}
-                <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                    Favorite Assets
-                </h2>
-                <div className="space-y-3">
-                    {isLoading ? (
-                    <p className="text-gray-500">Loading assets...</p>
-                    ) : favoriteAssets.length > 0 ? (
-                    favoriteAssets.map((asset) => (
-                        <Link
-                        to="/assets/my-assets/$id"
-                        params={{ id: asset.id }}
-                        key={asset.id}
-                        className="flex items-center gap-4 p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
-                        >
-                        {asset.images && asset.images.length > 0 ? (
-                            <img
-                            src={asset.images[0]}
-                            alt={asset.itemName}
-                            className="w-12 h-12 rounded-md object-cover"
-                            />
-                        ) : (
-                            <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
-                            <Package className="h-6 w-6 text-gray-400" />
-                            </div>
-                        )}
-                        <div>
-                            <p className="font-semibold text-gray-900">
-                            {asset.itemName}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                            {asset.brandName}
-                            </p>
-                        </div>
-                        <Heart className="h-5 w-5 text-red-500 fill-red-500 ml-auto" />
-                        </Link>
-                    ))
-                    ) : (
-                    <p className="text-gray-500">
-                        No favorite assets yet. Click the heart on an asset to add it
-                        here.
-                    </p>
-                    )}
-                </div>
-                </div>
-            </div>
+                  {/* Favorite Assets Section */}
+                  <div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                      Favorite Assets
+                  </h2>
+                  <div className="space-y-3">
+                      {isLoading ? (
+                      <p className="text-gray-500">Loading assets...</p>
+                      ) : favoriteAssets.length > 0 ? (
+                      favoriteAssets.map((asset) => (
+                          <Link
+                          to="/assets/my-assets/$id"
+                          params={{ id: asset.id }}
+                          key={asset.id}
+                          className="flex items-center gap-4 p-3 sm:p-4 rounded-lg hover:bg-gray-50 transition-colors"
+                          >
+                          {asset.images && asset.images.length > 0 ? (
+                              <img
+                              src={asset.images[0]}
+                              alt={asset.itemName}
+                              className="w-12 h-12 rounded-md object-cover"
+                              />
+                          ) : (
+                              <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center">
+                              <Package className="h-6 w-6 text-gray-400" />
+                              </div>
+                          )}
+                          <div>
+                              <p className="font-semibold text-gray-900">
+                              {asset.itemName}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                              {asset.brandName}
+                              </p>
+                          </div>
+                          <Heart className="h-5 w-5 text-red-500 fill-red-500 ml-auto" />
+                          </Link>
+                      ))
+                      ) : (
+                      <p className="text-gray-500">
+                          No favorite assets yet. Click the heart on an asset to add it
+                          here.
+                      </p>
+                      )}
+                  </div>
+                  </div>
+              </div>
             </div>
         </div>
       </main>
