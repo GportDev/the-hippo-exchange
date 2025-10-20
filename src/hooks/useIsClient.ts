@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 /**
  * A hook that returns `true` once the component has mounted on the client.
@@ -6,11 +6,11 @@ import { useState, useEffect } from 'react';
  * to avoid hydration mismatches.
  */
 export function useIsClient() {
-  const [isClient, setIsClient] = useState(false);
+	const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+	useEffect(() => {
+		setIsClient(true);
+	}, []);
 
-  return isClient;
+	return isClient;
 }

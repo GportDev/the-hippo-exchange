@@ -7,39 +7,29 @@ export const API_BASE_URL = "https://api.thehippoexchange.com";
  * @param options The request options.
  * @returns The JSON response.
  */
-export async function apiFetch(userId: string, url: string, options: RequestInit = {}) {
-    // Debug: Log the request details
-    console.log("API Request:", {
-        url: `${API_BASE_URL}${url}`,
-        method: options.method || 'GET',
-        headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-        },
-        body: options.body
-    });
+export async function apiFetch(
+	userId: string,
+	url: string,
+	options: RequestInit = {},
+) {
+	const response = await fetch(`${API_BASE_URL}${url}`, {
+		...options,
+		headers: {
+			...options.headers,
+			"Content-Type": "application/json",
+			"X-User-Id": userId,
+		},
+	});
 
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-        ...options,
-        headers: {
-            ...options.headers,
-            'Content-Type': 'application/json',
-            'X-User-Id': userId,
-        },
-    });
+	if (!response.ok) {
+		await response.text();
+		throw new Error(`Request failed with status ${response.status}`);
+	}
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error("API Fetch Error:", errorText);
-        throw new Error(`Request failed with status ${response.status}`);
-    }
+	const text = await response.text();
+	if (!text) {
+		return null;
+	}
 
-    const text = await response.text();
-    if (!text) {
-        return null;
-    }
-
-    return JSON.parse(text);
+	return JSON.parse(text);
 }
-

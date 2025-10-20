@@ -1,73 +1,80 @@
-[{
-  "itemName": "Predator 350 W Power Station",
-  "brandName": "Honda",
-  "category": "Electronics",
-  "purchaseDate": "2023-12-01T10:00:00Z",
-  "purchaseCost": 899.99,
-  "currentLocation": "Cookeville, Tennessee",
-  "images": [
-    "https://s.alicdn.com/@sc04/kf/H2e9d6871f36d465ca0fee0f4fbda3a66p/Truck-Battery-Charging-Inboard-Inverter-Turbine-12v-Wind-Dc-24v-Gasoline-Generator-by-FAW.png_300x300.jpg"
-  ],
-  "conditionDescription": "Excellent condition. Portable power station with 350W capacity. Includes charging cable and carrying case. Perfect for camping and outdoor activities.",
-  "status": "available"
-}, {
-  "itemName": "Sony A7 III Camera Body",
-  "brandName": "Sony",
-  "category": "Electronics",
-  "purchaseDate": "2023-05-15T10:00:00Z",
-  "purchaseCost": 1799.99,
-  "currentLocation": "Cookeville, Tennessee",
-  "images": [
-    "https://alphagvrd.com/cdn/shop/products/ObsidianCamo_9ea634a5-1403-4d59-896e-c0110039796d_800x.png?v=1677109370"
-  ],
-  "conditionDescription": "Excellent condition with minor signs of wear on the base plate. Fully functional. Shutter count is approximately 8,500. This is a test record.",
-  "status": "available"
-}, {
-  "itemName": "MacBook Pro 14-inch M3",
-  "brandName": "Apple",
-  "category": "Electronics",
-  "purchaseDate": "2023-11-01T09:30:00Z",
-  "purchaseCost": 1999.00,
-  "currentLocation": "Nashville, Tennessee",
-  "images": [
-    "https://ipowerresale.com/cdn/shop/files/media_8168ae6e-edc8-4d43-83fc-5671bdd8f163.png?v=1741644674"
-  ],
-  "conditionDescription": "Like new condition. Used for software development. No scratches or dents. Battery health at 98%. Includes original charger and box.",
-  "status": "available"
-}, {
-  "itemName": "Dyson V15 Detect Vacuum",
-  "brandName": "Dyson",
-  "category": "Home & Garden",
-  "purchaseDate": "2023-06-10T11:45:00Z",
-  "purchaseCost": 749.99,
-  "currentLocation": "Knoxville, Tennessee",
-  "images": [
-    "https://crdms.images.consumerreports.org/prod/products/cr/models/403943-stick-vacuums-cordless-dyson-v15-detect-cordless-10020911.png"
-  ],
-  "conditionDescription": "Very good condition. All attachments included. Filter recently replaced. Battery holds full charge.",
-  "status": "available"
-}, {
-  "itemName": "KitchenAid Stand Mixer",
-  "brandName": "KitchenAid",
-  "category": "Home & Garden",
-  "purchaseDate": "2023-04-22T16:20:00Z",
-  "purchaseCost": 399.99,
-  "currentLocation": "Chattanooga, Tennessee",
-  "images": [
-    "https://www.kitchenaid.com/is/image/content/dam/global/kitchenaid/countertop-appliance/stand-mixer/images/hero-KSM150PSER.tif?$PRODUCT-FEATURE$&fmt=webp-alpha"
-  ],
-  "conditionDescription": "Good condition. Empire Red color. Includes dough hook, whisk, and paddle attachments. Minor scuffing on base.",
-  "status": "available"
-}, {
-  "itemName": "Peloton Bike",
-  "brandName": "Peloton",
-  "category": "Sports & Fitness",
-  "purchaseDate": "2023-02-28T12:00:00Z",
-  "purchaseCost": 1495.00,
-  "currentLocation": "Brentwood, Tennessee",
-  "images": [
-    "https://s3.amazonaws.com/peloton-qa1-catalog/68f2c6433d9c4115885d504d204ec20e_1654523605698.png"
-  ],
-  "conditionDescription": "Good condition. Regular use but well maintained. Includes shoes and weights. Some wear on seat and handlebars.",
-  "status": "available"
-}]
+[
+	{
+		"itemName": "Predator 350 W Power Station",
+		"brandName": "Honda",
+		"category": "Electronics",
+		"purchaseDate": "2023-12-01T10:00:00Z",
+		"purchaseCost": 899.99,
+		"currentLocation": "Cookeville, Tennessee",
+		"images": [
+			"https://s.alicdn.com/@sc04/kf/H2e9d6871f36d465ca0fee0f4fbda3a66p/Truck-Battery-Charging-Inboard-Inverter-Turbine-12v-Wind-Dc-24v-Gasoline-Generator-by-FAW.png_300x300.jpg"
+		],
+		"conditionDescription": "Excellent condition. Portable power station with 350W capacity. Includes charging cable and carrying case. Perfect for camping and outdoor activities.",
+		"status": "available"
+	},
+	{
+		"itemName": "Sony A7 III Camera Body",
+		"brandName": "Sony",
+		"category": "Electronics",
+		"purchaseDate": "2023-05-15T10:00:00Z",
+		"purchaseCost": 1799.99,
+		"currentLocation": "Cookeville, Tennessee",
+		"images": [
+			"https://alphagvrd.com/cdn/shop/products/ObsidianCamo_9ea634a5-1403-4d59-896e-c0110039796d_800x.png?v=1677109370"
+		],
+		"conditionDescription": "Excellent condition with minor signs of wear on the base plate. Fully functional. Shutter count is approximately 8,500. This is a test record.",
+		"status": "available"
+	},
+	{
+		"itemName": "MacBook Pro 14-inch M3",
+		"brandName": "Apple",
+		"category": "Electronics",
+		"purchaseDate": "2023-11-01T09:30:00Z",
+		"purchaseCost": 1999.0,
+		"currentLocation": "Nashville, Tennessee",
+		"images": [
+			"https://ipowerresale.com/cdn/shop/files/media_8168ae6e-edc8-4d43-83fc-5671bdd8f163.png?v=1741644674"
+		],
+		"conditionDescription": "Like new condition. Used for software development. No scratches or dents. Battery health at 98%. Includes original charger and box.",
+		"status": "available"
+	},
+	{
+		"itemName": "Dyson V15 Detect Vacuum",
+		"brandName": "Dyson",
+		"category": "Home & Garden",
+		"purchaseDate": "2023-06-10T11:45:00Z",
+		"purchaseCost": 749.99,
+		"currentLocation": "Knoxville, Tennessee",
+		"images": [
+			"https://crdms.images.consumerreports.org/prod/products/cr/models/403943-stick-vacuums-cordless-dyson-v15-detect-cordless-10020911.png"
+		],
+		"conditionDescription": "Very good condition. All attachments included. Filter recently replaced. Battery holds full charge.",
+		"status": "available"
+	},
+	{
+		"itemName": "KitchenAid Stand Mixer",
+		"brandName": "KitchenAid",
+		"category": "Home & Garden",
+		"purchaseDate": "2023-04-22T16:20:00Z",
+		"purchaseCost": 399.99,
+		"currentLocation": "Chattanooga, Tennessee",
+		"images": [
+			"https://www.kitchenaid.com/is/image/content/dam/global/kitchenaid/countertop-appliance/stand-mixer/images/hero-KSM150PSER.tif?$PRODUCT-FEATURE$&fmt=webp-alpha"
+		],
+		"conditionDescription": "Good condition. Empire Red color. Includes dough hook, whisk, and paddle attachments. Minor scuffing on base.",
+		"status": "available"
+	},
+	{
+		"itemName": "Peloton Bike",
+		"brandName": "Peloton",
+		"category": "Sports & Fitness",
+		"purchaseDate": "2023-02-28T12:00:00Z",
+		"purchaseCost": 1495.0,
+		"currentLocation": "Brentwood, Tennessee",
+		"images": [
+			"https://s3.amazonaws.com/peloton-qa1-catalog/68f2c6433d9c4115885d504d204ec20e_1654523605698.png"
+		],
+		"conditionDescription": "Good condition. Regular use but well maintained. Includes shoes and weights. Some wear on seat and handlebars.",
+		"status": "available"
+	}
+]
