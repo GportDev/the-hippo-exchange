@@ -61,8 +61,12 @@ function App() {
 									<div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-2xl shadow-lg">
 										🔨
 									</div>
-									<h3 className="text-md font-semibold text-primary-gray">Power Tools</h3>
-									<p className="text-xs text-primary-gray/70">Drills, saws, sanders & more</p>
+									<h3 className="text-md font-semibold text-primary-gray">
+										Power Tools
+									</h3>
+									<p className="text-xs text-primary-gray/70">
+										Drills, saws, sanders & more
+									</p>
 									<div className="absolute -right-2 -top-2 size-4 rounded-full bg-primary-yellow border-2 border-white shadow-md" />
 								</div>
 								<div
@@ -72,8 +76,12 @@ function App() {
 									<div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-2xl shadow-lg">
 										🌿
 									</div>
-									<h3 className="text-md font-semibold text-primary-gray">Garden Tools</h3>
-									<p className="text-xs text-primary-gray/70">Mowers, trimmers, blowers</p>
+									<h3 className="text-md font-semibold text-primary-gray">
+										Garden Tools
+									</h3>
+									<p className="text-xs text-primary-gray/70">
+										Mowers, trimmers, blowers
+									</p>
 									<div className="absolute -right-2 -top-2 size-4 rounded-full bg-primary-yellow border-2 border-white shadow-md" />
 								</div>
 								<div
@@ -83,8 +91,12 @@ function App() {
 									<div className="mb-4 flex size-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-2xl shadow-lg">
 										🛠️
 									</div>
-									<h3 className="text-md font-semibold text-primary-gray">Hand Tools</h3>
-									<p className="text-xs text-primary-gray/70">Hammers, wrenches, screwdrivers</p>
+									<h3 className="text-md font-semibold text-primary-gray">
+										Hand Tools
+									</h3>
+									<p className="text-xs text-primary-gray/70">
+										Hammers, wrenches, screwdrivers
+									</p>
 									<div className="absolute -right-2 -top-2 size-4 rounded-full bg-primary-yellow border-2 border-white shadow-md" />
 								</div>
 							</div>
@@ -116,7 +128,9 @@ function App() {
 								<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-2xl text-primary-yellow font-bold shadow-lg ring-4 ring-white/50">
 									1
 								</div>
-								<h3 className="mb-2 text-xl font-bold text-primary-gray">Browse & Discover</h3>
+								<h3 className="mb-2 text-xl font-bold text-primary-gray">
+									Browse & Discover
+								</h3>
 								<p className="text-primary-gray/70 leading-relaxed">
 									Search thousands of tools available in your neighborhood. Find
 									exactly what you need.
@@ -132,7 +146,9 @@ function App() {
 								<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-2xl text-primary-yellow font-bold shadow-lg ring-4 ring-white/50">
 									2
 								</div>
-								<h3 className="mb-2 text-xl font-bold text-primary-gray">Connect & Request</h3>
+								<h3 className="mb-2 text-xl font-bold text-primary-gray">
+									Connect & Request
+								</h3>
 								<p className="text-primary-gray/70 leading-relaxed">
 									Send a request to your neighbor. Arrange pickup times and
 									coordinate through our platform.
@@ -147,7 +163,9 @@ function App() {
 								<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-2xl text-primary-yellow font-bold shadow-lg ring-4 ring-white/50">
 									3
 								</div>
-								<h3 className="mb-2 text-xl font-bold text-primary-gray">Borrow & Return</h3>
+								<h3 className="mb-2 text-xl font-bold text-primary-gray">
+									Borrow & Return
+								</h3>
 								<p className="text-primary-gray/70 leading-relaxed">
 									Pick up the tool, complete your project, and return it. Build
 									trust in the community.
@@ -183,10 +201,12 @@ function App() {
 								<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-3xl shadow-lg ring-4 ring-white/50">
 									💰
 								</div>
-								<h3 className="mb-2 text-xl font-bold text-primary-gray">Save Money</h3>
+								<h3 className="mb-2 text-xl font-bold text-primary-gray">
+									Save Money
+								</h3>
 								<p className="text-primary-gray/70 leading-relaxed">
-									Why buy expensive tools you'll rarely use? Borrow from neighbors
-									and save hundreds of dollars.
+									Why buy expensive tools you'll rarely use? Borrow from
+									neighbors and save hundreds of dollars.
 								</p>
 								<div className="absolute -left-2 -top-2 size-12 bg-[radial-gradient(circle,rgba(254,239,76,0.3)_0%,transparent_70%)] rounded-full blur-xl" />
 							</div>
@@ -198,7 +218,9 @@ function App() {
 								<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-3xl shadow-lg ring-4 ring-white/50">
 									🤝
 								</div>
-								<h3 className="mb-2 text-xl font-bold text-primary-gray">Build Community</h3>
+								<h3 className="mb-2 text-xl font-bold text-primary-gray">
+									Build Community
+								</h3>
 								<p className="text-primary-gray/70 leading-relaxed">
 									Connect with your neighbors, share resources, and strengthen
 									your local community bonds.
@@ -213,7 +235,9 @@ function App() {
 								<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary-gray to-primary-gray/90 text-3xl shadow-lg ring-4 ring-white/50">
 									🌍
 								</div>
-								<h3 className="mb-2 text-xl font-bold text-primary-gray">Go Green</h3>
+								<h3 className="mb-2 text-xl font-bold text-primary-gray">
+									Go Green
+								</h3>
 								<p className="text-primary-gray/70 leading-relaxed">
 									Reduce waste and environmental impact by sharing resources
 									instead of buying new items.
