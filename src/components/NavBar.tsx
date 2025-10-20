@@ -29,9 +29,11 @@ function Navbar({ isExpanded, onMouseEnter, onMouseLeave }: NavbarProps) {
 					onMouseLeave={onMouseLeave}
 					className="relative h-full bg-primary-gray text-primary-yellow z-40 overflow-visible w-16"
 				>
-					<div className={`absolute top-0 left-0 h-full flex flex-col bg-primary-gray transition-all duration-300 ease-in-out ${
-						isExpanded ? "w-64" : "w-16"
-					}`}>
+					<div
+						className={`absolute top-0 left-0 h-full flex flex-col bg-primary-gray transition-all duration-300 ease-in-out ${
+							isExpanded ? "w-64" : "w-16"
+						}`}
+					>
 						{/* Navigation links */}
 						<ul
 							className={

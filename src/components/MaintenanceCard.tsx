@@ -40,13 +40,13 @@ export function MaintenanceCard({
 	};
 
 	return (
-		<div className="relative group overflow-hidden rounded-lg border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-primary-yellow/40">
+		<div className="relative group overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg hover:ring-1 hover:ring-primary-yellow/40">
 			<div
 				className={"absolute left-0 top-0 h-full w-1 sm:w-1.5 bg-primary-gray"}
 			/>
-			<div className="flex items-start gap-4">
+			<div className="flex flex-col sm:flex-row items-start gap-4">
 				{imageUrl && (
-					<div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
+					<div className="w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
 						<img
 							src={imageUrl}
 							alt={task.productName}
@@ -54,13 +54,13 @@ export function MaintenanceCard({
 						/>
 					</div>
 				)}
-				<div className="flex-1">
-					<div className="flex items-center gap-3 mb-2">
-						<h3 className="text-xl font-semibold text-primary-gray">
+				<div className="flex-1 min-w-0 w-full">
+					<div className="flex flex-wrap items-center gap-2 mb-2">
+						<h3 className="text-lg sm:text-xl font-semibold text-primary-gray">
 							{task.maintenanceTitle}
 						</h3>
 						<span
-							className={`px-2 py-1 rounded-full text-sm font-medium ${getStatusColor()}`}
+							className={`px-2 py-1 rounded-full text-xs sm:text-sm font-medium ${getStatusColor()}`}
 						>
 							<Badge className={getStatusColor()}>
 								{task.status === "pending"
@@ -69,39 +69,40 @@ export function MaintenanceCard({
 							</Badge>
 						</span>
 					</div>
-					<p className="text-gray-600 mb-2">
+					<p className="text-sm sm:text-base text-gray-600 mb-2">
 						{task.maintenanceDescription || "No description provided."}
 					</p>
-					<div className="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-						<span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">
+					<div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-gray-500">
+						<span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-gray-700">
 							<Package className="h-3.5 w-3.5 text-gray-500" />
-							<span>
+							<span className="truncate max-w-[150px] sm:max-w-none">
 								{task.brandName} {task.productName}
 							</span>
 						</span>
 						<span
 							className={
-								"inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-700"
+								"inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-gray-700"
 							}
 						>
-							<Calendar className="h-4 w-4" />
+							<Calendar className="h-3.5 sm:h-4 w-3.5 sm:w-4" />
 							<span>{formatDate(task.maintenanceDueDate)}</span>
 						</span>
 					</div>
 				</div>
-				<div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0">
+				<div className="w-full sm:w-auto sm:ml-2 flex sm:flex-col gap-2 sm:gap-3 flex-shrink-0">
 					<button
 						type="button"
 						onClick={() => onViewDetails(task)}
-						className="px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+						className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-primary-gray text-primary-yellow rounded-lg hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap"
 					>
 						<span className="text-lg">⏵</span>
-						View Details
+						<span className="hidden sm:inline">View Details</span>
+						<span className="sm:hidden">View</span>
 					</button>
 					{onUpdateStatus && !task.isCompleted && (
 						<button
 							type="button"
-							className="px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+							className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-primary-gray text-primary-yellow rounded-lg hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap"
 							onClick={() => {
 								if (task.id) {
 									onUpdateStatus(task.id, true);
@@ -115,7 +116,7 @@ export function MaintenanceCard({
 					{onUpdateStatus && task.isCompleted && (
 						<button
 							type="button"
-							className="px-4 py-2 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+							className="flex-1 sm:flex-none px-3 sm:px-4 py-2 bg-primary-gray text-primary-yellow rounded-lg hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base whitespace-nowrap"
 							onClick={() => {
 								if (task.id) {
 									onUpdateStatus(task.id, false);
@@ -123,7 +124,8 @@ export function MaintenanceCard({
 							}}
 						>
 							<span className="text-lg">↺</span>
-							Undo Complete
+							<span className="hidden sm:inline">Undo Complete</span>
+							<span className="sm:hidden">Undo</span>
 						</button>
 					)}
 				</div>

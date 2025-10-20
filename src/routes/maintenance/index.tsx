@@ -326,15 +326,22 @@ function RouteComponent() {
 	return (
 		<div className="p-4 sm:p-6 min-h-screen">
 			<section className="mx-auto max-w-7xl">
-				<div className="flex justify-between items-center mb-5">
+				<div className="flex flex-wrap items-center justify-between gap-4 mb-5">
 					<div>
 						<h1 className="text-3xl sm:text-4xl font-bold text-primary-gray mb-1">
 							My Maintenance
 						</h1>
-						<p className="text-base text-gray-600">
+						<p className="text-sm sm:text-base text-gray-600">
 							Keep track of all your maintenance tasks.
 						</p>
 					</div>
+					<Button
+						onClick={() => setAddModalOpen(true)}
+						className="w-full sm:w-auto bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer shadow-sm hover:shadow-md px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-center gap-2"
+					>
+						<span className="text-2xl mb-1">+</span>
+						<span className="text-base">Add Task</span>
+					</Button>
 				</div>
 
 				<AddMaintenanceModal
@@ -360,7 +367,7 @@ function RouteComponent() {
 					onSave={handleSaveEdit}
 				/>
 
-				<div className="flex gap-6 border-b border-gray-200 mb-5">
+				<div className="flex gap-3 sm:gap-6 border-b border-gray-200 mb-5 overflow-x-auto pb-px scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
 					{[
 						{ key: "all", label: "All" },
 						{ key: "overdue", label: "Overdue" },
@@ -371,7 +378,7 @@ function RouteComponent() {
 							key={key}
 							type="button"
 							onClick={() => handleFilterChange(key as MaintenanceFilter)}
-							className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
+							className={`relative px-1 sm:px-2 font-semibold text-base sm:text-lg border-b-2 transition-colors cursor-pointer whitespace-nowrap flex-shrink-0 pb-2 ${
 								activeFilter === key
 									? "border-primary-gray text-primary-gray"
 									: "border-transparent text-gray-500 hover:text-gray-700"
@@ -379,7 +386,7 @@ function RouteComponent() {
 						>
 							{label}
 							<span
-								className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
+								className={`ml-1.5 sm:ml-2 mb-1 inline-block min-w-[1.5em] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-bold align-middle ${
 									key === "overdue"
 										? "bg-red-100 text-red-800"
 										: key === "pending"
@@ -394,23 +401,15 @@ function RouteComponent() {
 							</span>
 						</button>
 					))}
-					<div className="flex-grow" />
-					<Button
-						onClick={() => setAddModalOpen(true)}
-						className="p-6 px-8 mb-2 mr-5 bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
-					>
-						<span className="text-2xl mb-1">+</span>
-						<span className="text-base hidden sm:inline">Add Task</span>
-					</Button>
 				</div>
 
 				<div className="space-y-4">
 					{sortedAndFilteredItems.length === 0 ? (
-						<div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/50 p-12 text-center shadow-md">
-							<p className="text-lg text-primary-gray font-medium">
+						<div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/50 p-8 sm:p-12 text-center shadow-md">
+							<p className="text-base sm:text-lg text-primary-gray font-medium">
 								No maintenance items found for this filter.
 							</p>
-							<p className="text-sm text-gray-600 mt-2">
+							<p className="text-xs sm:text-sm text-gray-600 mt-2">
 								Try selecting a different filter or add a new maintenance task.
 							</p>
 						</div>

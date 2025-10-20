@@ -377,28 +377,36 @@ function RouteComponent() {
 						</div>
 
 						{/* Status */}
-						<div className={`rounded-xl p-4 shadow-sm border-2 ${
-							asset.status.toLowerCase() === "available"
-								? "bg-gradient-to-br from-green-50 to-white border-green-200"
-								: asset.status.toLowerCase() === "in_repair"
-								? "bg-gradient-to-br from-yellow-50 to-white border-yellow-200"
-								: "bg-gradient-to-br from-gray-50 to-white border-gray-200"
-						}`}>
+						<div
+							className={`rounded-xl p-4 shadow-sm border-2 ${
+								asset.status.toLowerCase() === "available"
+									? "bg-gradient-to-br from-green-50 to-white border-green-200"
+									: asset.status.toLowerCase() === "in_repair"
+										? "bg-gradient-to-br from-yellow-50 to-white border-yellow-200"
+										: "bg-gradient-to-br from-gray-50 to-white border-gray-200"
+							}`}
+						>
 							<div className="flex items-center gap-2 mb-1">
-								<CheckCircle className={`w-4 h-4 ${
-									asset.status.toLowerCase() === "available"
-										? "text-green-600"
-										: asset.status.toLowerCase() === "in_repair"
-										? "text-yellow-600"
-										: "text-gray-600"
-								}`} />
-								<span className={`text-sm font-medium ${
-									asset.status.toLowerCase() === "available"
-										? "text-green-600"
-										: asset.status.toLowerCase() === "in_repair"
-										? "text-yellow-600"
-										: "text-gray-600"
-								}`}>Status</span>
+								<CheckCircle
+									className={`w-4 h-4 ${
+										asset.status.toLowerCase() === "available"
+											? "text-green-600"
+											: asset.status.toLowerCase() === "in_repair"
+												? "text-yellow-600"
+												: "text-gray-600"
+									}`}
+								/>
+								<span
+									className={`text-sm font-medium ${
+										asset.status.toLowerCase() === "available"
+											? "text-green-600"
+											: asset.status.toLowerCase() === "in_repair"
+												? "text-yellow-600"
+												: "text-gray-600"
+									}`}
+								>
+									Status
+								</span>
 							</div>
 							<span
 								className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}`}
@@ -455,18 +463,18 @@ function RouteComponent() {
 			</div>
 
 			{/* Maintenance Section */}
-			<div className="bg-gray-100 py-12">
+			<div className="bg-gray-100 py-8 sm:py-12 px-4 sm:px-6">
 				<div className="max-w-7xl mx-auto">
-					<div className="flex justify-between items-center mb-6">
-						<h2 className="text-2xl font-bold text-primary-gray">
+					<div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+						<h2 className="text-xl sm:text-2xl font-bold text-primary-gray">
 							Maintenance History
 						</h2>
 						<Button
 							onClick={() => setAddModalOpen(true)}
-							className="w-full sm:w-auto bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer shadow-sm hover:shadow-md px-8 py-6 flex items-center justify-center gap-2"
+							className="w-full sm:w-auto bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer shadow-sm hover:shadow-md px-6 sm:px-8 py-4 sm:py-6 flex items-center justify-center gap-2"
 						>
 							<span className="text-2xl mb-1">+</span>
-							<span className="text-base hidden sm:inline">Add Maintenance</span>
+							<span className="text-base">Add Maintenance</span>
 						</Button>
 					</div>
 

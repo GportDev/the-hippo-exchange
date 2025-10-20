@@ -24,7 +24,9 @@ export function HomeSkeleton() {
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-10 -mt-10" />
 							<Package className="h-7 w-7 text-blue-600 mb-2 opacity-50" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Assets</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Total Assets
+							</div>
 							<Skeleton className="h-8 w-12" />
 						</div>
 
@@ -32,7 +34,9 @@ export function HomeSkeleton() {
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-4 shadow-sm">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-10 -mt-10" />
 							<DollarSign className="h-7 w-7 text-green-600 mb-2 opacity-50" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Value</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Total Value
+							</div>
 							<Skeleton className="h-8 w-20" />
 						</div>
 
@@ -40,7 +44,9 @@ export function HomeSkeleton() {
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-yellow-50 to-white p-4 shadow-sm">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/5 rounded-full -mr-10 -mt-10" />
 							<Calendar className="h-7 w-7 text-yellow-600 mb-2 opacity-50" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Upcoming</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Upcoming
+							</div>
 							<Skeleton className="h-8 w-12" />
 						</div>
 
@@ -48,7 +54,9 @@ export function HomeSkeleton() {
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-red-50 to-white p-4 shadow-sm">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-10 -mt-10" />
 							<AlertTriangle className="h-7 w-7 text-red-600 mb-2 opacity-50" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Overdue</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Overdue
+							</div>
 							<Skeleton className="h-8 w-12" />
 						</div>
 					</div>
@@ -75,7 +83,8 @@ export function HomeSkeleton() {
 											</div>
 										</div>
 										<div className="flex items-center gap-2 ml-3">
-											<Skeleton className="h-6 w-16 rounded-full" /> {/* Date */}
+											<Skeleton className="h-6 w-16 rounded-full" />{" "}
+											{/* Date */}
 											<Skeleton className="h-4 w-4" /> {/* Chevron */}
 										</div>
 									</div>
