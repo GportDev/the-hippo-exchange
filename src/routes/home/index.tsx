@@ -177,7 +177,7 @@ function RouteComponent() {
 					</div>
 
 					{/* Stats Cards - Compressed Grid */}
-					<div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
 						<Link
 							to="/assets/my-assets"
 							className="group relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"

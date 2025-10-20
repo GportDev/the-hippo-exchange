@@ -233,8 +233,8 @@ function MyAssetsComponent() {
 				</header>
 
 				<div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
-					<div className="flex flex-wrap items-center gap-4">
-						<div className="relative flex-1 min-w-[300px]">
+					<div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+						<div className="relative w-full sm:flex-1 sm:min-w-[260px]">
 							<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 							<Input
 								placeholder="Search assets by name, brand, or category..."
@@ -243,29 +243,31 @@ function MyAssetsComponent() {
 								className="pl-10"
 							/>
 						</div>
-						<Select value={statusFilter} onValueChange={setStatusFilter}>
-							<SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
-								<SelectValue placeholder="Filter by status" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="all">All Statuses</SelectItem>
-								<SelectItem value="available">Available</SelectItem>
-								<SelectItem value="in_repair">In Repair</SelectItem>
-								<SelectItem value="unlisted">Unlisted</SelectItem>
-							</SelectContent>
-						</Select>
-						<Button
-							variant={showFavoritesOnly ? "secondary" : "outline"}
-							onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-							className="flex items-center gap-2 text-primary-gray cursor-pointer"
-						>
-							<Heart
-								className={`h-4 w-4 ${
-									showFavoritesOnly ? "fill-red-500 text-red-500" : ""
-								}`}
-							/>
-							Favorites
-						</Button>
+						<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-3 w-full sm:w-auto">
+							<Select value={statusFilter} onValueChange={setStatusFilter}>
+								<SelectTrigger className="w-full sm:w-[180px] cursor-pointer">
+									<SelectValue placeholder="Filter by status" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="all">All Statuses</SelectItem>
+									<SelectItem value="available">Available</SelectItem>
+									<SelectItem value="in_repair">In Repair</SelectItem>
+									<SelectItem value="unlisted">Unlisted</SelectItem>
+								</SelectContent>
+							</Select>
+							<Button
+								variant={showFavoritesOnly ? "secondary" : "outline"}
+								onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+								className="flex w-full items-center justify-center gap-2 text-primary-gray cursor-pointer sm:w-auto"
+							>
+								<Heart
+									className={`h-4 w-4 ${
+										showFavoritesOnly ? "fill-red-500 text-red-500" : ""
+									}`}
+								/>
+								Favorites
+							</Button>
+						</div>
 					</div>
 				</div>
 

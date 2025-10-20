@@ -287,7 +287,7 @@ function SignUpComponent() {
 										"\u00A0"}
 								</p>
 								<div className="space-y-2 text-primary-gray">
-									<Label htmlFor="password ">Password</Label>
+									<Label htmlFor="password">Password</Label>
 									<Input
 										id="password"
 										type="password"

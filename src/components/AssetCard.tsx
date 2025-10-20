@@ -58,7 +58,7 @@ export function AssetCard({
 			>
 				<div className="aspect-square overflow-hidden">
 					<img
-						src={asset.images?.[0] || "/public/placeholder.jpg"}
+						src={asset.images?.[0] || "/placeholder.jpg"}
 						alt={asset.itemName}
 						className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
 					/>

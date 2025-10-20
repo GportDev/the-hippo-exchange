@@ -153,7 +153,26 @@ function RouteComponent() {
 	});
 
 	const handleUpdateStatus = (taskId: string, isCompleted: boolean) => {
-		editMutation.mutate({ id: taskId, isCompleted });
+		const targetTask = maintenanceItemsWithStatus.find(
+			(task) => task.id === taskId,
+		);
+		if (!targetTask) {
+			return;
+		}
+
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		const dueDate = new Date(targetTask.maintenanceDueDate);
+		dueDate.setHours(0, 0, 0, 0);
+
+		const maintenanceStatus: Maintenance["maintenanceStatus"] = isCompleted
+			? "Completed"
+			: dueDate < today
+				? "Overdue"
+				: "Upcoming";
+
+		editMutation.mutate({ id: taskId, isCompleted, maintenanceStatus });
 	};
 
 	const handleViewDetails = (
@@ -428,7 +447,7 @@ function RouteComponent() {
 								<MaintenanceCard
 									key={maintenance.id}
 									task={maintenance}
-									imageUrl={asset.images?.[0] || "/public/placeholder.jpg"}
+									imageUrl={asset.images?.[0] || "/placeholder.jpg"}
 									onUpdateStatus={handleUpdateStatus}
 									onViewDetails={handleViewDetails}
 								/>
