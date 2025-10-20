@@ -4,7 +4,8 @@
       "Bash(pnpm build)",
       "Bash(pnpm biome check --fix --unsafe)",
       "Bash(pnpm vite build)",
-      "Bash(pnpm tsc)"
+      "Bash(pnpm tsc)",
+      "Bash(pnpm run dev)"
     ],
     "deny": [],
     "ask": []

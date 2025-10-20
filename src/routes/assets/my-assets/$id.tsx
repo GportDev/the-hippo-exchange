@@ -375,10 +375,28 @@ function RouteComponent() {
 						</div>
 
 						{/* Status */}
-						<div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
-							<div className="flex items-center gap-2 text-gray-600 mb-1">
-								<CheckCircle className="w-4 h-4" />
-								<span className="text-sm font-medium">Status</span>
+						<div className={`rounded-xl p-4 shadow-sm border-2 ${
+							asset.status === "available"
+								? "bg-gradient-to-br from-green-50 to-white border-green-200"
+								: asset.status === "in_repair"
+								? "bg-gradient-to-br from-yellow-50 to-white border-yellow-200"
+								: "bg-gradient-to-br from-gray-50 to-white border-gray-200"
+						}`}>
+							<div className="flex items-center gap-2 mb-1">
+								<CheckCircle className={`w-4 h-4 ${
+									asset.status === "available"
+										? "text-green-600"
+										: asset.status === "in_repair"
+										? "text-yellow-600"
+										: "text-gray-600"
+								}`} />
+								<span className={`text-sm font-medium ${
+									asset.status === "available"
+										? "text-green-600"
+										: asset.status === "in_repair"
+										? "text-yellow-600"
+										: "text-gray-600"
+								}`}>Status</span>
 							</div>
 							<span
 								className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}`}
@@ -443,9 +461,10 @@ function RouteComponent() {
 						</h2>
 						<Button
 							onClick={() => setAddModalOpen(true)}
-							className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+							className="w-full sm:w-auto bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer shadow-sm hover:shadow-md px-8 py-6 flex items-center justify-center gap-2"
 						>
-							Add Maintenance
+							<span className="text-2xl mb-1">+</span>
+							<span className="text-base hidden sm:inline">Add Maintenance</span>
 						</Button>
 					</div>
 
