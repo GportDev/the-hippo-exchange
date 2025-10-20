@@ -5,7 +5,8 @@
       "Bash(pnpm biome check --fix --unsafe)",
       "Bash(pnpm vite build)",
       "Bash(pnpm tsc)",
-      "Bash(pnpm run dev)"
+      "Bash(pnpm run dev)",
+      "Bash(pnpm biome format --write src/pages/NotFoundPage.tsx src/routes/home/index.tsx)"
     ],
     "deny": [],
     "ask": []
