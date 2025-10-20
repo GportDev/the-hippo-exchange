@@ -164,18 +164,18 @@ function SignUpComponent() {
 	};
 
 	return (
-		<div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow">
-			<div className="flex flex-col justify-center items-center md:w-1/2 p-6 sm:p-8 md:p-12 text-white bg-primary-gray rounded-b-[3rem] md:rounded-r-[6rem] md:rounded-bl-none flex-grow">
+		<div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow overflow-x-hidden">
+			<div className="flex flex-col justify-center items-center md:w-1/2 p-4 sm:p-6 md:p-12 text-white bg-primary-gray rounded-b-[2.5rem] md:rounded-r-[6rem] md:rounded-bl-none overflow-hidden">
 				<img
 					src="/HippoTransparent.png"
 					alt="Hippo Exchange Logo"
-					className="w-32 h-32 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-70 lg:h-70 mb-3 sm:mb-4"
+					className="w-24 h-24 sm:w-40 sm:h-40 md:w-64 md:h-64 lg:w-70 lg:h-70 mb-2 sm:mb-3 md:mb-4"
 				/>
 				<div className="text-center">
-					<h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-primary-yellow mb-1 sm:mb-2">
+					<h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold text-primary-yellow mb-1 sm:mb-2">
 						Hippo Exchange
 					</h1>
-					<p className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-white">
+					<p className="text-base sm:text-lg md:text-2xl lg:text-3xl text-white">
 						don't buy. borrow.
 					</p>
 				</div>
