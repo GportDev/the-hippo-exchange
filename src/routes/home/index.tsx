@@ -219,7 +219,7 @@ function RouteComponent() {
 					{/* Main Content Grid */}
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 						{/* Upcoming Maintenance Section */}
-						<div className="lg:col-span-2 bg-white p-5 rounded-2xl shadow-lg border border-gray-100">
+						<div className="lg:col-span-2 bg-gradient-to-br from-white to-gray-50/50 p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
 							<div className="flex items-center justify-between mb-4">
 								<h2 className="text-xl font-bold text-primary-gray">
 									Upcoming Maintenance
@@ -244,7 +244,7 @@ function RouteComponent() {
 											to="/assets/my-assets/$id"
 											params={{ id: item.assetId }}
 											key={item.id}
-											className="group flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200"
+											className="group flex items-center justify-between p-3 rounded-xl bg-white hover:bg-gray-50 transition-all duration-200 border border-gray-100 hover:border-gray-300 hover:shadow-sm"
 										>
 											<div className="flex items-center gap-3 flex-1 min-w-0">
 												<div
@@ -295,7 +295,7 @@ function RouteComponent() {
 						</div>
 
 						{/* Favorite Assets Section */}
-						<div className="bg-white p-5 rounded-2xl shadow-lg border border-gray-100">
+						<div className="bg-gradient-to-br from-white to-gray-50/50 p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
 							<div className="flex items-center justify-between mb-4">
 								<h2 className="text-xl font-bold text-primary-gray">
 									Favorite Assets
@@ -317,7 +317,7 @@ function RouteComponent() {
 											to="/assets/my-assets/$id"
 											params={{ id: asset.id }}
 											key={asset.id}
-											className="group flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 border border-transparent hover:border-gray-200"
+											className="group flex items-center gap-3 p-3 rounded-xl bg-white hover:bg-gray-50 transition-all duration-200 border border-gray-100 hover:border-gray-300 hover:shadow-sm"
 										>
 											{asset.images && asset.images.length > 0 ? (
 												<img
