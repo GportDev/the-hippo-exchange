@@ -49,7 +49,7 @@ export function AssetCard({ asset, onToggleFavorite, onDelete, onEdit }: AssetCa
       <Link to="/assets/my-assets/$id" params={{ id: asset.id }} className="block">
         <div className="aspect-square overflow-hidden">
           <img
-            src={asset.images?.[0] || '/public/placeholder.jpg'}
+            src={asset.images?.[0] || '/HippoTransparent.png'}
             alt={asset.itemName}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />

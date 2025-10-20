@@ -188,14 +188,14 @@ function MyAssetsComponent() {
             <AddAssetModal />
           </div>
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="rounded-lg border bg-white p-4 shadow-sm flex items-center justify-between md:flex-col md:items-start flex-wrap">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Package className="h-5 w-5 text-blue-600" />
                 <span>Total Assets</span>
               </div>
               <div className="mt-1 text-2xl font-bold text-primary-gray">{assets.length}</div>
             </div>
-            <div className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="rounded-lg border bg-white p-4 shadow-sm flex items-center justify-between md:flex-col md:items-start flex-wrap">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <DollarSign className="h-5 w-5 text-green-600" />
                 <span>Total Value</span>
@@ -204,7 +204,7 @@ function MyAssetsComponent() {
                 ${totalValue.toLocaleString()}
               </div>
             </div>
-            <div className="rounded-lg border bg-white p-4 shadow-sm">
+            <div className="rounded-lg border bg-white p-4 shadow-sm flex items-center justify-between md:flex-col md:items-start flex-wrap">
               <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <Heart className="h-5 w-5 text-red-600" />
                 <span>Favorites</span>
@@ -256,7 +256,7 @@ function MyAssetsComponent() {
         {filteredAssets.length === 0 ? (
           <div className="rounded-lg border bg-white p-12 text-center shadow-sm">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-4 text-lg font-medium text-gray-900 text-primary-gray">
+            <h3 className="mt-4 text-lg font-medium text-primary-gray">
               No assets found
             </h3>
             <p className="mt-2 text-sm text-gray-600">
