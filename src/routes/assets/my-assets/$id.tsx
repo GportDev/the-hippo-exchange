@@ -516,6 +516,7 @@ function RouteComponent() {
 					onClose={handleCloseDetails}
 					onEdit={handleEdit}
 					onDelete={handleDelete}
+					onUpdateStatus={handleUpdateStatus}
 				/>
 			)}
 
@@ -526,7 +527,6 @@ function RouteComponent() {
 					setSelectedTask(null);
 				}}
 				onSave={handleSaveEdit}
-				onUpdateStatus={handleUpdateStatus}
 			/>
 
 			{asset && (

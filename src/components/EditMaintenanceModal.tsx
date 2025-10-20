@@ -27,14 +27,12 @@ interface EditMaintenanceModalProps {
 	task: Maintenance | null;
 	onClose: () => void;
 	onSave: (updatedTask: Maintenance) => void;
-	onUpdateStatus?: (maintenanceId: string, isCompleted: boolean) => void;
 }
 
 export function EditMaintenanceModal({
 	task,
 	onClose,
 	onSave,
-	onUpdateStatus,
 }: EditMaintenanceModalProps) {
 	const [formData, setFormData] = useState<Partial<Maintenance>>({});
 	const [toolsInput, setToolsInput] = useState("");
@@ -358,33 +356,7 @@ export function EditMaintenanceModal({
 						)}
 					</form>
 				</div>
-				<DialogFooter className="flex-shrink-0 border-t px-6 py-4 flex flex-col sm:flex-row gap-2">
-					{onUpdateStatus && !isCompleted && task?.id && (
-						<Button
-							type="button"
-							onClick={() => {
-								if (task.id) {
-									onUpdateStatus(task.id, true);
-								}
-							}}
-							className="w-full sm:w-auto bg-green-600 text-white hover:bg-green-700 transition-colors"
-						>
-							✓ Mark Complete
-						</Button>
-					)}
-					{onUpdateStatus && isCompleted && task?.id && (
-						<Button
-							type="button"
-							onClick={() => {
-								if (task.id) {
-									onUpdateStatus(task.id, false);
-								}
-							}}
-							className="w-full sm:w-auto bg-yellow-600 text-white hover:bg-yellow-700 transition-colors"
-						>
-							↺ Undo Complete
-						</Button>
-					)}
+				<DialogFooter className="flex-shrink-0 border-t px-6 py-4">
 					<Button
 						type="submit"
 						form="edit-maintenance-form"

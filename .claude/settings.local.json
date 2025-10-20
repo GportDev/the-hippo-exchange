@@ -8,7 +8,9 @@
       "Bash(pnpm run dev)",
       "Bash(pnpm biome format --write src/pages/NotFoundPage.tsx src/routes/home/index.tsx)",
       "Bash(pnpm biome format --write src/components/MaintenanceCard.tsx)",
-      "Bash(pnpm biome format --write src/components/EditMaintenanceModal.tsx src/routes/maintenance/index.tsx src/routes/assets/my-assets/$id.tsx)"
+      "Bash(pnpm biome format --write src/components/EditMaintenanceModal.tsx src/routes/maintenance/index.tsx src/routes/assets/my-assets/$id.tsx)",
+      "Bash(pnpm biome format --write src/components/EditMaintenanceModal.tsx src/components/MaintenanceDetailsModal.tsx src/routes/maintenance/index.tsx src/routes/assets/my-assets/$id.tsx)",
+      "Bash(pnpm biome format --write src/components/MaintenanceDetailsModal.tsx)"
     ],
     "deny": [],
     "ask": []
