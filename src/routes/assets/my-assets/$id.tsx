@@ -1,4 +1,5 @@
 import { AddMaintenanceModal } from "@/components/AddMaintenanceModal";
+import { EditAssetModal } from "@/components/EditAssetModal";
 import { EditMaintenanceModal } from "@/components/EditMaintenanceModal";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { MaintenanceDetailsModal } from "@/components/MaintenanceDetailsModal";
@@ -15,6 +16,7 @@ import {
 	CheckCircle,
 	DollarSign,
 	MapPin,
+	Pencil,
 	Tag,
 } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -51,6 +53,7 @@ function RouteComponent() {
 		(Maintenance & { status: MaintenanceStatus }) | null
 	>(null);
 	const [isEditModalOpen, setEditModalOpen] = useState(false);
+	const [isEditAssetModalOpen, setIsEditAssetModalOpen] = useState(false);
 
 	// Redirect to home if not signed in
 	if (isLoaded && !isSignedIn) {
@@ -152,6 +155,32 @@ function RouteComponent() {
 		},
 	});
 
+	const updateAssetMutation = useMutation({
+		mutationFn: async (updatedAsset: Asset) => {
+			if (!user) throw new Error("User not authenticated");
+			const { id: assetId, ...assetData } = updatedAsset;
+			const res = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+					"X-User-Id": user.id,
+				},
+				body: JSON.stringify(assetData),
+			});
+			if (!res.ok) {
+				throw new Error("Failed to update asset");
+			}
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["assets", id] });
+			toast.success("Asset updated successfully!");
+			setIsEditAssetModalOpen(false);
+		},
+		onError: (error) => {
+			toast.error(`Failed to update asset: ${error.message}`);
+		},
+	});
+
 	const handleUpdateStatus = (taskId: string, isCompleted: boolean) => {
 		editMutation.mutate({ id: taskId, isCompleted });
 	};
@@ -246,6 +275,24 @@ function RouteComponent() {
 		);
 	}
 
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case "available":
+				return "bg-green-100 text-green-800";
+			case "in_repair":
+				return "bg-yellow-100 text-yellow-800";
+			case "unlisted":
+				return "bg-gray-100 text-gray-800";
+			default:
+				return "bg-gray-100 text-gray-800";
+		}
+	};
+
+	const formattedStatus = asset.status
+		.split("_")
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+		.join(" ");
+
 	return (
 		<div className="p-6">
 			{/* Header */}
@@ -262,36 +309,13 @@ function RouteComponent() {
 							</Link>
 						</div>
 						<div className="flex items-center gap-2">
-							{(() => {
-								const getStatusColor = (status: string) => {
-									switch (status) {
-										case "available":
-											return "bg-green-100 text-green-800";
-										case "borrowed":
-											return "bg-yellow-100 text-yellow-800";
-										case "in_repair":
-											return "bg-yellow-100 text-yellow-800";
-										case "unlisted":
-											return "bg-gray-100 text-gray-800";
-										default:
-											return "bg-gray-100 text-gray-800";
-									}
-								};
-
-								const formattedStatus = asset.status
-									.split("_")
-									.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-									.join(" ");
-
-								return (
-									<span
-										className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}`}
-									>
-										<CheckCircle className="w-4 h-4" />
-										{formattedStatus}
-									</span>
-								);
-							})()}
+							<Button
+								onClick={() => setIsEditAssetModalOpen(true)}
+								className="inline-flex items-center gap-2 px-4 py-2 bg-primary-gray text-primary-yellow rounded-lg hover:bg-primary-gray/90 transition-colors"
+							>
+								<Pencil className="w-4 h-4" />
+								Edit Asset
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -348,6 +372,19 @@ function RouteComponent() {
 							{asset.brandName && (
 								<p className="text-xl text-gray-600">{asset.brandName}</p>
 							)}
+						</div>
+
+						{/* Status */}
+						<div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
+							<div className="flex items-center gap-2 text-gray-600 mb-1">
+								<CheckCircle className="w-4 h-4" />
+								<span className="text-sm font-medium">Status</span>
+							</div>
+							<span
+								className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(asset.status)}`}
+							>
+								{formattedStatus}
+							</span>
 						</div>
 
 						{/* Key Information */}
@@ -461,6 +498,16 @@ function RouteComponent() {
 				}}
 				onSave={handleSaveEdit}
 			/>
+
+			{asset && (
+				<EditAssetModal
+					asset={asset}
+					open={isEditAssetModalOpen}
+					onOpenChange={setIsEditAssetModalOpen}
+					onSave={updateAssetMutation.mutate}
+					isSaving={updateAssetMutation.isPending}
+				/>
+			)}
 		</div>
 	);
 }
