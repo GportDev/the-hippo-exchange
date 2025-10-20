@@ -276,7 +276,9 @@ function RouteComponent() {
 	}
 
 	const getStatusColor = (status: string) => {
-		switch (status) {
+		// Normalize to handle both backend format (capitalized) and frontend format (lowercase)
+		const normalizedStatus = status.toLowerCase();
+		switch (normalizedStatus) {
 			case "available":
 				return "bg-green-100 text-green-800";
 			case "in_repair":
@@ -376,24 +378,24 @@ function RouteComponent() {
 
 						{/* Status */}
 						<div className={`rounded-xl p-4 shadow-sm border-2 ${
-							asset.status === "available"
+							asset.status.toLowerCase() === "available"
 								? "bg-gradient-to-br from-green-50 to-white border-green-200"
-								: asset.status === "in_repair"
+								: asset.status.toLowerCase() === "in_repair"
 								? "bg-gradient-to-br from-yellow-50 to-white border-yellow-200"
 								: "bg-gradient-to-br from-gray-50 to-white border-gray-200"
 						}`}>
 							<div className="flex items-center gap-2 mb-1">
 								<CheckCircle className={`w-4 h-4 ${
-									asset.status === "available"
+									asset.status.toLowerCase() === "available"
 										? "text-green-600"
-										: asset.status === "in_repair"
+										: asset.status.toLowerCase() === "in_repair"
 										? "text-yellow-600"
 										: "text-gray-600"
 								}`} />
 								<span className={`text-sm font-medium ${
-									asset.status === "available"
+									asset.status.toLowerCase() === "available"
 										? "text-green-600"
-										: asset.status === "in_repair"
+										: asset.status.toLowerCase() === "in_repair"
 										? "text-yellow-600"
 										: "text-gray-600"
 								}`}>Status</span>

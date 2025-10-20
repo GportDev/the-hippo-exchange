@@ -319,9 +319,9 @@ export function EditAssetModal({
 									<SelectValue placeholder="Select a status" />
 								</SelectTrigger>
 								<SelectContent>
-									<SelectItem value="available">Available</SelectItem>
-									<SelectItem value="in_repair">In Repair</SelectItem>
-									<SelectItem value="unlisted">Unlisted</SelectItem>
+									<SelectItem value="Available">Available</SelectItem>
+									<SelectItem value="In_Repair">In Repair</SelectItem>
+									<SelectItem value="Unlisted">Unlisted</SelectItem>
 								</SelectContent>
 							</Select>
 						</div>
