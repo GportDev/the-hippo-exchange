@@ -182,52 +182,49 @@ function MyAssetsComponent() {
 	);
 
 	return (
-		<div className="p-6">
+		<div className="p-4 sm:p-6">
 			<div className="mx-auto max-w-7xl">
-				<header className="mb-8">
-					<div className="flex flex-wrap items-center justify-between gap-4">
+				<header className="mb-5">
+					<div className="flex flex-wrap items-center justify-between gap-4 mb-5">
 						<div>
-							<h1 className="text-3xl font-bold text-primary-gray">
+							<h1 className="text-3xl sm:text-4xl font-bold text-primary-gray mb-1">
 								My Assets
 							</h1>
-							<p className="text-muted-foreground">
+							<p className="text-base text-gray-600">
 								Manage and track your valuable assets.
 							</p>
 						</div>
 						<AddAssetModal />
 					</div>
-					<div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-						<div className="rounded-lg border bg-white p-4 shadow-sm">
-							<div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-								<Package className="h-5 w-5 text-blue-600" />
-								<span>Total Assets</span>
-							</div>
-							<div className="mt-1 text-2xl font-bold text-primary-gray">
-								{assets.length}
-							</div>
+					<div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm hover:shadow-lg transition-shadow">
+							<div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-10 -mt-10" />
+							<Package className="h-7 w-7 text-blue-600 mb-2" />
+							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Assets</div>
+							<div className="text-2xl font-bold text-primary-gray">{assets.length}</div>
 						</div>
-						<div className="rounded-lg border bg-white p-4 shadow-sm">
-							<div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-								<DollarSign className="h-5 w-5 text-green-600" />
-								<span>Total Value</span>
-							</div>
-							<div className="mt-1 text-2xl font-bold text-primary-gray">
+
+						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-4 shadow-sm hover:shadow-lg transition-shadow">
+							<div className="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-10 -mt-10" />
+							<DollarSign className="h-7 w-7 text-green-600 mb-2" />
+							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Value</div>
+							<div className="text-2xl font-bold text-primary-gray">
 								${totalValue.toLocaleString()}
 							</div>
 						</div>
-						<div className="rounded-lg border bg-white p-4 shadow-sm">
-							<div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-								<Heart className="h-5 w-5 text-red-600" />
-								<span>Favorites</span>
-							</div>
-							<div className="mt-1 text-2xl font-bold text-primary-gray">
+
+						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-red-50 to-white p-4 shadow-sm hover:shadow-lg transition-shadow col-span-2 lg:col-span-1">
+							<div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-10 -mt-10" />
+							<Heart className="h-7 w-7 text-red-600 mb-2" />
+							<div className="text-xs font-medium text-gray-600 mb-0.5">Favorites</div>
+							<div className="text-2xl font-bold text-primary-gray">
 								{assets.filter((a) => a.favorite).length}
 							</div>
 						</div>
 					</div>
 				</header>
 
-				<div className="mb-6 rounded-lg border bg-white p-4 shadow-sm">
+				<div className="mb-6 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
 					<div className="flex flex-wrap items-center gap-4">
 						<div className="relative flex-1 min-w-[300px]">
 							<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -265,9 +262,9 @@ function MyAssetsComponent() {
 				</div>
 
 				{filteredAssets.length === 0 ? (
-					<div className="rounded-lg border bg-white p-12 text-center shadow-sm">
+					<div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/50 p-12 text-center shadow-md">
 						<Package className="mx-auto h-12 w-12 text-gray-400" />
-						<h3 className="mt-4 text-lg font-medium text-gray-900 text-primary-gray">
+						<h3 className="mt-4 text-lg font-medium text-primary-gray">
 							No assets found
 						</h3>
 						<p className="mt-2 text-sm text-gray-600">
