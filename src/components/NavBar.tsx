@@ -27,11 +27,13 @@ function Navbar({ isExpanded, onMouseEnter, onMouseLeave }: NavbarProps) {
 					data-expanded={isExpanded}
 					onMouseEnter={onMouseEnter}
 					onMouseLeave={onMouseLeave}
-					className={`h-full bg-primary-gray text-primary-yellow transition-all duration-300 ease-in-out z-40 overflow-visible ${
-						isExpanded ? "w-64" : "w-16"
-					}`}
+					className="relative h-full bg-primary-gray text-primary-yellow z-40 overflow-visible w-16"
 				>
-					<div className="flex flex-col h-full">
+					<div
+						className={`absolute top-0 left-0 h-full flex flex-col bg-primary-gray transition-all duration-300 ease-in-out ${
+							isExpanded ? "w-64" : "w-16"
+						}`}
+					>
 						{/* Navigation links */}
 						<ul
 							className={

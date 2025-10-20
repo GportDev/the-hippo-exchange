@@ -14,26 +14,26 @@ const COLORS = {
 export const Desktop = () => {
 	return (
 		<main
-			className="hidden md:grid min-h-full w-full place-items-start justify-left overflow-hidden"
+			className="hidden md:grid min-h-screen w-full place-items-start justify-left overflow-hidden fixed inset-0 z-[100]"
 			style={{ backgroundColor: COLORS.desktopBackground }}
 		>
 			<section
-				className="flex h-full w-full items-start"
+				className="flex h-screen w-full items-start"
 				style={{ backgroundColor: COLORS.desktopBackground }}
 			>
 				{/* Left side content */}
 				<div className="relative h-full w-[744px] flex-shrink-0 p-16">
-					{/* Decorative corner elements that remain absolutely positioned */}
+					{/* Decorative corner elements with smoother curves */}
 					<div className="absolute left-0 bottom-[428px] flex items-start bg-[#2a323f]">
 						<div
-							className="h-[128px] w-[144px] rounded-bl-[60px]"
+							className="h-[128px] w-[144px] rounded-bl-[80px]"
 							style={{ backgroundColor: COLORS.desktopBackground }}
 						/>
 					</div>
-					<div className="absolute left-0 bottom-0 h-[429px] w-[600px] rounded-tr-[100px] bg-[#2a323f]" />
+					<div className="absolute left-0 bottom-0 h-[429px] w-[600px] rounded-tr-[120px] bg-[#2a323f] shadow-lg" />
 					<div className="absolute right-0 bottom-0 flex items-end justify-end bg-[#2a323f]">
 						<div
-							className="m-0 h-[128px] w-[144px] rounded-bl-[60px]"
+							className="m-0 h-[128px] w-[144px] rounded-bl-[80px]"
 							style={{ backgroundColor: COLORS.desktopBackground }}
 						/>
 					</div>
@@ -45,17 +45,17 @@ export const Desktop = () => {
 							className="flex flex-1 flex-col items-start justify-center"
 							style={{ paddingBottom: "429px" }}
 						>
-							<h1 className="font-bold text-[160px] leading-none tracking-tight text-[#2a323f] text-shadow-lg">
+							<h1 className="font-bold text-[160px] leading-none tracking-tight text-[#2a323f] drop-shadow-lg">
 								404
 							</h1>
-							<h2 className="font-bold text-[60px] leading-none text-[#2a323f] text-shadow-lg">
+							<h2 className="font-bold text-[60px] leading-none text-[#2a323f] drop-shadow-lg">
 								error
 							</h2>
 						</div>
 
 						{/* Bottom group: Message and button - positioned at bottom */}
 						<div className="absolute bottom-0 left-0 right-0 flex flex-col gap-8 pb-0">
-							<p className="m-0 w-120 font-bold text-4xl leading-normal tracking-tight text-[#fafafa] text-shadow-lg">
+							<p className="m-0 w-120 font-bold text-4xl leading-normal tracking-tight text-[#fafafa] drop-shadow-lg">
 								Oops! Looks like this page went on a little adventure. While we
 								try to wrangle it back, want to go home?
 							</p>
@@ -64,7 +64,7 @@ export const Desktop = () => {
 								aria-label="Home navigation"
 								className={cn(
 									buttonVariants({ size: "lg", variant: null }),
-									"w-full max-w-md h-15 bg-[#fff47b] text-[#2a323f] hover:bg-[#fff47b] hover:scale-105 transition-all font-bold text-3xl rounded-[60px]",
+									"w-full max-w-md h-15 bg-[#fff47b] text-[#2a323f] hover:bg-[#fff47b]/90 hover:scale-105 transition-all font-bold text-3xl rounded-[60px] shadow-lg",
 								)}
 							>
 								Home
@@ -89,16 +89,16 @@ export const Desktop = () => {
 export const Mobile = () => {
 	return (
 		<main
-			className="flex md:hidden h-full w-full flex-col overflow-hidden"
+			className="flex md:hidden h-screen w-full flex-col overflow-hidden fixed inset-0 z-[100]"
 			style={{ backgroundColor: COLORS.mobileDecoration }}
 		>
 			{/* Dark gray box at top with rounded bottom edges */}
 			<section
-				className="relative flex flex-col items-center rounded-b-[40px] px-6 py-12"
+				className="relative flex flex-col items-center rounded-b-[50px] px-6 py-12 shadow-lg"
 				style={{ backgroundColor: COLORS.mobileBackground }}
 			>
 				{/* Circular Hippo Image at top */}
-				<div className="mb-8">
+				<div className="mb-8 ring-4 ring-[#fff47b]/30 rounded-full">
 					<img
 						src="/half_shocked_hippo.png"
 						alt="Shocked hippo"
@@ -107,12 +107,12 @@ export const Mobile = () => {
 				</div>
 
 				{/* 404 heading */}
-				<h1 className="font-bold text-[100px] leading-none tracking-tight text-[#fff47b] text-shadow-lg">
+				<h1 className="font-bold text-[100px] leading-none tracking-tight text-[#fff47b] drop-shadow-lg">
 					404
 				</h1>
 
 				{/* error subheading */}
-				<h2 className="mb-8 font-bold text-[40px] leading-none text-[#fff47b] text-shadow-lg">
+				<h2 className="mb-8 font-bold text-[40px] leading-none text-[#fff47b] drop-shadow-lg">
 					error
 				</h2>
 			</section>
@@ -123,7 +123,7 @@ export const Mobile = () => {
 				style={{ backgroundColor: COLORS.mobileDecoration }}
 			>
 				{/* Oops! text - left justified but moved right a bit */}
-				<p className="mb-8 ml-4 font-bold text-2xl leading-normal tracking-tight text-[#2a323f] text-shadow-lg">
+				<p className="mb-8 ml-4 font-bold text-2xl leading-normal tracking-tight text-[#2a323f] drop-shadow-sm">
 					Oops! Looks like this page went on a little adventure. While we try to
 					wrangle it back, want to go home?
 				</p>
@@ -134,7 +134,7 @@ export const Mobile = () => {
 					aria-label="Home navigation"
 					className={cn(
 						buttonVariants({ size: "lg", variant: null }),
-						"mr-[-20px] h-14 bg-[#2a323f] text-[#fff47b] hover:bg-[#2a323f] hover:scale-105 transition-all font-bold text-2xl rounded-l-[60px] rounded-r-[60px]",
+						"mr-[-20px] h-14 bg-[#2a323f] text-[#fff47b] hover:bg-[#2a323f]/90 hover:scale-105 transition-all font-bold text-2xl rounded-l-[60px] rounded-r-[60px] shadow-lg",
 					)}
 				>
 					Home

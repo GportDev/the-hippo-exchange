@@ -18,6 +18,7 @@ interface MaintenanceDetailsModalProps {
 	onClose: () => void;
 	onEdit: (task: Maintenance & { status: MaintenanceStatus }) => void;
 	onDelete: (taskId: string) => void;
+	onUpdateStatus?: (maintenanceId: string, isCompleted: boolean) => void;
 }
 
 const formatDate = (dateString: string) => {
@@ -35,6 +36,7 @@ export function MaintenanceDetailsModal({
 	onClose,
 	onEdit,
 	onDelete,
+	onUpdateStatus,
 }: MaintenanceDetailsModalProps) {
 	if (!task) return null;
 
@@ -142,26 +144,57 @@ export function MaintenanceDetailsModal({
 						)}
 				</div>
 
-				<DialogFooter className="flex-shrink-0 border-t px-6 py-4 flex justify-between w-full">
+				<DialogFooter className="flex-shrink-0 border-t px-6 py-4 flex flex-col sm:flex-row justify-between w-full gap-3">
 					<Button
-						variant="destructive"
 						onClick={handleDelete}
-						className="flex items-center gap-2 bg-red-800 hover:bg-red-900"
+						className="flex items-center justify-center gap-2 w-full sm:w-auto bg-red-600/10 text-red-700 border border-red-600/20 hover:bg-red-600/20 hover:border-red-600/30 transition-colors"
 					>
 						<Trash2 className="h-4 w-4" />
 						Delete
 					</Button>
-					<div className="flex gap-2">
+					<div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+						{onUpdateStatus && !task.isCompleted && task?.id && (
+							<Button
+								type="button"
+								onClick={() => {
+									if (task.id) {
+										onUpdateStatus(task.id, true);
+									}
+								}}
+								className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors flex items-center justify-center gap-2"
+							>
+								<span className="text-lg">✓</span>
+								Mark Complete
+							</Button>
+						)}
+						{onUpdateStatus && task.isCompleted && task?.id && (
+							<Button
+								type="button"
+								onClick={() => {
+									if (task.id) {
+										onUpdateStatus(task.id, false);
+									}
+								}}
+								className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors flex items-center justify-center gap-2"
+							>
+								<span className="text-lg">↺</span>
+								Undo Complete
+							</Button>
+						)}
 						<Button
-							variant="outline"
 							onClick={() => onEdit(task)}
-							className="flex items-center gap-2"
+							className="flex items-center justify-center gap-2 w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
 						>
 							<Edit className="h-4 w-4" />
 							Edit
 						</Button>
 						<DialogClose asChild>
-							<Button onClick={onClose}>Close</Button>
+							<Button
+								onClick={onClose}
+								className="w-full sm:w-auto bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 border border-gray-300 transition-colors"
+							>
+								Close
+							</Button>
 						</DialogClose>
 					</div>
 				</DialogFooter>

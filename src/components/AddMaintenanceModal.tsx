@@ -55,11 +55,11 @@ export function AddMaintenanceModal({
 	// Use localStorage to persist recurrence settings
 	const [preserveFromPrior, setPreserveFromPrior] = useState(() => {
 		const saved = localStorage.getItem("preserveFromPrior");
-		return saved ? JSON.parse(saved) : false;
+		return saved ? JSON.parse(saved) : true; // Default to true
 	});
 	const [recurrenceInterval, setRecurrenceInterval] = useState(() => {
 		const saved = localStorage.getItem("recurrenceInterval");
-		return saved ? Number(JSON.parse(saved)) : 2;
+		return saved ? Number(JSON.parse(saved)) : 1; // Default to 1 week
 	});
 	const [recurrenceUnit, setRecurrenceUnit] = useState<
 		"Days" | "Weeks" | "Months" | "Years"
@@ -370,9 +370,9 @@ export function AddMaintenanceModal({
 							/>
 							<label
 								htmlFor="preserveFromPrior"
-								className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+								className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
 							>
-								Preserve for future recurrence
+								Repeat this task automatically
 							</label>
 						</div>
 

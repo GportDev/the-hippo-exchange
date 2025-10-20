@@ -343,7 +343,13 @@ function RouteComponent() {
 												<img
 													src={asset.images[0]}
 													alt={asset.itemName}
-													className="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:shadow-md transition-shadow"
+													className="w-12 h-12 rounded-lg object-cover shadow-sm group-hover:shadow-md transition-shadow antialiased"
+													style={{
+														imageRendering: "-webkit-optimize-contrast",
+														backfaceVisibility: "hidden",
+														transform: "translateZ(0)",
+													}}
+													loading="lazy"
 												/>
 											) : (
 												<div className="w-12 h-12 rounded-lg bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center shadow-sm">
