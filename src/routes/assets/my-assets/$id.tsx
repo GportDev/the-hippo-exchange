@@ -194,7 +194,7 @@ function RouteComponent() {
 
   if (isError || !asset) {
     return (
-      <div className="bg-gray-50 flex items-center justify-center h-full px-4">
+      <div className="bg-gray-50 flex items-center justify-center h-full">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Asset Not Found</h1>
           <p className="text-gray-600 mb-4">The asset you're looking for doesn't exist or could not be loaded.</p>
@@ -213,7 +213,7 @@ function RouteComponent() {
   return (
     <div className="bg-gray-50 p-6">
       {/* Header */}
-      <div className="bg-white border border-gray-200 rounded-md px-4 shadow-sm">
+      <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -345,15 +345,15 @@ function RouteComponent() {
       </div>
 
       {/* Maintenance Section */}
-      <div className="bg-gray-100 py-12 rounded-md px-4">
+      <div className="bg-gray-100 py-12">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4 text-left">
+          <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-primary-gray">
               Maintenance History
             </h2>
             <Button
               onClick={() => setAddModalOpen(true)}
-              className="w-fit bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+              className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors"
             >
               Add Maintenance
             </Button>
@@ -363,7 +363,7 @@ function RouteComponent() {
             {isLoadingMaintenance ? (
               <div className="text-center text-primary-gray">Loading maintenance tasks...</div>
             ) : maintenanceItemsWithStatus.length === 0 ? (
-              <div className="text-center py-12 px-4 text-balance text-gray-500 bg-white rounded-lg border">
+              <div className="text-center py-12 text-gray-500 bg-white rounded-lg border">
                 <p className="text-lg">No maintenance history for this asset.</p>
               </div>
             ) : (
@@ -371,7 +371,7 @@ function RouteComponent() {
                 <MaintenanceCard
                   key={maintenance.id}
                   task={maintenance}
-                  imageUrl={asset.images?.[0] || '/HippoTransparent.png'}
+                  imageUrl={asset.images?.[0] || '/public/placeholder.jpg'}
                   onUpdateStatus={handleUpdateStatus}
                   onViewDetails={handleViewDetails}
                 />
