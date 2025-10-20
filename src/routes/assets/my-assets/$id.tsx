@@ -38,6 +38,23 @@ interface Asset {
 
 type MaintenanceStatus = "overdue" | "pending" | "completed";
 
+const determineMaintenanceStatus = (
+	task: Maintenance,
+	isCompleted: boolean,
+): Maintenance["maintenanceStatus"] => {
+	if (isCompleted) {
+		return "Completed";
+	}
+
+	const today = new Date();
+	today.setHours(0, 0, 0, 0);
+
+	const dueDate = new Date(task.maintenanceDueDate);
+	dueDate.setHours(0, 0, 0, 0);
+
+	return dueDate < today ? "Overdue" : "Upcoming";
+};
+
 export const Route = createFileRoute("/assets/my-assets/$id")({
 	component: RouteComponent,
 });
@@ -152,6 +169,112 @@ function RouteComponent() {
 		},
 	});
 
+	const updateMaintenanceStatusMutation = useMutation<
+		Maintenance,
+		Error,
+		{ taskId: string; payload: Partial<Maintenance> },
+		{ originalTask?: Maintenance; previous?: Maintenance[] }
+	>({
+		mutationFn: async ({ taskId, payload }) => {
+			if (!user) throw new Error("User not authenticated");
+			return apiFetch(user.id, `/maintenance/${taskId}`, {
+				method: "PATCH",
+				body: JSON.stringify(payload),
+			});
+		},
+		onMutate: async (variables) => {
+			await Promise.all([
+				queryClient.cancelQueries({ queryKey: ["maintenance", "asset", id] }),
+				queryClient.cancelQueries({ queryKey: ["maintenance", user?.id] }),
+			]);
+			const previous = queryClient.getQueryData<Maintenance[]>([
+				"maintenance",
+				"asset",
+				id,
+			]);
+			const originalTask = previous?.find(
+				(task) => task.id === variables.taskId,
+			);
+			return { originalTask, previous };
+		},
+		onSuccess: async (_data, variables, context) => {
+			if (!user) {
+				return;
+			}
+
+			const originalTask = context?.originalTask;
+			if (variables.payload.isCompleted && originalTask?.preserveFromPrior) {
+				const adjustedDueDate = new Date(originalTask.maintenanceDueDate);
+				const interval = originalTask.recurrenceInterval || 0;
+				switch (originalTask.recurrenceUnit) {
+					case "Days":
+						adjustedDueDate.setDate(adjustedDueDate.getDate() + interval);
+						break;
+					case "Weeks":
+						adjustedDueDate.setDate(adjustedDueDate.getDate() + interval * 7);
+						break;
+					case "Months":
+						adjustedDueDate.setMonth(adjustedDueDate.getMonth() + interval);
+						break;
+					case "Years":
+						adjustedDueDate.setFullYear(
+							adjustedDueDate.getFullYear() + interval,
+						);
+						break;
+				}
+
+				const nextTaskPayload = {
+					assetId: originalTask.assetId,
+					brandName: originalTask.brandName,
+					productName: originalTask.productName,
+					purchaseLocation: originalTask.purchaseLocation || undefined,
+					assetCategory: originalTask.assetCategory,
+					costPaid: originalTask.costPaid,
+					maintenanceDueDate: adjustedDueDate.toISOString(),
+					maintenanceTitle: originalTask.maintenanceTitle,
+					maintenanceDescription: originalTask.maintenanceDescription,
+					maintenanceStatus: "Upcoming" as Maintenance["maintenanceStatus"],
+					preserveFromPrior: originalTask.preserveFromPrior,
+					isCompleted: false,
+					requiredTools: originalTask.requiredTools,
+					toolLocation: originalTask.toolLocation,
+					recurrenceUnit: originalTask.recurrenceUnit,
+					recurrenceInterval: originalTask.recurrenceInterval,
+				};
+
+				try {
+					await apiFetch(
+						user.id,
+						`/assets/${originalTask.assetId}/maintenance`,
+						{
+							method: "POST",
+							body: JSON.stringify(nextTaskPayload),
+						},
+					);
+				} catch (error) {
+					toast.error(
+						error instanceof Error
+							? error.message
+							: "Failed to schedule next recurring maintenance task.",
+					);
+				}
+			}
+
+			queryClient.invalidateQueries({ queryKey: ["maintenance", "asset", id] });
+			queryClient.invalidateQueries({ queryKey: ["maintenance", user?.id] });
+			toast.success("Maintenance task updated successfully!");
+		},
+		onError: (error, _variables, context) => {
+			toast.error(`Update failed: ${error.message}`);
+			if (context?.previous) {
+				queryClient.setQueryData(
+					["maintenance", "asset", id],
+					context.previous,
+				);
+			}
+		},
+	});
+
 	const handleUpdateStatus = (taskId: string, isCompleted: boolean) => {
 		const targetTask = maintenanceItemsWithStatus.find(
 			(task) => task.id === taskId,
@@ -160,19 +283,13 @@ function RouteComponent() {
 			return;
 		}
 
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
-
-		const dueDate = new Date(targetTask.maintenanceDueDate);
-		dueDate.setHours(0, 0, 0, 0);
-
-		const maintenanceStatus: Maintenance["maintenanceStatus"] = isCompleted
-			? "Completed"
-			: dueDate < today
-				? "Overdue"
-				: "Upcoming";
-
-		editMutation.mutate({ id: taskId, isCompleted, maintenanceStatus });
+		updateMaintenanceStatusMutation.mutate({
+			taskId,
+			payload: {
+				isCompleted,
+				maintenanceStatus: determineMaintenanceStatus(targetTask, isCompleted),
+			},
+		});
 	};
 
 	const handleViewDetails = (
