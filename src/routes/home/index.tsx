@@ -77,14 +77,16 @@ function RouteComponent() {
 	const overdueItems = maintenanceTasks.filter(
 		(item) => item.status === "overdue",
 	);
-	const upcomingItems = maintenanceTasks
-		.filter((item) => item.status === "pending" || item.status === "overdue")
-		.sort(
-			(a, b) =>
-				new Date(a.maintenanceDueDate).getTime() -
-				new Date(b.maintenanceDueDate).getTime(),
-		)
-		.slice(0, 5); // Cap the list to the top 5
+	const upcomingItems = useMemo(() => {
+		return maintenanceTasks
+			.filter((item) => item.status === "pending" || item.status === "overdue")
+			.sort(
+				(a, b) =>
+					new Date(a.maintenanceDueDate).getTime() -
+					new Date(b.maintenanceDueDate).getTime(),
+			);
+	}, [maintenanceTasks]);
+
 	const favoriteAssets = assets.filter((asset) => asset.favorite);
 	const totalAssetValue = assets.reduce(
 		(sum, asset) => sum + (asset.purchaseCost || 0),
@@ -219,7 +221,7 @@ function RouteComponent() {
 					{/* Main Content Grid */}
 					<div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 						{/* Upcoming Maintenance Section */}
-						<div className="lg:col-span-2 bg-gradient-to-br from-white to-gray-50/50 p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
+						<div className="lg:col-span-2 bg-gradient-to-br from-white to-gray-50/50 p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow flex flex-col">
 							<div className="flex items-center justify-between mb-4">
 								<h2 className="text-xl font-bold text-primary-gray">
 									Upcoming Maintenance
@@ -233,7 +235,7 @@ function RouteComponent() {
 									<ChevronRight className="h-4 w-4" />
 								</Link>
 							</div>
-							<div className="space-y-2">
+							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400">
 								{isLoading ? (
 									<p className="text-gray-500 py-6 text-center">
 										Loading maintenance items...
@@ -259,7 +261,7 @@ function RouteComponent() {
 														{item.maintenanceTitle}
 													</p>
 													<p className="text-xs text-gray-600 truncate">
-														{item.productName || item.brandName}
+														{item.brandName} {item.productName}
 													</p>
 												</div>
 											</div>
@@ -295,7 +297,7 @@ function RouteComponent() {
 						</div>
 
 						{/* Favorite Assets Section */}
-						<div className="bg-gradient-to-br from-white to-gray-50/50 p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow">
+						<div className="bg-gradient-to-br from-white to-gray-50/50 p-5 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition-shadow flex flex-col">
 							<div className="flex items-center justify-between mb-4">
 								<h2 className="text-xl font-bold text-primary-gray">
 									Favorite Assets
@@ -308,11 +310,11 @@ function RouteComponent() {
 									<ChevronRight className="h-4 w-4" />
 								</Link>
 							</div>
-							<div className="space-y-2">
+							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400">
 								{isLoading ? (
 									<p className="text-gray-500 py-6 text-center">Loading assets...</p>
 								) : favoriteAssets.length > 0 ? (
-									favoriteAssets.slice(0, 5).map((asset) => (
+									favoriteAssets.map((asset) => (
 										<Link
 											to="/assets/my-assets/$id"
 											params={{ id: asset.id }}
