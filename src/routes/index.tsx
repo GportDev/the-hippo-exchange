@@ -10,7 +10,7 @@ function App() {
 	const { isSignedIn } = useUser();
 
 	if (isSignedIn) {
-		return <Navigate to="/assets/my-assets" />;
+		return <Navigate to="/home" />;
 	}
 
 	return (
@@ -78,9 +78,60 @@ function App() {
 				</div>
 			</section>
 
+			{/* How It Works Section */}
+			<section className="relative bg-black/5 py-20 md:py-24 overflow-hidden">
+				<div className="absolute right-[-5%] top-[10%] size-[200px] bg-[radial-gradient(circle,#000_2px,transparent_2px)] bg-[length:20px_20px] opacity-10" />
+				<div className="absolute left-[-10%] bottom-[20%] size-[300px] rounded-full bg-[radial-gradient(circle,rgba(254,239,76,0.15)_0%,transparent_70%)]" />
+				<div className="container mx-auto px-5 relative z-10">
+					<h2 className="mb-5 text-center text-4xl text-primary-gray font-bold md:text-5xl">
+						How It Works
+					</h2>
+					<p className="mx-auto max-w-2xl text-primary-gray text-center text-lg">
+						Get started in three simple steps
+					</p>
+
+					<div className="mt-16 grid gap-10 md:grid-cols-3">
+						<div className="rounded-2xl border border-primary-gray/10 bg-gradient-to-br from-white/60 to-white/80 p-8 text-center transition-all hover:-translate-y-1 hover:border-[rgba(254,239,76,0.3)]">
+							<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary-gray text-2xl text-primary-yellow font-bold">
+								1
+							</div>
+							<h3 className="mb-2 text-xl font-bold">Browse & Discover</h3>
+							<p className="">
+								Search thousands of tools available in your neighborhood. Find
+								exactly what you need.
+							</p>
+						</div>
+
+						<div className="rounded-2xl border border-primary-gray/10 bg-gradient-to-br from-white/60 to-white/80 p-8 text-center transition-all hover:-translate-y-1 hover:border-[rgba(254,239,76,0.3)]">
+							<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary-gray text-2xl text-primary-yellow font-bold">
+								2
+							</div>
+							<h3 className="mb-2 text-xl font-bold">Connect & Request</h3>
+							<p className="">
+								Send a request to your neighbor. Arrange pickup times and
+								coordinate through our platform.
+							</p>
+						</div>
+
+						<div className="rounded-2xl border border-primary-gray/10 bg-gradient-to-br from-white/60 to-white/80 p-8 text-center transition-all hover:-translate-y-1 hover:border-[rgba(254,239,76,0.3)]">
+							<div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-2xl bg-primary-gray text-2xl text-primary-yellow font-bold">
+								3
+							</div>
+							<h3 className="mb-2 text-xl font-bold">Borrow & Return</h3>
+							<p className="">
+								Pick up the tool, complete your project, and return it. Build
+								trust in the community.
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
 			{/* Features Section */}
-			<section className="bg-black/5 py-20 md:py-24">
-				<div className="container mx-auto px-5">
+			<section className="relative bg-black/5 py-20 md:py-24 overflow-hidden">
+				<div className="absolute left-[5%] top-[15%] size-[150px] bg-[radial-gradient(circle,#000_2px,transparent_2px)] bg-[length:20px_20px] opacity-10" />
+				<div className="absolute right-[-15%] bottom-[10%] size-[400px] rounded-full bg-[radial-gradient(circle,rgba(254,239,76,0.15)_0%,transparent_70%)]" />
+				<div className="container mx-auto px-5 relative z-10">
 					<h2 className="mb-5 text-center text-4xl text-primary-gray font-bold md:text-5xl">
 						Why Choose Hippo Exchange?
 					</h2>
