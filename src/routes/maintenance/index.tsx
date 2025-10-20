@@ -365,6 +365,7 @@ function RouteComponent() {
 						setSelectedTask(null);
 					}}
 					onSave={handleSaveEdit}
+					onUpdateStatus={handleUpdateStatus}
 				/>
 
 				<div className="flex gap-3 sm:gap-6 border-b border-gray-200 mb-5 overflow-x-auto pb-px scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">

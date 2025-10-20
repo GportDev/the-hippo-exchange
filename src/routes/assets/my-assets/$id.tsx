@@ -526,6 +526,7 @@ function RouteComponent() {
 					setSelectedTask(null);
 				}}
 				onSave={handleSaveEdit}
+				onUpdateStatus={handleUpdateStatus}
 			/>
 
 			{asset && (
