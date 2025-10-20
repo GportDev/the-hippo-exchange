@@ -44,7 +44,7 @@ export function MaintenanceCard({
 			<div
 				className={"absolute left-0 top-0 h-full w-1 sm:w-1.5 bg-primary-gray"}
 			/>
-			<div className="flex items-start gap-4">
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-4">
 				{imageUrl && (
 					<div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 shadow-sm group-hover:shadow-md transition-shadow">
 						<img
@@ -55,7 +55,7 @@ export function MaintenanceCard({
 					</div>
 				)}
 				<div className="flex-1">
-					<div className="flex items-center gap-3 mb-2">
+					<div className="flex flex-wrap items-center gap-3 mb-2">
 						<h3 className="text-xl font-semibold text-primary-gray">
 							{task.maintenanceTitle}
 						</h3>
@@ -89,7 +89,7 @@ export function MaintenanceCard({
 						</span>
 					</div>
 				</div>
-				<div className="ml-2 sm:ml-4 grid space-y-2 sm:space-y-4 flex-shrink-0">
+				<div className="grid w-full gap-2 sm:ml-4 sm:w-auto sm:gap-4 sm:flex-shrink-0">
 					<button
 						type="button"
 						onClick={() => onViewDetails(task)}

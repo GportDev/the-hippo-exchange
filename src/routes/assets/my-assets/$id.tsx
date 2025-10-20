@@ -383,7 +383,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="p-6">
+		<div className="p-4 sm:p-6">
 			{/* Header */}
 			<div className="bg-white border-b border-gray-200">
 				<div className="max-w-7xl mx-auto">
@@ -535,8 +535,8 @@ function RouteComponent() {
 
 			{/* Maintenance Section */}
 			<div className="bg-gray-100 py-12">
-				<div className="max-w-7xl mx-auto">
-					<div className="flex justify-between items-center mb-6">
+				<div className="max-w-7xl mx-auto px-4 sm:px-0">
+					<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
 						<h2 className="text-2xl font-bold text-primary-gray">
 							Maintenance History
 						</h2>
