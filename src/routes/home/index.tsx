@@ -235,7 +235,7 @@ function RouteComponent() {
 									<ChevronRight className="h-4 w-4" />
 								</Link>
 							</div>
-							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400">
+							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
 								{isLoading ? (
 									<p className="text-gray-500 py-6 text-center">
 										Loading maintenance items...
@@ -310,7 +310,7 @@ function RouteComponent() {
 									<ChevronRight className="h-4 w-4" />
 								</Link>
 							</div>
-							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent hover:scrollbar-thumb-gray-400">
+							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
 								{isLoading ? (
 									<p className="text-gray-500 py-6 text-center">Loading assets...</p>
 								) : favoriteAssets.length > 0 ? (
