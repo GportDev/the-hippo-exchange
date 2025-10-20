@@ -282,13 +282,13 @@ function RouteComponent() {
 		});
 	}, [itemsWithStatus, activeFilter]);
 
-	const assetImageMap = useMemo(() => {
-		const map = new Map<string, string | undefined>();
-		for (const a of assets) {
-			map.set(a.id, a.images?.[0] || "/public/placeholder.jpg");
-		}
-		return map;
-	}, [assets]);
+  const assetImageMap = useMemo(() => {
+    const map = new Map<string, string | undefined>();
+    for (const a of assets) {
+      map.set(a.id, a.images?.[0] || "/HippoTransparent.png");
+    }
+    return map;
+  }, [assets]);
 
 	// Redirect to home if not signed in
 	if (isLoaded && !isSignedIn) {
@@ -360,49 +360,47 @@ function RouteComponent() {
 					onSave={handleSaveEdit}
 				/>
 
-				<div className="flex gap-6 border-b border-gray-200 mb-5">
-					{[
-						{ key: "all", label: "All" },
-						{ key: "overdue", label: "Overdue" },
-						{ key: "pending", label: "Upcoming" },
-						{ key: "completed", label: "Completed" },
-					].map(({ key, label }) => (
-						<button
-							key={key}
-							type="button"
-							onClick={() => handleFilterChange(key as MaintenanceFilter)}
-							className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer ${
-								activeFilter === key
-									? "border-primary-gray text-primary-gray"
-									: "border-transparent text-gray-500 hover:text-gray-700"
-							}`}
-						>
-							{label}
-							<span
-								className={`ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
-									key === "overdue"
-										? "bg-red-100 text-red-800"
-										: key === "pending"
-											? "bg-yellow-100 text-yellow-800"
-											: key === "completed"
-												? "bg-green-100 text-green-800"
-												: "bg-gray-200 text-gray-700"
-								}`}
-								aria-label={`Number of ${label.toLowerCase()} tasks`}
-							>
-								{counts[key as keyof typeof counts]}
-							</span>
-						</button>
-					))}
-					<div className="flex-grow" />
-					<Button
-						onClick={() => setAddModalOpen(true)}
-						className="p-6 px-8 mb-2 mr-5 bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
-					>
-						<span className="text-2xl mb-1">+</span>
-						<span className="text-base hidden sm:inline">Add Task</span>
-					</Button>
-				</div>
+        <div className="flex gap-6 border-b border-gray-200 mb-4">
+          {[
+            { key: "all", label: "All" },
+            { key: "overdue", label: "Overdue" },
+            { key: "pending", label: "Upcoming" },
+            { key: "completed", label: "Completed" },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => handleFilterChange(key as MaintenanceFilter)}
+              className={`relative px-1 font-semibold text-lg border-b-2 transition-colors cursor-pointer items-center justify-center  ${
+                activeFilter === key ? "border-primary-gray text-primary-gray" : "border-transparent text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              {label}
+              <span
+                className={`md:ml-2 mb-1 inline-block min-w-[1.5em] px-2 py-1 rounded-full text-xs font-bold align-middle ${
+                  key === "overdue"
+                    ? "bg-red-100 text-red-800"
+                    : key === "pending"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : key === "completed"
+                    ? "bg-green-100 text-green-800"
+                    : "bg-gray-200 text-gray-700"
+                }`}
+                aria-label={`Number of ${label.toLowerCase()} tasks`}
+              >
+                {counts[key as keyof typeof counts]}
+              </span>
+            </button>
+          ))}
+          <div className="flex-grow" />
+          <Button
+            onClick={() => setAddModalOpen(true)}
+            className="p-6 px-8 mb-2 mr-5 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+          >
+            <span className="text-2xl mb-1">+</span>
+            <span className="text-base hidden sm:inline">Add Task</span>
+          </Button>
+        </div>
 
 				<div className="space-y-4">
 					{sortedAndFilteredItems.length === 0 ? (
