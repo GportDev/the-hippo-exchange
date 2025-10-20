@@ -324,7 +324,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="bg-gray-50 p-6 min-h-screen">
+		<div className="p-6 min-h-screen">
 			<section className="mx-auto max-w-7xl">
 				<div className="flex justify-between items-center mb-6">
 					<div>

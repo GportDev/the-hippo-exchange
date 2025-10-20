@@ -162,7 +162,7 @@ function RouteComponent() {
 	}
 
 	return (
-		<div className="h-full bg-gradient-to-br from-gray-50 to-gray-100/50">
+		<div className="h-full">
 			<main className="p-4 sm:p-6 space-y-4">
 				<div className="mx-auto max-w-7xl">
 					{/* Header Section */}

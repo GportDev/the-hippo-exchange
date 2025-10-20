@@ -182,7 +182,7 @@ function MyAssetsComponent() {
 	);
 
 	return (
-		<div className="bg-gray-50 p-6">
+		<div className="p-6">
 			<div className="mx-auto max-w-7xl">
 				<header className="mb-8">
 					<div className="flex flex-wrap items-center justify-between gap-4">

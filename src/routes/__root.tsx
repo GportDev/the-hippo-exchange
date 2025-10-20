@@ -80,7 +80,7 @@ function RootComponent() {
 							onMouseEnter={handleMouseEnter}
 							onMouseLeave={handleMouseLeave}
 						/>
-						<div className="flex-1 overflow-y-scroll overflow-x-hidden bg-gray-50">
+						<div className="flex-1 overflow-y-scroll overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50/20">
 							<Outlet />
 						</div>
 					</div>
