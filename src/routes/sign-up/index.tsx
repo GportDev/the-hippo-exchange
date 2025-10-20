@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSignUp, useUser } from "@clerk/clerk-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Navigate, createFileRoute } from "@tanstack/react-router";
+import { Link, Navigate, createFileRoute } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -164,7 +165,14 @@ function SignUpComponent() {
 	};
 
 	return (
-		<div className="flex flex-col md:flex-row min-h-screen bg-primary-yellow overflow-x-hidden">
+		<div className="relative flex flex-col md:flex-row min-h-screen bg-primary-yellow overflow-x-hidden">
+			<Link
+				to="/"
+				className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 inline-flex items-center gap-2 text-primary-yellow hover:text-primary-yellow/80 transition-colors"
+			>
+				<ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+				<span className="font-semibold text-sm sm:text-base">Back</span>
+			</Link>
 			<div className="flex flex-col justify-center items-center md:w-1/2 p-4 sm:p-6 md:p-12 text-white bg-primary-gray rounded-b-[2.5rem] md:rounded-r-[6rem] md:rounded-bl-none overflow-hidden">
 				<img
 					src="/HippoTransparent.png"
