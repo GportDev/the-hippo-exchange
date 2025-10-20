@@ -75,11 +75,14 @@ export function EditMaintenanceModal({
 		}));
 	};
 
-	const handleSelectChange = (
-		id: keyof Maintenance | "requiredToolsString",
-		value: any,
+	const handleSelectChange = <K extends keyof Maintenance>(
+		id: K | "requiredToolsString",
+		value: Maintenance[K] | string[] | undefined,
 	) => {
-		setFormData((prev) => ({ ...prev, [id]: value }));
+		setFormData((prev) => ({
+			...prev,
+			[id]: value as Maintenance[keyof Maintenance],
+		}));
 	};
 
 	const {
@@ -165,7 +168,12 @@ export function EditMaintenanceModal({
 		}
 
 		// Remove any extra fields that shouldn't be in the API payload
-		(updatedTask as any).status = undefined;
+		// `status` is not part of the API payload; delete if present
+		// Use a safe delete on a loosened typed object to avoid `any` lint
+		const updatedTaskLoose = updatedTask as unknown as Partial<
+			Record<string, unknown>
+		>;
+		if (updatedTaskLoose.status) updatedTaskLoose.status = undefined;
 
 		onSave(updatedTask);
 	};
@@ -175,6 +183,7 @@ export function EditMaintenanceModal({
 			<DialogContent className="w-[90vw] sm:w-full sm:max-w-lg max-h-[90vh] flex flex-col p-0">
 				<DialogClose asChild>
 					<button
+						type="button"
 						aria-label="Close"
 						className="absolute right-4 top-4 text-primary-yellow hover:text-white transition-colors z-50"
 						onClick={onClose}

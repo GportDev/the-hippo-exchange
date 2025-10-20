@@ -200,14 +200,20 @@ function MyAssetsComponent() {
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-blue-50 to-white p-4 shadow-sm hover:shadow-lg transition-shadow">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-10 -mt-10" />
 							<Package className="h-7 w-7 text-blue-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Assets</div>
-							<div className="text-2xl font-bold text-primary-gray">{assets.length}</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Total Assets
+							</div>
+							<div className="text-2xl font-bold text-primary-gray">
+								{assets.length}
+							</div>
 						</div>
 
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-4 shadow-sm hover:shadow-lg transition-shadow">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-10 -mt-10" />
 							<DollarSign className="h-7 w-7 text-green-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Value</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Total Value
+							</div>
 							<div className="text-2xl font-bold text-primary-gray">
 								${totalValue.toLocaleString()}
 							</div>
@@ -216,7 +222,9 @@ function MyAssetsComponent() {
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-red-50 to-white p-4 shadow-sm hover:shadow-lg transition-shadow col-span-2 lg:col-span-1">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-10 -mt-10" />
 							<Heart className="h-7 w-7 text-red-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Favorites</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Favorites
+							</div>
 							<div className="text-2xl font-bold text-primary-gray">
 								{assets.filter((a) => a.favorite).length}
 							</div>

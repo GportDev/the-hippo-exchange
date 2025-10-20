@@ -33,7 +33,11 @@ function Navbar({ isExpanded, onMouseEnter, onMouseLeave }: NavbarProps) {
 				>
 					<div className="flex flex-col h-full">
 						{/* Navigation links */}
-						<ul className={"flex flex-col pt-4 items-start border-t border-primary-yellow/10"}>
+						<ul
+							className={
+								"flex flex-col pt-4 items-start border-t border-primary-yellow/10"
+							}
+						>
 							<li className="mb-2 w-full">
 								<Link
 									to="/home"

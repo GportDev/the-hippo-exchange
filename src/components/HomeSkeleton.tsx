@@ -61,13 +61,13 @@ export function HomeSkeleton() {
 							<div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-md">
 								<Skeleton className="h-8 w-64 mb-4" /> {/* Section Title */}
 								<div className="space-y-4">
-									{Array.from({ length: 5 }).map((_, index) => (
+									{[0, 1, 2, 3, 4].map((id) => (
 										<div
-											key={index}
+											key={`home-upcoming-${id}`}
 											className="flex items-center justify-between p-3 sm:p-4 rounded-lg hover:bg-gray-50"
 										>
 											<div className="flex items-center gap-4">
-												<Skeleton className="h-10 w-10 rounded-full" />{" "}
+												<Skeleton className="h-10 w-10 rounded-full" />
 												{/* Icon placeholder */}
 												<div>
 													<Skeleton className="h-5 w-48" /> {/* Item Title */}
@@ -88,19 +88,19 @@ export function HomeSkeleton() {
 							<div className="bg-white p-4 sm:p-6 rounded-xl shadow-md">
 								<Skeleton className="h-8 w-48 mb-4" /> {/* Section Title */}
 								<div className="space-y-3">
-									{Array.from({ length: 3 }).map((_, index) => (
+									{[0, 1, 2].map((id) => (
 										<div
-											key={index}
+											key={`home-fav-${id}`}
 											className="flex items-center gap-4 p-3 sm:p-4 rounded-lg hover:bg-gray-50"
 										>
-											<Skeleton className="w-12 h-12 rounded-md" />{" "}
+											<Skeleton className="w-12 h-12 rounded-md" />
 											{/* Image placeholder */}
 											<div>
 												<Skeleton className="h-5 w-32" /> {/* Asset Name */}
 												<Skeleton className="h-4 w-24 mt-2" />{" "}
 												{/* Brand Name */}
 											</div>
-											<Heart className="h-5 w-5 text-gray-300 ml-auto opacity-50" />{" "}
+											<Heart className="h-5 w-5 text-gray-300 ml-auto opacity-50" />
 											{/* Star Icon */}
 										</div>
 									))}

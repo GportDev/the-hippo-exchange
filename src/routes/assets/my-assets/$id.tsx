@@ -318,14 +318,14 @@ function RouteComponent() {
 						{/* Additional Images */}
 						{asset.images && asset.images.length > 1 && (
 							<div className="grid grid-cols-4 gap-2">
-								{asset.images.slice(1, 5).map((image, index) => (
+								{asset.images.slice(1, 5).map((image) => (
 									<div
-										key={index}
+										key={image}
 										className="aspect-square rounded-lg overflow-hidden bg-white shadow-sm border border-gray-200"
 									>
 										<img
 											src={image}
-											alt={`${asset.itemName} ${index + 1}`}
+											alt={`${asset.itemName}`}
 											className="w-full h-full object-cover"
 										/>
 									</div>

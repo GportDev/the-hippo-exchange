@@ -12,8 +12,8 @@ export function MaintenanceSkeleton() {
 				</div>
 
 				<div className="flex gap-6 border-b border-gray-200 mb-4">
-					{Array.from({ length: 4 }).map((_, index) => (
-						<div key={index} className="relative px-1">
+					{[0, 1, 2, 3].map((id) => (
+						<div key={`maintenance-tab-${id}`} className="relative px-1">
 							<Skeleton className="h-8 w-24" />
 						</div>
 					))}
@@ -22,9 +22,9 @@ export function MaintenanceSkeleton() {
 				</div>
 
 				<div className="space-y-4">
-					{Array.from({ length: 5 }).map((_, index) => (
+					{[0, 1, 2, 3, 4].map((id) => (
 						<div
-							key={index}
+							key={`maintenance-item-${id}`}
 							className="flex items-center gap-4 rounded-lg border bg-white p-4 shadow-sm"
 						>
 							<Skeleton className="h-16 w-16 rounded-md" />

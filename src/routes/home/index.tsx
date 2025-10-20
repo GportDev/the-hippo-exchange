@@ -119,6 +119,7 @@ function RouteComponent() {
 							</div>
 						</Link>
 						<button
+							type="button"
 							onClick={() => toast.dismiss(t.id)}
 							className="p-1 rounded-full hover:bg-yellow-200 transition-colors ml-4 flex-shrink-0"
 						>
@@ -183,14 +184,20 @@ function RouteComponent() {
 						>
 							<div className="absolute top-0 right-0 w-20 h-20 bg-blue-500/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500" />
 							<Package className="h-7 w-7 text-blue-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Assets</div>
-							<div className="text-2xl font-bold text-primary-gray">{assets.length}</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Total Assets
+							</div>
+							<div className="text-2xl font-bold text-primary-gray">
+								{assets.length}
+							</div>
 						</Link>
 
 						<div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-4 shadow-sm">
 							<div className="absolute top-0 right-0 w-20 h-20 bg-green-500/5 rounded-full -mr-10 -mt-10" />
 							<DollarSign className="h-7 w-7 text-green-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Total Value</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Total Value
+							</div>
 							<div className="text-2xl font-bold text-primary-gray">
 								${totalAssetValue.toLocaleString()}
 							</div>
@@ -203,8 +210,12 @@ function RouteComponent() {
 						>
 							<div className="absolute top-0 right-0 w-20 h-20 bg-yellow-500/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500" />
 							<Calendar className="h-7 w-7 text-yellow-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Upcoming</div>
-							<div className="text-2xl font-bold text-primary-gray">{pendingItems.length}</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Upcoming
+							</div>
+							<div className="text-2xl font-bold text-primary-gray">
+								{pendingItems.length}
+							</div>
 						</Link>
 
 						<Link
@@ -214,8 +225,12 @@ function RouteComponent() {
 						>
 							<div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-10 -mt-10 group-hover:scale-150 transition-transform duration-500" />
 							<AlertTriangle className="h-7 w-7 text-red-600 mb-2" />
-							<div className="text-xs font-medium text-gray-600 mb-0.5">Overdue</div>
-							<div className="text-2xl font-bold text-primary-gray">{overdueItems.length}</div>
+							<div className="text-xs font-medium text-gray-600 mb-0.5">
+								Overdue
+							</div>
+							<div className="text-2xl font-bold text-primary-gray">
+								{overdueItems.length}
+							</div>
 						</Link>
 					</div>
 					{/* Main Content Grid */}
@@ -271,12 +286,13 @@ function RouteComponent() {
 														item.status,
 													)}`}
 												>
-													{new Date(
-														item.maintenanceDueDate,
-													).toLocaleDateString("en-US", {
-														month: "short",
-														day: "numeric",
-													})}
+													{new Date(item.maintenanceDueDate).toLocaleDateString(
+														"en-US",
+														{
+															month: "short",
+															day: "numeric",
+														},
+													)}
 												</span>
 												<ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all" />
 											</div>
@@ -312,7 +328,9 @@ function RouteComponent() {
 							</div>
 							<div className="overflow-y-auto max-h-[400px] pr-2 space-y-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
 								{isLoading ? (
-									<p className="text-gray-500 py-6 text-center">Loading assets...</p>
+									<p className="text-gray-500 py-6 text-center">
+										Loading assets...
+									</p>
 								) : favoriteAssets.length > 0 ? (
 									favoriteAssets.map((asset) => (
 										<Link

@@ -11,7 +11,10 @@ export default function Header() {
 			</div>
 			<SignedOut>
 				<SignInButton>
-					<button className="bg-primary-gray text-primary-yellow px-4 py-2 rounded-md font-semibold text-lg mr-4 hover:bg-primary-yellow hover:text-primary-gray transition-colors">
+					<button
+						type="button"
+						className="bg-primary-gray text-primary-yellow px-4 py-2 rounded-md font-semibold text-lg mr-4 hover:bg-primary-yellow hover:text-primary-gray transition-colors"
+					>
 						Sign In
 					</button>
 				</SignInButton>

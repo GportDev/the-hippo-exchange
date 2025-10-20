@@ -83,6 +83,7 @@ export function AssetCard({
 				</div>
 			</div>
 			<button
+				type="button"
 				onClick={() => onToggleFavorite(asset.id, !asset.favorite)}
 				className="absolute top-3 right-3 z-10 rounded-full bg-white/70 p-1.5 text-gray-600 backdrop-blur-sm transition hover:bg-white hover:text-red-500"
 			>
@@ -93,7 +94,10 @@ export function AssetCard({
 			<div className="absolute top-3 left-3 z-10">
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<button className="rounded-full bg-white/70 p-1.5 text-gray-600 backdrop-blur-sm transition hover:bg-white">
+						<button
+							type="button"
+							className="rounded-full bg-white/70 p-1.5 text-gray-600 backdrop-blur-sm transition hover:bg-white"
+						>
 							<MoreVertical className="h-5 w-5" />
 						</button>
 					</DropdownMenuTrigger>

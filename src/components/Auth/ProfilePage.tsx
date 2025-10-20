@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -68,7 +69,10 @@ export const ProfilePage = () => {
 		handleSubmit,
 		formState: { errors },
 	} = useForm<ProfileFormValues>({
-		resolver: zodResolver(profileFormSchema) as any,
+		// Cast resolver to the react-hook-form Resolver type inferred for ProfileFormValues
+		resolver: zodResolver(
+			profileFormSchema,
+		) as unknown as Resolver<ProfileFormValues>,
 		defaultValues: data ?? {
 			phone: "",
 			address: "",
