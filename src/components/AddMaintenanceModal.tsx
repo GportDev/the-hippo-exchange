@@ -65,7 +65,7 @@ export function AddMaintenanceModal({
 		"Days" | "Weeks" | "Months" | "Years"
 	>(() => {
 		const saved = localStorage.getItem("recurrenceUnit");
-		return saved ? JSON.parse(saved) : "Weeks"; // Default to Weeks
+		return saved ? JSON.parse(saved) : "Weeks";
 	});
 
 	// Effects to save recurrence settings to localStorage whenever they change
