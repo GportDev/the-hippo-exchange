@@ -324,14 +324,14 @@ function RouteComponent() {
 	};
 
 	return (
-		<div className="p-6 min-h-screen">
+		<div className="p-4 sm:p-6 min-h-screen">
 			<section className="mx-auto max-w-7xl">
-				<div className="flex justify-between items-center mb-6">
+				<div className="flex justify-between items-center mb-5">
 					<div>
-						<h1 className="text-3xl font-bold text-primary-gray">
+						<h1 className="text-3xl sm:text-4xl font-bold text-primary-gray mb-1">
 							My Maintenance
 						</h1>
-						<p className="text-gray-500">
+						<p className="text-base text-gray-600">
 							Keep track of all your maintenance tasks.
 						</p>
 					</div>
@@ -360,7 +360,7 @@ function RouteComponent() {
 					onSave={handleSaveEdit}
 				/>
 
-				<div className="flex gap-6 border-b border-gray-200 mb-4">
+				<div className="flex gap-6 border-b border-gray-200 mb-5">
 					{[
 						{ key: "all", label: "All" },
 						{ key: "overdue", label: "Overdue" },
@@ -397,7 +397,7 @@ function RouteComponent() {
 					<div className="flex-grow" />
 					<Button
 						onClick={() => setAddModalOpen(true)}
-						className="p-6 px-8 mb-2 mr-5 bg-primary-gray text-primary-yellow rounded-md hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2"
+						className="p-6 px-8 mb-2 mr-5 bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
 					>
 						<span className="text-2xl mb-1">+</span>
 						<span className="text-base hidden sm:inline">Add Task</span>
@@ -406,9 +406,12 @@ function RouteComponent() {
 
 				<div className="space-y-4">
 					{sortedAndFilteredItems.length === 0 ? (
-						<div className="text-center py-12 text-gray-500">
-							<p className="text-lg">
+						<div className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/50 p-12 text-center shadow-md">
+							<p className="text-lg text-primary-gray font-medium">
 								No maintenance items found for this filter.
+							</p>
+							<p className="text-sm text-gray-600 mt-2">
+								Try selecting a different filter or add a new maintenance task.
 							</p>
 						</div>
 					) : (

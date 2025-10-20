@@ -269,8 +269,9 @@ export default function AddAssetModal() {
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
-				<Button className="w-full sm:w-auto bg-primary-gray text-primary-yellow hover:bg-primary-yellow hover:text-primary-gray transition-colors">
-					Add New Asset
+				<Button className="w-full sm:w-auto bg-primary-gray text-primary-yellow rounded-xl hover:bg-primary-gray/90 hover:text-primary-yellow/90 transition-colors cursor-pointer shadow-sm hover:shadow-md px-8 py-6 flex items-center justify-center gap-2">
+					<span className="text-2xl mb-1">+</span>
+					<span className="text-base">Add New Asset</span>
 				</Button>
 			</DialogTrigger>
 			<DialogContent className="w-[90vw] sm:w-full sm:max-w-[425px] max-h-[90vh] flex flex-col p-0">
